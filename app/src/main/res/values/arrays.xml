@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="themes">
+        <item>Light</item>
+        <item>Dark</item>
+    </array>
+    <array name="layout">
+        <item>Waterfall</item>
+        <item>Carousel</item>
+    </array>
+    <array name="mediaType">
+        <item>GIFs</item>
+        <item>Stickers</item>
+    </array>
+</resources>
