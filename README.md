@@ -5,7 +5,7 @@
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:1.0.0-beta2'
+implementation 'com.giphy.sdk:ui:1.0.0'
 ``` 
     
 ### Basic usage

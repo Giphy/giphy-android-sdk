@@ -23,11 +23,7 @@ allprojects {
         maven { url "https://jitpack.io" }
         mavenLocal()
         maven {
-            url "http://giphy.bintray.com/giphy-private-sdk"
-            credentials {
-                username hasProperty('GIPHY_BINTRAY_USER') ? bintray_user : System.getenv('GIPHY_BINTRAY_USER')
-                password hasProperty('GIPHY_BINTRAY_KEY') ? bintray_apikey : System.getenv('GIPHY_BINTRAY_KEY')
-            }
+            url "http://giphy.bintray.com/giphy-sdk"
         }
         maven {
             url 'https://maven.google.com/'
