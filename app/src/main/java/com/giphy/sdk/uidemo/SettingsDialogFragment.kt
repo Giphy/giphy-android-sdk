@@ -1,26 +1,26 @@
 package com.giphy.sdk.uidemo
 
 import android.content.DialogInterface
+import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.TabLayout
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatDialog
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
+import android.support.v7.widget.GridLayout
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import com.giphy.sdk.core.models.enums.RenditionType
-import com.giphy.sdk.ui.GPHMediaTypeConfiguration
+import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.themes.DarkTheme
 import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.ui.themes.LightTheme
-import com.giphy.sdk.ui.views.*
+import com.giphy.sdk.ui.views.buttons.*
+import com.savvyapps.togglebuttonlayout.ToggleButtonLayout
 import kotlinx.android.synthetic.main.fragment_settings.*
-import kotlinx.android.synthetic.main.giphy_button_holder.view.*
 
 /**
  * Created by Cristian Holdunu on 13/03/2019.
@@ -66,45 +66,46 @@ class SettingsDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val lightTab = themeSelector.newTab()
-        lightTab.text = "Light"
-        val darkTab = themeSelector.newTab()
-        darkTab.text = "Dark"
+        themeSelector.setToggled(if (settings.theme == LightTheme) R.id.lightTheme else R.id.darkTheme, true)
+        layoutSelector.setToggled(if (settings.gridType == GridType.waterfall) R.id.waterfall else R.id.carousel, true)
+        mediaTypeSelector.inflateMenu(if (settings.gridType == GridType.waterfall) R.menu.waterfal_media_types else R.menu.carousel_media_types)
+        settings.mediaTypeConfig.forEach {
+            val id = when (it) {
+                GPHContentType.gif -> R.id.typeGif
+                GPHContentType.sticker -> R.id.typeStickers
+                GPHContentType.text -> R.id.typeText
+                GPHContentType.emoji -> R.id.typeEmoji
+            }
+            mediaTypeSelector.setToggled(id, true)
+        }
 
-        themeSelector.addTab(lightTab, settings.theme == LightTheme)
-        themeSelector.addTab(darkTab, settings.theme == DarkTheme)
-
-        val waterfalTab = layoutSelector.newTab()
-        waterfalTab.text = "Waterfal"
-        val carouselTab = layoutSelector.newTab()
-        carouselTab.text = "Carousel"
-//        val emojiTab = layoutSelector.newTab()
-//        emojiTab.text = "Emoji"
-
-        layoutSelector.addTab(waterfalTab, settings.gridType == GridType.waterfall)
-        layoutSelector.addTab(carouselTab, settings.gridType == GridType.carousel)
-//        layoutSelector.addTab(emojiTab, settings.gridType == GridType.emoji)
-
-        val allMediaTab = mediaSelector.newTab()
-        allMediaTab.text = "Gifs & Stickers"
-        val gifsTab = mediaSelector.newTab()
-        gifsTab.text = "GIFs"
-        val stickersTab = mediaSelector.newTab()
-        stickersTab.text = "Stickers"
-        val textTab = mediaSelector.newTab()
-        textTab.text = "Text"
-        mediaSelector.addTab(allMediaTab, settings.mediaTypeConfig == GPHMediaTypeConfiguration.gifsAndStickers)
-        mediaSelector.addTab(gifsTab, settings.mediaTypeConfig == GPHMediaTypeConfiguration.gifsOnly)
-        mediaSelector.addTab(stickersTab, settings.mediaTypeConfig == GPHMediaTypeConfiguration.stickersOnly)
-        mediaSelector.addTab(textTab, settings.mediaTypeConfig == GPHMediaTypeConfiguration.textOnly)
+        layoutSelector.onToggledListener = { toggle, selected ->
+            (mediaTypeSelector.getChildAt(0) as LinearLayout).removeAllViews()
+            mediaTypeSelector.toggles.clear()
+            if (toggle.id == R.id.carousel) {
+                mediaTypeSelector.multipleSelection = false
+                mediaTypeSelector.inflateMenu(R.menu.carousel_media_types)
+                mediaTypeSelector.setToggled(R.id.typeGif, true)
+            } else {
+                mediaTypeSelector.multipleSelection = true
+                mediaTypeSelector.inflateMenu(R.menu.waterfal_media_types)
+                mediaTypeSelector.toggles.forEach {
+                    mediaTypeSelector.setToggled(it.id, true)
+                }
+            }
+        }
 
         applyTheme()
-        setupIconsList()
+
 
         dimBackgroundCheck.isChecked = settings.dimBackground
-        showAttributionCheck.isChecked = settings.showAttributeScreenOnSelection
+        showAttributionCheck.isChecked = settings.showAttribution
+        showConfirmationScreen.isChecked = settings.showConfirmationScreen
 
-        themeSelector.addOnTabSelectedListener(getThemeSelectorListener())
+        themeSelector.onToggledListener = { toggle, selected ->
+            settings.theme = if (toggle.id == R.id.lightTheme) LightTheme else DarkTheme
+            applyTheme()
+        }
         dismissBtn.setOnClickListener { dismiss() }
         gridRenditionType.setOnClickListener { openRenditionPicker(PICK_GRID_RENDITION) }
         attributionRenditionType.setOnClickListener { openRenditionPicker(PICK_ATTRIBUTION_RENDTION) }
@@ -113,61 +114,171 @@ class SettingsDialogFragment : DialogFragment() {
     private fun applyTheme() {
         themeTitle.setTextColor(settings.theme.textColor)
         layoutTitle.setTextColor(settings.theme.textColor)
-        mediaTitle.setTextColor(settings.theme.textColor)
+        gifTitle.setTextColor(settings.theme.textColor)
         dismissBtn.setColorFilter(settings.theme.textColor)
         mainView.setBackgroundColor(settings.theme.backgroundColor)
-        applyThemeToSelector(themeSelector)
-        applyThemeToSelector(layoutSelector)
-        applyThemeToSelector(mediaSelector)
-        iconSelector.setBackgroundColor(if (settings.theme == LightTheme) lightIconsBackground else darkIconsBackground)
+        applyTheme(themeSelector)
+        applyTheme(layoutSelector)
+        applyTheme(mediaTypeSelector)
+//        iconSelector.setBackgroundColor(if (settings.theme == LightTheme) lightIconsBackground else darkIconsBackground)
         dimBackgroundCheck.setTextColor(settings.theme.textColor)
         showAttributionCheck.setTextColor(settings.theme.textColor)
+        showConfirmationScreen.setTextColor(settings.theme.textColor)
+        setupIconsList()
     }
 
-    private fun applyThemeToSelector(selector: TabLayout) {
-        selector.setSelectedTabIndicatorColor(settings.theme.activeTextColor)
-        selector.setTabTextColors(settings.theme.textColor, settings.theme.activeTextColor)
-    }
+    private fun applyTheme(toggle: ToggleButtonLayout) {
+        toggle.selectedColor = settings.theme.activeTextColor
+        toggle.dividerColor = settings.theme.textColor
+        toggle.setCardBackgroundColor(Color.LTGRAY)
 
-    private fun getThemeSelectorListener() = object : TabLayout.OnTabSelectedListener {
-        override fun onTabReselected(tab: TabLayout.Tab?) {
-            Log.d("sdasd", "Asdasd")
-        }
-
-        override fun onTabUnselected(tab: TabLayout.Tab?) {
-            Log.d("sdasd", "Asdasd")
-        }
-
-        override fun onTabSelected(tab: TabLayout.Tab?) {
-            settings.theme = if (themeSelector.selectedTabPosition == 0) LightTheme else DarkTheme
-            applyTheme()
-        }
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
-        settings.gridType = when (layoutSelector.selectedTabPosition) {
-            0 -> GridType.waterfall
-            1 -> GridType.carousel
-            2 -> GridType.emoji
+        settings.gridType = when (layoutSelector.selectedToggles().firstOrNull()?.id) {
+            R.id.waterfall -> GridType.waterfall
+            R.id.carousel -> GridType.carousel
             else -> GridType.waterfall
         }
-        settings.mediaTypeConfig = when (mediaSelector.selectedTabPosition) {
-            0 -> GPHMediaTypeConfiguration.gifsAndStickers
-            1 -> GPHMediaTypeConfiguration.gifsOnly
-            2 -> GPHMediaTypeConfiguration.stickersOnly
-            3 -> GPHMediaTypeConfiguration.textOnly
-            else -> GPHMediaTypeConfiguration.gifsAndStickers
+        val contentTypes = ArrayList<GPHContentType>()
+        mediaTypeSelector.selectedToggles().forEach {
+            when (it.id) {
+                R.id.typeGif -> contentTypes.add(GPHContentType.gif)
+                R.id.typeStickers -> contentTypes.add(GPHContentType.sticker)
+                R.id.typeText -> contentTypes.add(GPHContentType.text)
+                R.id.typeEmoji -> contentTypes.add(GPHContentType.emoji)
+            }
         }
 
-        settings.showAttributeScreenOnSelection = showAttributionCheck.isChecked
+        settings.mediaTypeConfig = contentTypes.toTypedArray()
+        settings.showAttribution = showAttributionCheck.isChecked
+        settings.showConfirmationScreen = showConfirmationScreen.isChecked
         settings.dimBackground = dimBackgroundCheck.isChecked
         dismissListener(settings, gphButtonConfig)
         super.onDismiss(dialog)
     }
 
     private fun setupIconsList() {
-        iconSelector.layoutManager = GridLayoutManager(context, 3)
-        iconSelector.adapter = GiphyButtonAdapter()
+        setupIcons()
+        setupLogo()
+        setupGifHardCorners()
+        setupGifRoundedCorners()
+        setupText()
+        setupMultiContent()
+    }
+
+    private fun setupIcons() {
+        btnIconContainer.removeAllViews()
+        btnIconContainer.setBackgroundColor(themeBackgroundColor)
+        val iconTypes = arrayOf(GPHGiphyButtonStyle.iconSquareRounded, GPHGiphyButtonStyle.iconSquare, if (settings.theme == LightTheme) GPHGiphyButtonStyle.iconBlack else GPHGiphyButtonStyle.iconWhite)
+        iconTypes.forEach {
+            btnIconContainer.addView(getGridWrapper(GPHGiphyButton(context).apply {
+                style = it
+            }))
+        }
+    }
+
+
+    private fun setupLogo() {
+        btnLogoContainer.removeAllViews()
+        btnLogoContainer.setBackgroundColor(themeBackgroundColor)
+        val iconTypes = arrayOf(GPHGiphyButtonStyle.logo, GPHGiphyButtonStyle.logoRounded)
+        iconTypes.forEach {
+            btnLogoContainer.addView(getGridWrapper(GPHGiphyButton(context).apply {
+                style = it
+            }))
+        }
+    }
+
+    private fun setupGifHardCorners() {
+        btnGifHardContainer.removeAllViews()
+        btnGifHardContainer.setBackgroundColor(themeBackgroundColor)
+        val iconTypes = arrayOf(GPHGifButtonStyle.rectangle,
+                GPHGifButtonStyle.rectangleOutline,
+                GPHGifButtonStyle.square,
+                GPHGifButtonStyle.squareOutline)
+        GPHGifButtonColor.getThemeColors(settings.theme).forEach { color ->
+            iconTypes.forEach {
+                btnGifHardContainer.addView(getGridWrapper(GPHGifButton(context).apply {
+                    style = it
+                    this.color = color
+                }))
+            }
+        }
+    }
+
+    private fun setupGifRoundedCorners() {
+        btnGifRoundedContainer.removeAllViews()
+        btnGifRoundedContainer.setBackgroundColor(themeBackgroundColor)
+
+        val iconTypes = arrayOf(GPHGifButtonStyle.rectangleRounded,
+                GPHGifButtonStyle.rectangleOutlineRounded,
+                GPHGifButtonStyle.squareRounded,
+                GPHGifButtonStyle.squareOutlineRounded)
+        GPHGifButtonColor.getThemeColors(settings.theme).forEach { color ->
+            iconTypes.forEach {
+                btnGifRoundedContainer.addView(getGridWrapper(GPHGifButton(context).apply {
+                    style = it
+                    this.color = color
+                }))
+            }
+        }
+    }
+
+    private fun setupText() {
+        btnGifTextContainer.removeAllViews()
+        btnGifTextContainer.setBackgroundColor(themeBackgroundColor)
+
+        GPHGifButtonColor.values().forEach { color ->
+            btnGifTextContainer.addView(getGridWrapper(GPHGifButton(context).apply {
+                style = GPHGifButtonStyle.text
+                this.color = color
+            }))
+        }
+    }
+
+    private fun setupMultiContent() {
+        btnContentContainer.removeAllViews()
+        btnContentContainer.setBackgroundColor(themeBackgroundColor)
+
+        GPHGifButtonColor.getThemeColors(settings.theme).forEach { color ->
+            GPHContentTypeButtonStyle.values().forEach {
+                btnContentContainer.addView(getGridWrapper(GPHContentTypeButton(context).apply {
+                    style = it
+                    this.color = color
+                }))
+            }
+        }
+    }
+
+    private fun getGridWrapper(view: View): View {
+        val wrapper = FrameLayout(context)
+        wrapper.addView(view, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {
+            gravity = Gravity.CENTER
+        })
+        val params = GridLayout.LayoutParams(
+                GridLayout.spec(GridLayout.UNDEFINED, 1f),
+                GridLayout.spec(GridLayout.UNDEFINED, 1f))
+        params.height = 200
+        wrapper.layoutParams = params
+
+        wrapper.setOnClickListener {
+            gphButtonConfig = GPHButtonConfig(view.javaClass)
+            when(view) {
+                is GPHGifButton-> {
+                    gphButtonConfig?.gifButtonStyle = view.style
+                    gphButtonConfig?.color = view.color
+                }
+                is GPHGiphyButton->{
+                    gphButtonConfig?.brandButtonStyle = view.style
+                }
+                is GPHContentTypeButton->{
+                    gphButtonConfig?.contentTypeStyle = view.style
+                    gphButtonConfig?.color = view.color
+                }
+            }
+        }
+        return wrapper
     }
 
     private fun openRenditionPicker(renditionPlace: Int) {
@@ -177,9 +288,9 @@ class SettingsDialogFragment : DialogFragment() {
         builder.setItems(renditions) { dialog, which ->
             val renditionType = RenditionType.values().find { it.ordinal == which }
             if (renditionPlace == PICK_GRID_RENDITION) {
-                settings.gridRenditionType = renditionType
+                settings.renditionType = renditionType
             } else {
-                settings.attributionRenditionType = renditionType
+                settings.confirmationRenditionType = renditionType
             }
         }
 
@@ -188,67 +299,8 @@ class SettingsDialogFragment : DialogFragment() {
 
     }
 
-    inner class GiphyButtonAdapter : RecyclerView.Adapter<GiphyButtonViewHolder>() {
-        override fun onCreateViewHolder(p0: ViewGroup, p1: Int): GiphyButtonViewHolder {
-            return GiphyButtonViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.giphy_button_holder, p0, false))
-        }
-
-        override fun getItemCount(): Int {
-            return GiphyButtonStore.itemCount
-        }
-
-        override fun onBindViewHolder(p0: GiphyButtonViewHolder, p1: Int) {
-            var button: View? = null
-            when (val buttonType = GiphyButtonStore.getButtonType(p1)) {
-                ButtonItems.branded -> {
-                    button = GPHBrandButton(p0.itemView.context)
-                    button.rounded = p1 == 1
-                    button.fill = brandButtonFills[p1 % brandButtonFills.size]
-                    p0.itemView.buttonContainer.addView(button)
-                }
-                ButtonItems.generic, ButtonItems.genericRounded -> {
-                    button = GPHGenericButton(p0.itemView.context)
-                    button.style = genericButtonStyles[p1 % genericButtonStyles.size]
-                    button.gradient = genericButtonGradients[GiphyButtonStore.getGradientIndex(buttonType, p1)]
-                    button.rounded = buttonType == ButtonItems.genericRounded
-                    p0.itemView.buttonContainer.addView(button)
-                }
-            }
-            p0.itemView.setOnClickListener {
-                gphButtonConfig = GPHButtonConfig(button.javaClass)
-                (button as? GPHBrandButton)?.let { brandButton ->
-                    gphButtonConfig?.gphBrandFill = brandButton.fill
-                    gphButtonConfig?.rounded = brandButton.rounded
-                }
-                (button as? GPHGenericButton)?.let { genericButton ->
-                    gphButtonConfig?.gphGenericGradient = genericButton.gradient
-                    gphButtonConfig?.rounded = genericButton.rounded
-                    gphButtonConfig?.gphGenericStyle = genericButton.style
-                }
-                dismiss()
-            }
-        }
-
-        override fun onViewRecycled(holder: GiphyButtonViewHolder) {
-            holder.itemView.buttonContainer.removeAllViews()
-        }
-
-    }
-
-    class GiphyButtonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
-    private val brandButtonFills: Array<GPHBrandButtonFill>
+    private val themeBackgroundColor: Int
         get() {
-            return arrayOf(GPHBrandButtonFill.color, GPHBrandButtonFill.color, if (settings.theme == DarkTheme) GPHBrandButtonFill.white else GPHBrandButtonFill.black)
-        }
-
-    private val genericButtonStyles: Array<GPHGenericButtonStyle>
-        get() {
-            return GPHGenericButtonStyle.values()
-        }
-
-    private val genericButtonGradients: Array<GPHGenericButtonGradient>
-        get() {
-            return arrayOf(GPHGenericButtonGradient.blue, GPHGenericButtonGradient.pink, if (settings.theme == DarkTheme) GPHGenericButtonGradient.white else GPHGenericButtonGradient.black)
+            return if (settings.theme == LightTheme) lightIconsBackground else darkIconsBackground
         }
 }

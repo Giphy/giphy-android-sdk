@@ -9,19 +9,15 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.giphy.sdk.core.models.Media
-import com.giphy.sdk.core.models.enums.RenditionType
 import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.GiphyCoreUI
 import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.ui.themes.LightTheme
-import com.giphy.sdk.ui.views.GPHBrandButton
-import com.giphy.sdk.ui.views.GPHGenericButton
 import com.giphy.sdk.ui.views.GiphyDialogFragment
-import com.giphy.sdk.uidemo.feed.FeedDataItem
-import com.giphy.sdk.uidemo.feed.GifItem
-import com.giphy.sdk.uidemo.feed.MessageFeedAdapter
-import com.giphy.sdk.uidemo.feed.MessageItem
+import com.giphy.sdk.ui.views.buttons.*
+import com.giphy.sdk.uidemo.feed.*
 import kotlinx.android.synthetic.main.activity_demo.*
 
 /**
@@ -29,8 +25,10 @@ import kotlinx.android.synthetic.main.activity_demo.*
  */
 class DemoActivity : AppCompatActivity() {
 
-    var settings = GPHSettings(gridType = GridType.waterfall, theme = LightTheme, dimBackground = true, showAttributeScreenOnSelection = true)
-
+    companion object {
+        val TAG = DemoActivity::class.java.simpleName
+    }
+    var settings = GPHSettings(gridType = GridType.waterfall, theme = LightTheme, dimBackground = true)
     var feedAdapter: MessageFeedAdapter? = null
     var messageItems = ArrayList<FeedDataItem>()
 
@@ -58,10 +56,15 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun getGifSelectionListener() = object : GiphyDialogFragment.GifSelectionListener {
-        override fun onGifSelected(media: Media) {
-            messageItems.add(GifItem(media))
-            feedAdapter?.notifyItemInserted(messageItems.size - 1)        }
+        override fun onDismissed() {
+            Log.d(TAG, "onDismissed")
+        }
 
+        override fun onGifSelected(media: Media) {
+            Log.d(TAG, "onGifSelected")
+            messageItems.add(GifItem(media, Author.Me))
+            feedAdapter?.notifyItemInserted(messageItems.size - 1)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -83,7 +86,12 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun setupFeed() {
-        messageItems.add(MessageItem("Hey, what are you up tonight? Wanna meet Rich and I for a dinner and a movie?"))
+        messageItems.add(
+            MessageItem(
+                "Hey, what are you up tonight? Wanna meet Rich and I for a dinner and a movie?",
+                Author.GifBot
+            )
+        )
         feedAdapter = MessageFeedAdapter(messageItems)
         feedAdapter?.theme = settings.theme
         messageFeed.layoutManager = LinearLayoutManager(this)
@@ -104,16 +112,18 @@ class DemoActivity : AppCompatActivity() {
 
         buttonConfig?.let {
             launchGiphyBtn.removeAllViews()
-            val newBtn = it.type.getConstructor(Context::class.java).newInstance(this)
+            val newBtn = it.type.getConstructor(Context::class.java).newInstance(this) as View
             launchGiphyBtn.addView(newBtn)
-            (newBtn as? GPHGenericButton)?.let { button ->
-                button.style = it.gphGenericStyle!!
-                button.gradient = it.gphGenericGradient!!
-                button.rounded = it.rounded!!
+            (newBtn as? GPHGifButton)?.apply {
+                style = it.gifButtonStyle!!
+                color = it.color!!
             }
-            (newBtn as? GPHBrandButton)?.let { button ->
-                button.fill = it.gphBrandFill!!
-                button.rounded = it.rounded!!
+            (newBtn  as? GPHGiphyButton)?.apply {
+                style = it.brandButtonStyle!!
+            }
+            (newBtn as? GPHContentTypeButton)?.apply {
+                style = it.contentTypeStyle!!
+                color = it.color!!
             }
         }
     }

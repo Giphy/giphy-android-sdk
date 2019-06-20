@@ -8,7 +8,7 @@ class DemoApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.FLAVOR == "debug") {
             if (LeakCanary.isInAnalyzerProcess(this)) {
                 // This process is dedicated to LeakCanary for heap analysis.
                 // You should not init your app in this process.
