@@ -15,5 +15,6 @@ This includes interfacing with the GIPHY API, fetching and caching assets, and d
 
 With billions of requests a day, it’s safe to say GIPHY knows GIFs. We’re excited to share our best in class tools with you so your users can have the best GIF experience there is. With the GIPHY SDK you can add the same features your users already enjoy on Facebook, Slack, Instagram and more in a matter of hours instead of weeks.
 
-### [Get Started](Docs.md) 
+### [Get Started](Docs.md)
+### [Download Demo APK](https://s3.amazonaws.com/sdk.mobile.giphy.com/android/giphy-ui-sdk-example.apk) 
 
