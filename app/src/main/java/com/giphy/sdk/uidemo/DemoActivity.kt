@@ -35,7 +35,7 @@ class DemoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        GiphyCoreUI.configure(this, "oUThALwXNzrOG4b1jRyoPDtmZJmmW5HU")
+        GiphyCoreUI.configure(this, "2ZeBKSIJEzHddmQfMo4IamcC5FJWwhRg")
 
         setContentView(R.layout.activity_demo)
         setupToolbar()
