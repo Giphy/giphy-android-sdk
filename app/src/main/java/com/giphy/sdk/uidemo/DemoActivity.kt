@@ -88,7 +88,13 @@ class DemoActivity : AppCompatActivity() {
     private fun setupFeed() {
         messageItems.add(
             MessageItem(
-                "Hey, what are you up tonight? Wanna meet Rich and I for a dinner and a movie?",
+                "Hi there! The SDK is perfect for many contexts, including messaging, reactions, stories and other camera features. This is one example of how the GIPHY SDK can be used in a messaging app.",
+                Author.GifBot
+            )
+        )
+        messageItems.add(
+            MessageItem(
+                "Tap the GIPHY button in the bottom left to see the SDK in action. Tap the settings icon in the top right to try out all of the customization options.",
                 Author.GifBot
             )
         )
