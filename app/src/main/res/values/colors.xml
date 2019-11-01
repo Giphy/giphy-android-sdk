@@ -7,4 +7,5 @@
     <color name="black">#ff000000</color>
     <color name="dark_grey">#3D3D3D</color>
     <color name="input_stroke_dark">#B6B6B6</color>
+    <color name="dark_red">#D60000</color>
 </resources>

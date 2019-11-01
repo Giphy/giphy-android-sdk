@@ -3,9 +3,9 @@ package com.giphy.sdk.uidemo
 import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.GridLayout
+import androidx.fragment.app.DialogFragment
+import androidx.appcompat.app.AlertDialog
+import androidx.gridlayout.widget.GridLayout
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 /**
  * Created by Cristian Holdunu on 13/03/2019.
  */
-class SettingsDialogFragment : DialogFragment() {
+class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
 
     private var settings: GPHSettings = GPHSettings()
     var dismissListener: (GPHSettings, GPHButtonConfig?) -> Unit = { settings, config -> }
@@ -134,7 +134,7 @@ class SettingsDialogFragment : DialogFragment() {
 
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         settings.gridType = when (layoutSelector.selectedToggles().firstOrNull()?.id) {
             R.id.waterfall -> GridType.waterfall
             R.id.carousel -> GridType.carousel
@@ -256,9 +256,9 @@ class SettingsDialogFragment : DialogFragment() {
         wrapper.addView(view, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {
             gravity = Gravity.CENTER
         })
-        val params = GridLayout.LayoutParams(
-                GridLayout.spec(GridLayout.UNDEFINED, 1f),
-                GridLayout.spec(GridLayout.UNDEFINED, 1f))
+        val params = androidx.gridlayout.widget.GridLayout.LayoutParams(
+                androidx.gridlayout.widget.GridLayout.spec(androidx.gridlayout.widget.GridLayout.UNDEFINED, 1f),
+                androidx.gridlayout.widget.GridLayout.spec(androidx.gridlayout.widget.GridLayout.UNDEFINED, 1f))
         params.height = 200
         wrapper.layoutParams = params
 

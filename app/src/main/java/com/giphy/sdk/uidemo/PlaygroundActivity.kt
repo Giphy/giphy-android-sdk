@@ -3,7 +3,7 @@ package com.giphy.sdk.uidemo
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.giphy.sdk.core.GiphyCore
 import com.giphy.sdk.core.models.enums.RenditionType
 import com.giphy.sdk.core.network.api.CompletionHandler

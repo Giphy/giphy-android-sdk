@@ -1,11 +1,12 @@
 package com.giphy.sdk.uidemo
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.view.ViewCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.core.view.ViewCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -27,15 +28,20 @@ class DemoActivity : AppCompatActivity() {
 
     companion object {
         val TAG = DemoActivity::class.java.simpleName
+        val INVALID_KEY = "YOUR_API_KEY"
     }
+
     var settings = GPHSettings(gridType = GridType.waterfall, theme = LightTheme, dimBackground = true)
     var feedAdapter: MessageFeedAdapter? = null
     var messageItems = ArrayList<FeedDataItem>()
 
+    //TODO: Set a valid API KEY
+    val YOUR_API_KEY = INVALID_KEY
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        GiphyCoreUI.configure(this, "YOUR_API_KEY")
+        GiphyCoreUI.configure(this, YOUR_API_KEY, true)
 
         setContentView(R.layout.activity_demo)
         setupToolbar()
@@ -76,6 +82,7 @@ class DemoActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> showSettingsDialog()
+            R.id.action_grid -> openGridDemo()
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -83,6 +90,12 @@ class DemoActivity : AppCompatActivity() {
     private fun setupToolbar() {
         setSupportActionBar(toolbar2)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+    }
+
+    private fun openGridDemo(): Boolean {
+        val intent = Intent(this, GridActivity::class.java)
+        startActivity(intent)
+        return true
     }
 
     private fun setupFeed() {
@@ -98,9 +111,12 @@ class DemoActivity : AppCompatActivity() {
                 Author.GifBot
             )
         )
+        if (YOUR_API_KEY == INVALID_KEY) {
+            messageItems.add(InvalidKeyItem(Author.GifBot))
+        }
         feedAdapter = MessageFeedAdapter(messageItems)
         feedAdapter?.theme = settings.theme
-        messageFeed.layoutManager = LinearLayoutManager(this)
+        messageFeed.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         messageFeed.adapter = feedAdapter
     }
 
@@ -124,7 +140,7 @@ class DemoActivity : AppCompatActivity() {
                 style = it.gifButtonStyle!!
                 color = it.color!!
             }
-            (newBtn  as? GPHGiphyButton)?.apply {
+            (newBtn as? GPHGiphyButton)?.apply {
                 style = it.brandButtonStyle!!
             }
             (newBtn as? GPHContentTypeButton)?.apply {

@@ -2,8 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_grid"
+        android:icon="@drawable/ic_grid"
+        android:title="Grid"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings"
-        app:showAsAction="always"
-        android:title="Settings"/>
+        android:title="Settings"
+        app:showAsAction="always" />
 </menu>

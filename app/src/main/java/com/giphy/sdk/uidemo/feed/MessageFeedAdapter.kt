@@ -1,7 +1,7 @@
 package com.giphy.sdk.uidemo.feed
 
 import android.graphics.Color
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +17,7 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
     private val ITEM_MESSAGE = 100
     private val ITEM_GIF = 101
     private val ITEM_NONE = 102
+    private val ITEM_INVALID_API = 103
 
     var theme: Theme = LightTheme
 
@@ -24,6 +25,7 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
         return when (viewType) {
             ITEM_MESSAGE -> MessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_item, parent, false))
             ITEM_GIF -> GifViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.gif_item, parent, false))
+            ITEM_INVALID_API -> InvalidApiViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_api_key, parent, false))
             else -> throw RuntimeException("unsupported type")
         }
     }
@@ -36,15 +38,19 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
         when (items[p1]) {
             is MessageItem -> (p0 as MessageViewHolder).bindMessage(items[p1] as MessageItem)
             is GifItem -> (p0 as GifViewHolder).bindMessage(items[p1] as GifItem)
+            is InvalidKeyItem -> {
+                //Nothing to do
+            }
             else -> throw RuntimeException("type not allowed")
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        when (items[position]) {
-            is MessageItem -> return ITEM_MESSAGE
-            is GifItem -> return ITEM_GIF
-            else -> return ITEM_NONE
+        return when (items[position]) {
+            is MessageItem -> ITEM_MESSAGE
+            is GifItem -> ITEM_GIF
+            is InvalidKeyItem -> ITEM_INVALID_API
+            else -> ITEM_NONE
         }
     }
 
@@ -61,5 +67,9 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
         fun bindMessage(message: GifItem) {
             itemView.gifView.setMedia(message.media, placeholderColor = Color.BLUE)
         }
+    }
+
+    inner class InvalidApiViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
     }
 }
