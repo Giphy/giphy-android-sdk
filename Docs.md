@@ -39,7 +39,7 @@ class GiphyActivity: AppCompatActivity() {
 Before you start using GIPHY SDK, you have to initialize it using your GIPHY API KEY. You can apply for an API key [here](https://developers.giphy.com/dashboard/)
 
 ```kotlin
-    GiphyCoreUI.configure(this, YOUR_API_KEY)
+        GiphyCoreUI.configure(context = this, apiKey = YOUR_API_KEY, verificationMode = true)
 ```
 
 All the magic is done by the `GiphyDialogFragment`. You can adjust the GIPHY SDK by passing a `GPHSettings` object when creating the dialog.
