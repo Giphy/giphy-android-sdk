@@ -1,24 +1,25 @@
 package com.giphy.sdk.uidemo
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import androidx.core.view.ViewCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.ui.GPHSettings
-import com.giphy.sdk.ui.GiphyCoreUI
+import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.ui.themes.LightTheme
 import com.giphy.sdk.ui.views.GiphyDialogFragment
-import com.giphy.sdk.ui.views.buttons.*
-import com.giphy.sdk.uidemo.feed.*
+import com.giphy.sdk.uidemo.feed.Author
+import com.giphy.sdk.uidemo.feed.FeedDataItem
+import com.giphy.sdk.uidemo.feed.GifItem
+import com.giphy.sdk.uidemo.feed.InvalidKeyItem
+import com.giphy.sdk.uidemo.feed.MessageFeedAdapter
+import com.giphy.sdk.uidemo.feed.MessageItem
 import kotlinx.android.synthetic.main.activity_demo.*
 
 /**
@@ -28,10 +29,10 @@ class DemoActivity : AppCompatActivity() {
 
     companion object {
         val TAG = DemoActivity::class.java.simpleName
-        val INVALID_KEY = "YOUR_API_KEY"
+        val INVALID_KEY = "NOT_A_VALID_KEY"
     }
 
-    var settings = GPHSettings(gridType = GridType.waterfall, theme = LightTheme, dimBackground = true)
+    var settings = GPHSettings(gridType = GridType.waterfall, theme = LightTheme)
     var feedAdapter: MessageFeedAdapter? = null
     var messageItems = ArrayList<FeedDataItem>()
 
@@ -41,7 +42,7 @@ class DemoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        GiphyCoreUI.configure(context = this, apiKey = YOUR_API_KEY, verificationMode = true)
+        Giphy.configure(this, YOUR_API_KEY, true)
 
         setContentView(R.layout.activity_demo)
         setupToolbar()
@@ -78,11 +79,10 @@ class DemoActivity : AppCompatActivity() {
         return true
     }
 
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> showSettingsDialog()
-            R.id.action_grid -> openGridDemo()
+            R.id.action_grid -> openGridViewDemo()
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -92,8 +92,9 @@ class DemoActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
-    private fun openGridDemo(): Boolean {
-        val intent = Intent(this, GridActivity::class.java)
+
+    private fun openGridViewDemo(): Boolean {
+        val intent = Intent(this, GridViewSetupActivity::class.java)
         startActivity(intent)
         return true
     }
@@ -127,27 +128,10 @@ class DemoActivity : AppCompatActivity() {
         return true
     }
 
-    private fun applyNewSettings(settings: GPHSettings, buttonConfig: GPHButtonConfig?) {
+    private fun applyNewSettings(settings: GPHSettings) {
         this.settings = settings
         feedAdapter?.theme = settings.theme
         applyTheme()
-
-        buttonConfig?.let {
-            launchGiphyBtn.removeAllViews()
-            val newBtn = it.type.getConstructor(Context::class.java).newInstance(this) as View
-            launchGiphyBtn.addView(newBtn)
-            (newBtn as? GPHGifButton)?.apply {
-                style = it.gifButtonStyle!!
-                color = it.color!!
-            }
-            (newBtn as? GPHGiphyButton)?.apply {
-                style = it.brandButtonStyle!!
-            }
-            (newBtn as? GPHContentTypeButton)?.apply {
-                style = it.contentTypeStyle!!
-                color = it.color!!
-            }
-        }
     }
 
     private fun applyTheme() {
@@ -173,5 +157,4 @@ class DemoActivity : AppCompatActivity() {
         get() {
             return if (settings.theme == LightTheme) 0xfff3f3f3.toInt() else Color.BLACK
         }
-
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,22 +9,23 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:max="5"
         android:progress="2"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/spanCountView"
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView" />
 
-    <fragment
-        android:id="@+id/gifsGridFragment"
-        class="com.giphy.sdk.ui.views.GiphyGridFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchInput" />
+    <TextView
+        android:id="@+id/spanCountView"
+        android:layout_width="42dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="4"
+        app:layout_constraintBottom_toBottomOf="@+id/spanCountBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/spanCountBar" />
 
     <TextView
         android:id="@+id/textView"
@@ -34,6 +34,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Span Count"
+        android:textColor="@color/black"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,6 +46,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Padding"
+        android:textColor="@color/black"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -51,12 +55,24 @@
         android:id="@+id/paddingBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:max="100"
         android:progress="20"
         app:layout_constraintBottom_toBottomOf="@+id/textView2"
-        app:layout_constraintEnd_toEndOf="@+id/spanCountBar"
+        app:layout_constraintEnd_toStartOf="@+id/paddingView"
         app:layout_constraintStart_toStartOf="@+id/spanCountBar"
         app:layout_constraintTop_toTopOf="@+id/textView2" />
+
+
+    <TextView
+        android:id="@+id/paddingView"
+        android:layout_width="42dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="16px"
+        app:layout_constraintBottom_toBottomOf="@+id/paddingBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/paddingBar" />
 
     <TextView
         android:id="@+id/textView3"
@@ -65,6 +81,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Orientation"
+        android:textColor="@color/black"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -98,27 +116,62 @@
         app:layout_constraintStart_toEndOf="@+id/orientationToggle"
         app:layout_constraintTop_toTopOf="@+id/orientationToggle" />
 
-    <EditText
-        android:id="@+id/searchInput"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:imeOptions="actionGo"
-        android:layout_marginEnd="4dp"
-        android:ems="10"
-        android:hint="Search GIPHY"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toStartOf="@+id/searchBtn"
-        app:layout_constraintStart_toStartOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-    <Button
-        android:id="@+id/searchBtn"
+    <TextView
+        android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search"
-        app:layout_constraintBottom_toBottomOf="@+id/searchInput"
-        app:layout_constraintEnd_toEndOf="@+id/paddingBar"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Media Type"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
+    <RadioGroup
+        android:id="@+id/mediaTypeContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6">
+
+        <RadioButton
+            android:id="@+id/mediaGif"
+            android:checked="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GIFs" />
+
+        <RadioButton
+            android:id="@+id/mediaStickers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stickers" />
+
+        <RadioButton
+            android:id="@+id/mediaText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Text" />
+
+        <RadioButton
+            android:id="@+id/mediaEmoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Emoji" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/launchGrid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Launch GRID"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,22 +3,17 @@ package com.giphy.sdk.uidemo
 import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
-import androidx.appcompat.app.AlertDialog
-import androidx.gridlayout.widget.GridLayout
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
 import com.giphy.sdk.core.models.enums.RenditionType
 import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.themes.DarkTheme
 import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.ui.themes.LightTheme
-import com.giphy.sdk.ui.views.buttons.*
 import com.savvyapps.togglebuttonlayout.ToggleButtonLayout
 import kotlinx.android.synthetic.main.fragment_settings.*
 
@@ -28,12 +23,10 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
 
     private var settings: GPHSettings = GPHSettings()
-    var dismissListener: (GPHSettings, GPHButtonConfig?) -> Unit = { settings, config -> }
+    var dismissListener: (GPHSettings) -> Unit = { settings -> }
 
     private var lightIconsBackground = 0xFFE9E9E9.toInt()
     private var darkIconsBackground = 0xFF242424.toInt()
-
-    private var gphButtonConfig: GPHButtonConfig? = null
 
     companion object {
         private const val PICK_GRID_RENDITION = 201
@@ -56,7 +49,6 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         settings = arguments!!.getParcelable(KEY_SETTINGS)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -97,8 +89,6 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
 
         applyTheme()
 
-
-        dimBackgroundCheck.isChecked = settings.dimBackground
         showAttributionCheck.isChecked = settings.showAttribution
         showConfirmationScreen.isChecked = settings.showConfirmationScreen
 
@@ -120,18 +110,14 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
         applyTheme(themeSelector)
         applyTheme(layoutSelector)
         applyTheme(mediaTypeSelector)
-//        iconSelector.setBackgroundColor(if (settings.theme == LightTheme) lightIconsBackground else darkIconsBackground)
-        dimBackgroundCheck.setTextColor(settings.theme.textColor)
         showAttributionCheck.setTextColor(settings.theme.textColor)
         showConfirmationScreen.setTextColor(settings.theme.textColor)
-        setupIconsList()
     }
 
     private fun applyTheme(toggle: ToggleButtonLayout) {
         toggle.selectedColor = settings.theme.activeTextColor
         toggle.dividerColor = settings.theme.textColor
         toggle.setCardBackgroundColor(Color.LTGRAY)
-
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -153,132 +139,8 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
         settings.mediaTypeConfig = contentTypes.toTypedArray()
         settings.showAttribution = showAttributionCheck.isChecked
         settings.showConfirmationScreen = showConfirmationScreen.isChecked
-        settings.dimBackground = dimBackgroundCheck.isChecked
-        dismissListener(settings, gphButtonConfig)
+        dismissListener(settings)
         super.onDismiss(dialog)
-    }
-
-    private fun setupIconsList() {
-        setupIcons()
-        setupLogo()
-        setupGifHardCorners()
-        setupGifRoundedCorners()
-        setupText()
-        setupMultiContent()
-    }
-
-    private fun setupIcons() {
-        btnIconContainer.removeAllViews()
-        btnIconContainer.setBackgroundColor(themeBackgroundColor)
-        val iconTypes = arrayOf(GPHGiphyButtonStyle.iconSquareRounded, GPHGiphyButtonStyle.iconSquare, if (settings.theme == LightTheme) GPHGiphyButtonStyle.iconBlack else GPHGiphyButtonStyle.iconWhite)
-        iconTypes.forEach {
-            btnIconContainer.addView(getGridWrapper(GPHGiphyButton(context).apply {
-                style = it
-            }))
-        }
-    }
-
-
-    private fun setupLogo() {
-        btnLogoContainer.removeAllViews()
-        btnLogoContainer.setBackgroundColor(themeBackgroundColor)
-        val iconTypes = arrayOf(GPHGiphyButtonStyle.logo, GPHGiphyButtonStyle.logoRounded)
-        iconTypes.forEach {
-            btnLogoContainer.addView(getGridWrapper(GPHGiphyButton(context).apply {
-                style = it
-            }))
-        }
-    }
-
-    private fun setupGifHardCorners() {
-        btnGifHardContainer.removeAllViews()
-        btnGifHardContainer.setBackgroundColor(themeBackgroundColor)
-        val iconTypes = arrayOf(GPHGifButtonStyle.rectangle,
-                GPHGifButtonStyle.rectangleOutline,
-                GPHGifButtonStyle.square,
-                GPHGifButtonStyle.squareOutline)
-        GPHGifButtonColor.getThemeColors(settings.theme).forEach { color ->
-            iconTypes.forEach {
-                btnGifHardContainer.addView(getGridWrapper(GPHGifButton(context).apply {
-                    style = it
-                    this.color = color
-                }))
-            }
-        }
-    }
-
-    private fun setupGifRoundedCorners() {
-        btnGifRoundedContainer.removeAllViews()
-        btnGifRoundedContainer.setBackgroundColor(themeBackgroundColor)
-
-        val iconTypes = arrayOf(GPHGifButtonStyle.rectangleRounded,
-                GPHGifButtonStyle.rectangleOutlineRounded,
-                GPHGifButtonStyle.squareRounded,
-                GPHGifButtonStyle.squareOutlineRounded)
-        GPHGifButtonColor.getThemeColors(settings.theme).forEach { color ->
-            iconTypes.forEach {
-                btnGifRoundedContainer.addView(getGridWrapper(GPHGifButton(context).apply {
-                    style = it
-                    this.color = color
-                }))
-            }
-        }
-    }
-
-    private fun setupText() {
-        btnGifTextContainer.removeAllViews()
-        btnGifTextContainer.setBackgroundColor(themeBackgroundColor)
-
-        GPHGifButtonColor.values().forEach { color ->
-            btnGifTextContainer.addView(getGridWrapper(GPHGifButton(context).apply {
-                style = GPHGifButtonStyle.text
-                this.color = color
-            }))
-        }
-    }
-
-    private fun setupMultiContent() {
-        btnContentContainer.removeAllViews()
-        btnContentContainer.setBackgroundColor(themeBackgroundColor)
-
-        GPHGifButtonColor.getThemeColors(settings.theme).forEach { color ->
-            GPHContentTypeButtonStyle.values().forEach {
-                btnContentContainer.addView(getGridWrapper(GPHContentTypeButton(context).apply {
-                    style = it
-                    this.color = color
-                }))
-            }
-        }
-    }
-
-    private fun getGridWrapper(view: View): View {
-        val wrapper = FrameLayout(context)
-        wrapper.addView(view, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {
-            gravity = Gravity.CENTER
-        })
-        val params = androidx.gridlayout.widget.GridLayout.LayoutParams(
-                androidx.gridlayout.widget.GridLayout.spec(androidx.gridlayout.widget.GridLayout.UNDEFINED, 1f),
-                androidx.gridlayout.widget.GridLayout.spec(androidx.gridlayout.widget.GridLayout.UNDEFINED, 1f))
-        params.height = 200
-        wrapper.layoutParams = params
-
-        wrapper.setOnClickListener {
-            gphButtonConfig = GPHButtonConfig(view.javaClass)
-            when(view) {
-                is GPHGifButton-> {
-                    gphButtonConfig?.gifButtonStyle = view.style
-                    gphButtonConfig?.color = view.color
-                }
-                is GPHGiphyButton->{
-                    gphButtonConfig?.brandButtonStyle = view.style
-                }
-                is GPHContentTypeButton->{
-                    gphButtonConfig?.contentTypeStyle = view.style
-                    gphButtonConfig?.color = view.color
-                }
-            }
-        }
-        return wrapper
     }
 
     private fun openRenditionPicker(renditionPlace: Int) {
@@ -296,7 +158,6 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
 
         val dialog = builder.create()
         dialog.show()
-
     }
 
     private val themeBackgroundColor: Int

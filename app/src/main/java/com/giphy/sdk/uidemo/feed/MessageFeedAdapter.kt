@@ -1,16 +1,15 @@
 package com.giphy.sdk.uidemo.feed
 
 import android.graphics.Color
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.giphy.sdk.ui.themes.LightTheme
 import com.giphy.sdk.ui.themes.Theme
 import com.giphy.sdk.uidemo.R
 import kotlinx.android.synthetic.main.gif_item.view.*
 import kotlinx.android.synthetic.main.message_item.view.*
-
 
 class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -39,7 +38,7 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
             is MessageItem -> (p0 as MessageViewHolder).bindMessage(items[p1] as MessageItem)
             is GifItem -> (p0 as GifViewHolder).bindMessage(items[p1] as GifItem)
             is InvalidKeyItem -> {
-                //Nothing to do
+                // Nothing to do
             }
             else -> throw RuntimeException("type not allowed")
         }
@@ -69,7 +68,5 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
         }
     }
 
-    inner class InvalidApiViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-    }
+    inner class InvalidApiViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

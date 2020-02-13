@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:visible="false"
+        android:id="@+id/action_grid_view"
+        android:icon="@drawable/ic_grid_view"
+        android:title="Grid View"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_grid"
         android:icon="@drawable/ic_grid"
         android:title="Grid"
