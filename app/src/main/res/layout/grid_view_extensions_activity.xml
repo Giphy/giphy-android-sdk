@@ -18,12 +18,12 @@
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView" />
 
-    <fragment
-        android:id="@+id/gifsGridFragment"
-        class="com.giphy.sdk.ui.views.GiphyGridFragment"
+    <com.giphy.sdk.ui.views.GiphyGridView
+        android:id="@+id/gifsGridView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
+        app:gphUseInExtensions="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchInput" />
 
@@ -103,10 +103,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:imeOptions="actionGo"
         android:layout_marginEnd="4dp"
         android:ems="10"
         android:hint="Search GIPHY"
+        android:imeOptions="actionGo"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/searchBtn"
         app:layout_constraintStart_toStartOf="@+id/textView3"

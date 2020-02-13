@@ -110,18 +110,6 @@
                 app:toggleMode="even" />
 
             <CheckBox
-                android:id="@+id/dimBackgroundCheck"
-                style="@style/SettingHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Dim background during search"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mediaTypeSelector"
-                tools:layout_editor_absoluteY="568dp" />
-
-            <CheckBox
                 android:id="@+id/showAttributionCheck"
                 style="@style/SettingHeader"
                 android:layout_width="match_parent"
@@ -130,7 +118,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Show attribution"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dimBackgroundCheck" />
+                app:layout_constraintTop_toBottomOf="@+id/mediaTypeSelector" />
 
             <CheckBox
                 android:id="@+id/showConfirmationScreen"
@@ -188,132 +176,6 @@
                     app:layout_constraintStart_toEndOf="@+id/gridRenditionType"
                     app:layout_constraintTop_toBottomOf="@+id/renditionTitle" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/renditionTitle3"
-                style="@style/SettingHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Icon"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/showConfirmationScreen" />
-
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/btnIconContainer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:columnCount="4"
-                app:orientation="horizontal" />
-
-            <TextView
-                style="@style/SettingHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Logo"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/showConfirmationScreen" />
-
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/btnLogoContainer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:columnCount="2"
-                app:orientation="horizontal" />
-
-
-            <TextView
-                style="@style/SettingHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="GIF - Hard Corners"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/showConfirmationScreen" />
-
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/btnGifHardContainer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:columnCount="4"
-                app:orientation="horizontal" />
-
-
-            <TextView
-                style="@style/SettingHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="GIF - Rounded Corners"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/showConfirmationScreen" />
-
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/btnGifRoundedContainer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:columnCount="4"
-                app:layout_columnWeight="1"
-                app:layout_gravity="fill"
-                app:orientation="horizontal" />
-
-            <TextView
-                style="@style/SettingHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="GIF - Text"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/showConfirmationScreen" />
-
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/btnGifTextContainer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:columnCount="4"
-                app:orientation="horizontal" />
-
-            <TextView
-                style="@style/SettingHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Multi Content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/showConfirmationScreen" />
-
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/btnContentContainer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                app:columnCount="3"
-                app:orientation="horizontal" />
-
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
