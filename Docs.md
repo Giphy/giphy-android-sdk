@@ -1,4 +1,11 @@
-## GIPHY SDK for Android
+## GIPHY UI SDK for Android 
+
+#### Requirements 
+
+- Giphy UI SDK only supports projects that have been upgraded to [androidx](https://developer.android.com/jetpack/androidx/). 
+- Requires minSdkVersion 19
+- A Giphy API key from the [Giphy Developer Portal](https://developers.giphy.com/dashboard/?create=true).
+ 
 
 ### Installation
 
@@ -12,13 +19,11 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:1.1.1'
+implementation 'com.giphy.sdk:ui:1.2.0'
 ``` 
     
-### Getting started
-Make sure to configure the GIPHY SDK with your Giphy API key, which you can grab from [Giphy Developer Portal](https://developers.giphy.com/dashboard/?create=true).
-
-Here is a basic example of how everything should work:
+### Basic Setup
+Here's a basic setup to make sure everything's working. Configure the GIPHY SDK with your API key.
 
 ```kotlin
 
@@ -27,24 +32,22 @@ class GiphyActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        GiphyCoreUI.configure(this, YOUR_API_KEY)
+        Giphy.configure(this, YOUR_API_KEY)
         
         GiphyDialogFragment.newInstance().show(supportFragmentManager, "giphy_dialog")
     }
 }
 ```
+### Templates: `GiphyDialogFragment`
 
-### Basic usage
-
-Before you start using GIPHY SDK, you have to initialize it using your GIPHY API KEY. You can apply for an API key [here](https://developers.giphy.com/dashboard/)
+Configure the SDK with your API key. 
 
 ```kotlin
-        GiphyCoreUI.configure(context = this, apiKey = YOUR_API_KEY, verificationMode = true)
+    Giphy.configure(this, YOUR_API_KEY)
 ```
-
-All the magic is done by the `GiphyDialogFragment`. You can adjust the GIPHY SDK by passing a `GPHSettings` object when creating the dialog.
-
-Create a settings object to personalize your GIF picker. 
+ 
+Create a new instance of `GiphyDialogFragment`, which takes care of all the magic. Adjust the layout and theme by passing a `GPHSettings` object when creating the dialog.
+ 
 ``` kotlin 
 var settings = GPHSettings(gridType = GridType.waterfall, theme = LightTheme, dimBackground = true)
 ``` 
@@ -90,7 +93,6 @@ settings.renditionType = RenditionType.fixedWidth
 settings.confirmationRenditionType = RenditionType.original 
 ```
 
-
 #### Presentation 
 Show your `GiphyDialogFragment` using the `SupportFragmentManager` and watch as the GIFs start flowin'.
 
@@ -112,7 +114,6 @@ To handle GIF selection you need to implement the `GifSelectionListener` interfa
 }
 ```
 
-
 From there, it's up to you to decide what to do with the GIF. 
 
 Create a `GPHMediaView` to display the media. Optionaly, you can pass a rendition type to be loaded.
@@ -124,78 +125,4 @@ mediaView.setMedia(media, RenditionType.original)
 You can also populate a `GPHMediaView` with a media `id` like so: 
 ```kotlin
 mediaView.setMediaWithId(media.id)  
-```
-
-## Buttons
-
-There are three button classes provided for you to use if you choose to.
-
-#### GPHGiphyButton
-
-GIPHY branded button available in the following styles:
-
-- `logo` - full giphy logo
-- `logoRounded` - same styles as `logo` with rounded corners
-- `iconSquare` - square giphy icon logo with black background
-- `iconSquareRounded` - same styles as `iconSquare` with rounded corners
-- `iconColor` - color version of giphy icon logo with transparent background
-- `iconBlack` - solid black version of the giphy icon logo with transparent background
-- `iconWhite` - solid white version of the giphy icon logo with transparent background
-
-```
-val button = GPHGiphyButton(context)
-button.style = GPHGiphyButtonStyle.iconBlack
-```
-
-
-#### GPHGifButton
-
-Generic gif button with the text "GIF", available in the following styles:
-
-- `rectangle` - rectuangular "pill" style button with solid background and transparent text
-- `rectangleRounded` - same styles as `rectangle` with rounded corners
-- `rectangleOutline` - rectuangluar "pill" style button with solid text and an outline
-- `rectangleOutlineRounded` - same styles as `rectangleOutline` with rounded corners
-- `square` - same styles as `rectangle` but square with smaller text
-- `squareRounded` - same styles as `square` with rounded corners
-- `squareOutline` - same styles as `rectangleOutline` but square with smaller text
-- `squareOutlineRounded` - same styles as `squareOutline` with rounded corners
-- `text` - transparent background button with "gif" text only
-
-The `GPHGifButton` is also available in the following colors:
-
-- `pink` - pink and purple gradient
-- `blue` - blue and purple gradient
-- `black` - solid black
-- ` white` - solid white
-
-``` kotlin
-val button = GPHGifButton(context)
-button.style = GPHGifButtonStyle.squareRounded
-button.color = GPHGifButtonColor.blue
-```
-
-
-#### GPHContentTypeButton
-
-Icon buttons for the different supported icon types. These come in the following styles:
-
-- `stickers` - solid sticker icon
-- `stickersOutline` - outline version of the `stickers` button
-- `emoji` - solid emoji smiley icon
-- `emojiOutline` - outline version of the `emoji` button
-- `text` - solid text speech bubble icon
-- `textOutline` - outline version of the `text` button
-
-The `GPHContentTypeButton` is also available in the following colors:
-
-- `pink` - pink and purple gradient
-- `blue` - blue and purple gradient
-- `black` - solid black
-- ` white` - solid white
-
-```
-val button = GPHContentTypeButton(context)
-button.style = GPHContentTypeButtonStyle.emoji
-button.color = GPHGifButtonColor.blue
 ```
