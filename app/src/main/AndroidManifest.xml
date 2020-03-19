@@ -14,15 +14,16 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".DemoActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".GridActivity" />
         <activity android:name=".GridViewSetupActivity" />
+        <activity android:name=".GridViewExtensionsActivity" />
         <activity android:name=".GridViewDemoActivity" />
     </application>
 

@@ -13,8 +13,8 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
         android:ems="10"
+        android:imeOptions="actionSearch|flagNoFullscreen"
         android:hint="Search GIPHY"
-        android:imeOptions="actionGo"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/searchBtn"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,4 +36,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchInput" />
 
+    <Button
+        android:id="@+id/launchOnTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="Launch Next Screen"
+        app:layout_constraintBottom_toBottomOf="@+id/gifsGridView"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

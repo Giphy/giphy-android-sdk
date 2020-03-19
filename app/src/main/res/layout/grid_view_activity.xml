@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
-        android:max="5"
-        android:progress="2"
+        android:max="4"
+        android:progress="1"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintEnd_toStartOf="@+id/spanCountView"
         app:layout_constraintStart_toEndOf="@+id/textView"
@@ -34,7 +34,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Span Count"
-        android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,7 +45,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Padding"
-        android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -56,8 +54,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:max="100"
-        android:progress="20"
+        android:max="25"
+        android:progress="10"
         app:layout_constraintBottom_toBottomOf="@+id/textView2"
         app:layout_constraintEnd_toStartOf="@+id/paddingView"
         app:layout_constraintStart_toStartOf="@+id/spanCountBar"
@@ -81,7 +79,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Orientation"
-        android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -100,7 +97,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Vertical"
-        android:textColor="#3A3838"
+        android:textColor="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="@+id/textView3"
         app:layout_constraintStart_toStartOf="@+id/paddingBar"
         app:layout_constraintTop_toTopOf="@+id/textView3" />
@@ -111,7 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Horizontal"
-        android:textColor="#3A3838"
+        android:textColor="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="@+id/orientationToggle"
         app:layout_constraintStart_toEndOf="@+id/orientationToggle"
         app:layout_constraintTop_toTopOf="@+id/orientationToggle" />
@@ -124,7 +121,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Media Type"
-        android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -140,9 +136,9 @@
 
         <RadioButton
             android:id="@+id/mediaGif"
-            android:checked="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="GIFs" />
 
         <RadioButton
@@ -164,14 +160,27 @@
             android:text="Emoji" />
     </RadioGroup>
 
+    <CheckBox
+        android:id="@+id/fixedSizeCells"
+        android:enabled="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Use fixed size cells (Stickers only)"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mediaTypeContainer" />
+
     <Button
         android:id="@+id/launchGrid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="16dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
         android:text="Launch GRID"
         android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fixedSizeCells" />
 </androidx.constraintlayout.widget.ConstraintLayout>

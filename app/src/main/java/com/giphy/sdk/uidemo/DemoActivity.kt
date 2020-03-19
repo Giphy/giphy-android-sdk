@@ -1,18 +1,15 @@
 package com.giphy.sdk.uidemo
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.themes.GridType
-import com.giphy.sdk.ui.themes.LightTheme
 import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.giphy.sdk.uidemo.feed.Author
 import com.giphy.sdk.uidemo.feed.FeedDataItem
@@ -21,6 +18,7 @@ import com.giphy.sdk.uidemo.feed.InvalidKeyItem
 import com.giphy.sdk.uidemo.feed.MessageFeedAdapter
 import com.giphy.sdk.uidemo.feed.MessageItem
 import kotlinx.android.synthetic.main.activity_demo.*
+import timber.log.Timber
 
 /**
  * Created by Cristian Holdunu on 27/02/2019.
@@ -32,7 +30,7 @@ class DemoActivity : AppCompatActivity() {
         val INVALID_KEY = "NOT_A_VALID_KEY"
     }
 
-    var settings = GPHSettings(gridType = GridType.waterfall, theme = LightTheme)
+    var settings = GPHSettings(gridType = GridType.waterfall)
     var feedAdapter: MessageFeedAdapter? = null
     var messageItems = ArrayList<FeedDataItem>()
 
@@ -47,7 +45,6 @@ class DemoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_demo)
         setupToolbar()
         setupFeed()
-        applyTheme()
 
         launchGiphyBtn.setOnClickListener {
             val dialog = GiphyDialogFragment.newInstance(settings)
@@ -67,6 +64,10 @@ class DemoActivity : AppCompatActivity() {
             Log.d(TAG, "onDismissed")
         }
 
+        override fun didSearchTerm(term: String) {
+            Log.d(TAG, "didSearchTerm $term")
+        }
+
         override fun onGifSelected(media: Media) {
             Log.d(TAG, "onGifSelected")
             messageItems.add(GifItem(media, Author.Me))
@@ -83,18 +84,29 @@ class DemoActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> showSettingsDialog()
             R.id.action_grid -> openGridViewDemo()
+            R.id.action_grid_view -> openGridViewExtensionsDemo()
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(toolbar2)
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
+    private fun openGridDemo(): Boolean {
+        val intent = Intent(this, GridActivity::class.java)
+        startActivity(intent)
+        return true
+    }
 
     private fun openGridViewDemo(): Boolean {
         val intent = Intent(this, GridViewSetupActivity::class.java)
+        startActivity(intent)
+        return true
+    }
+
+    private fun openGridViewExtensionsDemo(): Boolean {
+        val intent = Intent(this, GridViewExtensionsActivity::class.java)
         startActivity(intent)
         return true
     }
@@ -116,7 +128,9 @@ class DemoActivity : AppCompatActivity() {
             messageItems.add(InvalidKeyItem(Author.GifBot))
         }
         feedAdapter = MessageFeedAdapter(messageItems)
-        feedAdapter?.theme = settings.theme
+        settings.theme?.let {
+            feedAdapter?.theme = it.getThemeResources(this)
+        }
         messageFeed.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         messageFeed.adapter = feedAdapter
     }
@@ -130,31 +144,13 @@ class DemoActivity : AppCompatActivity() {
 
     private fun applyNewSettings(settings: GPHSettings) {
         this.settings = settings
-        feedAdapter?.theme = settings.theme
-        applyTheme()
+        settings.theme?.let {
+            feedAdapter?.theme = it.getThemeResources(this)
+        }
     }
 
-    private fun applyTheme() {
-        toolbar2.setTitleTextColor(toolbarTextColor)
-        toolbar2.setBackgroundColor(toolbarBgColor)
-        contentView.setBackgroundColor(feedBgColor)
-        ViewCompat.setElevation(toolbar2, 10f)
-        feedAdapter?.notifyDataSetChanged()
-        composeContainer.setBackgroundResource(if (settings.theme == LightTheme) R.drawable.input_background_light else R.drawable.input_background_dark)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Timber.d("onActivityResult")
+        super.onActivityResult(requestCode, resultCode, data)
     }
-
-    private val toolbarTextColor: Int
-        get() {
-            return if (settings.theme == LightTheme) Color.DKGRAY else Color.WHITE
-        }
-
-    private val toolbarBgColor: Int
-        get() {
-            return if (settings.theme == LightTheme) Color.WHITE else Color.DKGRAY
-        }
-
-    private val feedBgColor: Int
-        get() {
-            return if (settings.theme == LightTheme) 0xfff3f3f3.toInt() else Color.BLACK
-        }
 }

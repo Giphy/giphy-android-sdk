@@ -8,4 +8,10 @@
     <color name="dark_grey">#3D3D3D</color>
     <color name="input_stroke_dark">#B6B6B6</color>
     <color name="dark_red">#D60000</color>
+    <color name="message_feed_background">#f3f3f3</color>
+    <color name="emoji_input_tint">#353535</color>
+    <color name="message_item_background">#ffffff</color>
+    <color name="input_field_background">#ffffff</color>
+    <color name="settings_dialog_bg">#ffffff</color>
+
 </resources>

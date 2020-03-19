@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="message_feed_background">#f3f3f3</color>
+    <color name="emoji_input_tint">#D5D5D5</color>
+    <color name="message_item_background">#000000</color>
+    <color name="input_field_background">#000000</color>
+    <color name="settings_dialog_bg">#000000</color>
+
+</resources>
