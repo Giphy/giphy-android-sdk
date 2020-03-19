@@ -5,7 +5,6 @@
 - Giphy UI SDK only supports projects that have been upgraded to [androidx](https://developer.android.com/jetpack/androidx/). 
 - Requires minSdkVersion 19
 - A Giphy API key from the [Giphy Developer Portal](https://developers.giphy.com/dashboard/?create=true).
- 
 
 ### Installation
 
@@ -19,7 +18,7 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:1.2.0'
+implementation 'com.giphy.sdk:ui:1.2.2'
 ``` 
     
 ### Basic Setup
@@ -38,6 +37,15 @@ class GiphyActivity: AppCompatActivity() {
     }
 }
 ```
+
+### Custom UI
+
+We offer two solutions for the SDK user interface - pre-built templates which handle the entirety of the GIPHY experience, and a [Grid-Only implementation](https://developers.giphy.com/docs/sdk#grid) which allows for endless customization.  
+
+See [customization](https://developers.giphy.com/docs/sdk#grid) to determine what's best for you.
+ 
+_Skip ahead to [Grid-Only section](#the-giphy-grid)_
+
 ### Templates: `GiphyDialogFragment`
 
 Configure the SDK with your API key. 
@@ -49,7 +57,7 @@ Configure the SDK with your API key.
 Create a new instance of `GiphyDialogFragment`, which takes care of all the magic. Adjust the layout and theme by passing a `GPHSettings` object when creating the dialog.
  
 ``` kotlin 
-var settings = GPHSettings(gridType = GridType.waterfall, theme = LightTheme, dimBackground = true)
+val settings = GPHSettings(GridType.waterfall, GPHTheme.Dark)
 ``` 
 
 Instantiate a `GiphyDialogFragment` with the settings object.
@@ -60,9 +68,9 @@ val gifsDialog = GiphyDialogFragment.newInstance(settings)
 
 #### `GPHSettings` properties
 
-- **Theme**: set the theme to be `DarkTheme` or `LightTheme`
+- **GPHTheme**: set the theme to be `Dark`, `Light` or `Automatic` which will match the application's `Night Mode` specifications for android P and newer. If you don't specify a theme, `Automatic` mode will be applied by default.
 ```kotlin
-settings.theme = LightTheme
+settings.theme = GPHTheme.Dark
 ```
 
 - **Layout**: set the layout to be `.waterfall` (vertical) or `.carousel` (horizontal) 
@@ -111,7 +119,23 @@ To handle GIF selection you need to implement the `GifSelectionListener` interfa
     override fun onDismissed() {
         //Your user dismissed the dialog without selecting a GIF
     }
+    override fun didSearchTerm(term: String) {
+        //Callback for search terms
+    }
 }
+```
+
+#### GifSelectionListener technical note
+As the `GiphyDialogFragment` is based on `DialogFragment`, this means that if the dialog is recreated after a process death caused by the Android System, your listener will not have a change to get set again so gif delivery will fail for that session.
+To prevent such problems, we also implemented the android `setTargetFragment` API, to allow callbacks to be made reliably to the caller fragment in the event of process death.   
+
+```kotlin
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_GIFS && resultCode == Activity.RESULT_OK) {
+            val media = data?.getParcelableExtra<Media>(GiphyDialogFragment.MEDIA_DELIVERY_KEY)
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 ```
 
 From there, it's up to you to decide what to do with the GIF. 
@@ -126,3 +150,124 @@ You can also populate a `GPHMediaView` with a media `id` like so:
 ```kotlin
 mediaView.setMediaWithId(media.id)  
 ```
+
+## Grid-Only and `GiphyGridView`
+
+The following section refers to the Grid-Only solution of the SDK. Learn more [here](https://developers.giphy.com/docs/sdk#grid)
+
+If you require a more flexible experience, use the `GiphyGridView` instead of the `GiphyDialogFragment` to load and render GIFs.
+
+`GiphyGridView` properties:
+- **orientation** - tells the scroll direction of the grid. (e.g. `GiphyGridView.HORIZONTAL`, `GiphyGridView.VERTICAL`)
+- **spanCount** - number of lanes in the grid
+- **cellPadding** - spacing between rendered GIFs
+- **showViewOnGiphy** - enables/disables the `Show on Giphy` action in the long-press menu
+- **showCheckeredBackground** - use a checkered background (for stickers only)
+- **fixedSizeCells** - display content in equally sized cells (for stickers only)
+
+## Loading GIFs using `GPHContent`
+ `GPHContent` contains all query params that necessary to load GIFs.
+- **mediaType** - media type that should be loaded (e.g. `MediaType.gif`)
+- **requestType** - tells the controller if the query should look for a trending feed of gifs or perform a search action (e.g. `GPHRequestType.trending`)
+- **rating** - minimum rating (e.g. `RatingType.pg13`)
+- **searchQuery**:- custom search input (e.g. `cats`)
+
+Use one of the convenience methods avaiable in the `GPHContent` in order to create a query.
+
+#### Trending
+- `GPHContent.trending(mediaType: MediaType, ratingType: RatingType = RatingType.pg13)`
+- `GPHContent.trendingGifs`, `GPHContent.trendingStickers`, etc.
+
+#### Search
+`GPHContent.searchQuery(search: String, mediaType: MediaType = MediaType.gif, ratingType: RatingType = RatingType.pg13)`
+
+## Execute the query
+After you have have defined your query using a `GPHContent` object, to load the media content pass this object to `GiphyGridView`
+```kotlin
+    val gifsContent = GPHContent.searchQuery("cats")
+    gifsGridView.updateContent(gifsContent)
+```
+
+## Integrating the `GiphyGridView`
+
+#### Method A
+It can be done by embedding in your layout XML. UI properties can also be applied as XML attributes
+
+```xml
+<com.giphy.sdk.ui.views.GiphyGridView
+    android:id="@+id/gifsGridView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:gphDirection="horizontal"
+    app:gphSpanCount="2"
+    app:gphCellPadding="12dp"
+    app:gphShowCheckeredBackground="false"/>
+```
+
+Perform a query
+```kotlin
+gifsGridView.updateContent(GPHContent.searchQuery("dogs"))
+```
+
+#### Method B
+Create a `GiphyGridView` and set it's UI properties
+```kotlin
+val gridView = GiphyGridView(context)
+
+gridView.direction = GiphyGridFragment.HORIZONTAL
+gridView.spanCount = 3
+gridView.cellPadding = 20
+```
+Add the `GiphyGridView` to your layout and start making queries.
+```kotlin
+parentView.addView(gridView)
+
+gridFragment?.content = GPHContent.searchQuery("dogs")
+```
+
+## Callbacks
+In order to interact with the `GiphyGridView` you can apply the following callbacks
+
+```kotlin
+interface GPHGridCallback {
+    fun contentDidUpdate(resultCount: Int)
+    fun didSelectMedia(media: Media)
+}
+
+interface GPHSearchGridCallback {
+    fun didTapUsername(username: String)
+    fun didLongPressCell(cell: GifView)
+    fun didScroll()
+}
+
+```
+
+Example
+```kotlin
+gridView.callback = object: GPHGridCallback {
+    override fun contentDidUpdate(resultCount: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun didSelectMedia(media: Media) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
+
+gridView.searchCallback = object: GPHSearchGridCallback {
+    override fun didTapUsername(username: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun didLongPressCell(cell: GifView) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun didScroll() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
+```
+
+### Proguard
+The GIPHY UI SDK exposes the `consumer-proguard.pro` rules for proguard/R8 so there is no need to add anything to your projects proguard rules.

@@ -3,6 +3,5 @@
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="42dp"
-    android:textColor="#5A5A5A"
     android:gravity="center"
     android:textStyle="bold" />

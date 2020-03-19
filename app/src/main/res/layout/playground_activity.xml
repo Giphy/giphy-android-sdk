@@ -6,9 +6,9 @@
 
     <com.giphy.sdk.ui.views.GifView
         android:id="@+id/gifView"
+        android:background="#ff00ff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:gphKeepGifRatio="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

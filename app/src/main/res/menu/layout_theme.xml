@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <item android:id="@+id/autoTheme" android:title="Auto"/>
     <item android:id="@+id/lightTheme" android:title="Light"/>
     <item android:id="@+id/darkTheme" android:title="Dark"/>
 </menu>

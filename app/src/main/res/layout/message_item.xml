@@ -15,7 +15,6 @@
         android:background="@drawable/message_background_light"
         android:elevation="4dp"
         android:text=""
-        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

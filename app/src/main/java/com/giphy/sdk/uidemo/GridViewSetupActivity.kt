@@ -45,11 +45,34 @@ class GridViewSetupActivity : AppCompatActivity() {
                 R.id.mediaText -> DemoConfig.mediaType = MediaType.text
                 R.id.mediaEmoji -> DemoConfig.mediaType = MediaType.emoji
             }
+            when (id) {
+                R.id.mediaStickers,
+                R.id.mediaText -> {
+                    fixedSizeCells.isEnabled = true
+                }
+                else -> {
+                    DemoConfig.fixedSizeCells = false
+                    fixedSizeCells.isEnabled = false
+                    fixedSizeCells.isChecked = false
+                }
+            }
         }
 
-        orientationToggle.setOnCheckedChangeListener { buttonView, isChecked ->
-            DemoConfig.direction =
-                if (isChecked) androidx.recyclerview.widget.RecyclerView.HORIZONTAL else androidx.recyclerview.widget.RecyclerView.VERTICAL
+        orientationToggle.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                DemoConfig.direction = androidx.recyclerview.widget.RecyclerView.HORIZONTAL
+                spanCountBar.max = 1
+                spanCountBar.progress = 0
+            } else {
+                DemoConfig.direction = androidx.recyclerview.widget.RecyclerView.VERTICAL
+                spanCountBar.max = 4
+                spanCountBar.progress = 1
+            }
+            spanCountBar.invalidate()
+        }
+
+        fixedSizeCells.setOnCheckedChangeListener { _, value ->
+            DemoConfig.fixedSizeCells = value
         }
 
         launchGrid.setOnClickListener {

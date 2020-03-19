@@ -8,4 +8,5 @@ object DemoConfig {
     var cellPadding = 0
     var mediaType = MediaType.gif
     var direction = GiphyGridView.VERTICAL
+    var fixedSizeCells = false
 }

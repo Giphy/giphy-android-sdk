@@ -1,7 +1,6 @@
 package com.giphy.sdk.uidemo
 
 import android.content.DialogInterface
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +10,8 @@ import androidx.appcompat.app.AlertDialog
 import com.giphy.sdk.core.models.enums.RenditionType
 import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.GPHSettings
-import com.giphy.sdk.ui.themes.DarkTheme
+import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.themes.GridType
-import com.giphy.sdk.ui.themes.LightTheme
-import com.savvyapps.togglebuttonlayout.ToggleButtonLayout
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 /**
@@ -24,9 +21,6 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
 
     private var settings: GPHSettings = GPHSettings()
     var dismissListener: (GPHSettings) -> Unit = { settings -> }
-
-    private var lightIconsBackground = 0xFFE9E9E9.toInt()
-    private var darkIconsBackground = 0xFF242424.toInt()
 
     companion object {
         private const val PICK_GRID_RENDITION = 201
@@ -58,7 +52,11 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        themeSelector.setToggled(if (settings.theme == LightTheme) R.id.lightTheme else R.id.darkTheme, true)
+        themeSelector.setToggled(when (settings.theme) {
+            GPHTheme.Light -> R.id.lightTheme
+            GPHTheme.Dark -> R.id.darkTheme
+            GPHTheme.Automatic -> R.id.autoTheme
+        }, true)
         layoutSelector.setToggled(if (settings.gridType == GridType.waterfall) R.id.waterfall else R.id.carousel, true)
         mediaTypeSelector.inflateMenu(if (settings.gridType == GridType.waterfall) R.menu.waterfal_media_types else R.menu.carousel_media_types)
         settings.mediaTypeConfig.forEach {
@@ -67,6 +65,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                 GPHContentType.sticker -> R.id.typeStickers
                 GPHContentType.text -> R.id.typeText
                 GPHContentType.emoji -> R.id.typeEmoji
+//                GPHContentType.recents -> R.id.typeRecents
             }
             mediaTypeSelector.setToggled(id, true)
         }
@@ -86,38 +85,19 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                 }
             }
         }
-
-        applyTheme()
-
         showAttributionCheck.isChecked = settings.showAttribution
         showConfirmationScreen.isChecked = settings.showConfirmationScreen
 
         themeSelector.onToggledListener = { toggle, selected ->
-            settings.theme = if (toggle.id == R.id.lightTheme) LightTheme else DarkTheme
-            applyTheme()
+            settings.theme = when (toggle.id) {
+                R.id.lightTheme -> GPHTheme.Light
+                R.id.darkTheme -> GPHTheme.Dark
+                else -> GPHTheme.Automatic
+            }
         }
         dismissBtn.setOnClickListener { dismiss() }
         gridRenditionType.setOnClickListener { openRenditionPicker(PICK_GRID_RENDITION) }
         attributionRenditionType.setOnClickListener { openRenditionPicker(PICK_ATTRIBUTION_RENDTION) }
-    }
-
-    private fun applyTheme() {
-        themeTitle.setTextColor(settings.theme.textColor)
-        layoutTitle.setTextColor(settings.theme.textColor)
-        gifTitle.setTextColor(settings.theme.textColor)
-        dismissBtn.setColorFilter(settings.theme.textColor)
-        mainView.setBackgroundColor(settings.theme.backgroundColor)
-        applyTheme(themeSelector)
-        applyTheme(layoutSelector)
-        applyTheme(mediaTypeSelector)
-        showAttributionCheck.setTextColor(settings.theme.textColor)
-        showConfirmationScreen.setTextColor(settings.theme.textColor)
-    }
-
-    private fun applyTheme(toggle: ToggleButtonLayout) {
-        toggle.selectedColor = settings.theme.activeTextColor
-        toggle.dividerColor = settings.theme.textColor
-        toggle.setCardBackgroundColor(Color.LTGRAY)
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -159,9 +139,4 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
         val dialog = builder.create()
         dialog.show()
     }
-
-    private val themeBackgroundColor: Int
-        get() {
-            return if (settings.theme == LightTheme) lightIconsBackground else darkIconsBackground
-        }
 }

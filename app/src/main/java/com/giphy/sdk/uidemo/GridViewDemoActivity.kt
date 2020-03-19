@@ -17,8 +17,6 @@ import com.giphy.sdk.ui.views.GPHSearchGridCallback
 import com.giphy.sdk.ui.views.GifView
 import com.giphy.sdk.ui.views.GiphyGridView
 import kotlinx.android.synthetic.main.grid_view_demo_activity.*
-import kotlinx.android.synthetic.main.grid_view_demo_activity.searchBtn
-import kotlinx.android.synthetic.main.grid_view_demo_activity.searchInput
 import timber.log.Timber
 
 class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity) {
@@ -28,6 +26,7 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
         gifsGridView.direction = DemoConfig.direction
         gifsGridView.spanCount = DemoConfig.spanCount
         gifsGridView.cellPadding = DemoConfig.cellPadding
+        gifsGridView.fixedSizeCells = DemoConfig.fixedSizeCells
         setTrendingQuery()
         if (DemoConfig.mediaType == MediaType.emoji) {
             searchInput.isEnabled = false

@@ -5,4 +5,5 @@
     <item android:id="@+id/typeStickers" android:title="Stickers"/>
     <item android:id="@+id/typeText" android:title="Text"/>
     <item android:id="@+id/typeEmoji" android:title="Emoji"/>
+<!--    <item android:id="@+id/typeRecents" android:title="Recents"/>-->
 </menu>
