@@ -1,6 +1,7 @@
 package com.giphy.sdk.uidemo
 
 import android.app.Activity
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.core.models.enums.MediaType
+import com.giphy.sdk.ui.GiphyLoadingProvider
 import com.giphy.sdk.ui.pagination.GPHContent
 import com.giphy.sdk.ui.views.GPHGridCallback
 import com.giphy.sdk.ui.views.GPHSearchGridCallback
@@ -50,9 +52,9 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
             override fun didSelectMedia(media: Media) {
                 Timber.d("didSelectMedia ${media.id}")
                 Toast.makeText(
-                    this@GridViewDemoActivity,
-                    "media selected: ${media.id}",
-                    Toast.LENGTH_SHORT
+                        this@GridViewDemoActivity,
+                        "media selected: ${media.id}",
+                        Toast.LENGTH_SHORT
                 ).show()
             }
         }
@@ -66,7 +68,7 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
                 Timber.d("didLongPressCell")
             }
 
-            override fun didScroll() {
+            override fun didScroll(dx: Int, dy: Int) {
                 Timber.d("didScroll")
             }
         }
@@ -75,6 +77,8 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
             dismissKeyboard()
             performCustomSearch()
         }
+
+        gifsGridView.setGiphyLoadingProvider(loadingProviderClient)
 
         searchInput.setOnEditorActionListener { view, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_GO) {
@@ -101,7 +105,7 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
             setTrendingQuery()
         else
             gifsGridView?.content =
-                GPHContent.searchQuery(searchInput.text.toString(), DemoConfig.mediaType)
+                    GPHContent.searchQuery(searchInput.text.toString(), DemoConfig.mediaType)
     }
 
     fun dismissKeyboard() {
@@ -116,6 +120,12 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
             MediaType.text -> GPHContent.trendingText
             MediaType.emoji -> GPHContent.emoji
             else -> throw Exception("MediaType ${DemoConfig.mediaType} not supported ")
+        }
+    }
+
+    private val loadingProviderClient = object : GiphyLoadingProvider {
+        override fun getLoadingDrawable(position: Int): Drawable {
+            return LoadingDrawable(if (position % 2 == 0) LoadingDrawable.Shape.Rect else LoadingDrawable.Shape.Circle)
         }
     }
 }

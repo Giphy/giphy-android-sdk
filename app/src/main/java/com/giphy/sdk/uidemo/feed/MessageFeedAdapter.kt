@@ -1,6 +1,5 @@
 package com.giphy.sdk.uidemo.feed
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,7 +63,7 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
 
     inner class GifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindMessage(message: GifItem) {
-            itemView.gifView.setMedia(message.media, placeholderColor = Color.BLUE)
+            itemView.gifView.setMedia(message.media)
         }
     }
 
