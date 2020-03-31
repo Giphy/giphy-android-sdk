@@ -18,7 +18,7 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:1.2.2'
+implementation 'com.giphy.sdk:ui:1.2.3'
 ``` 
     
 ### Basic Setup
@@ -138,6 +138,25 @@ To prevent such problems, we also implemented the android `setTargetFragment` AP
     }
 ```
 
+#### Customise the `GiphyDialogFragment`
+You can easily customise the color scheme for the `GiphyDialogFragment` for a better blend-in with your application UI. Simply override the following color resources:
+ - Light Theme:
+```xml
+    <color name="gph_channel_color_light">#FF4E4E4E</color>
+    <color name="gph_handle_bar_light">#ff888888</color>
+    <color name="gph_background_light">#ffF1F1F1</color>
+    <color name="gph_text_color_light">#ffA6A6A6</color>
+    <color name="gph_active_text_color_light">#ff000000</color>
+```
+- Dark Theme
+```xml
+    <color name="gph_channel_color_dark">#ffD8D8D8</color>
+    <color name="gph_handle_bar_dark">#ff888888</color>
+    <color name="gph_background_dark">#ff121212</color>
+    <color name="gph_text_color_dark">#ffA6A6A6</color>
+    <color name="gph_active_text_color_dark">#ff00FF99</color>
+```
+
 From there, it's up to you to decide what to do with the GIF. 
 
 Create a `GPHMediaView` to display the media. Optionaly, you can pass a rendition type to be loaded.
@@ -224,6 +243,23 @@ parentView.addView(gridView)
 
 gridFragment?.content = GPHContent.searchQuery("dogs")
 ```
+## Customise the GIF Loading
+You can customise the loading experience of GIFs in the `GridView` by using the `GiphyLoadingProvider` class.
+```kotlin
+
+    // Implement the GiphyLoadingProvider interface
+    private val loadingProviderClient = object : GiphyLoadingProvider {
+        override fun getLoadingDrawable(position: Int): Drawable {
+            val shape = LoadingDrawable(if (position % 2 == 0) LoadingDrawable.Shape.Rect else LoadingDrawable.Shape.Circle)
+            shape.setColorFilter(getPlaceholderColor(), PorterDuff.Mode.SRC_ATOP)
+            return shape
+        }
+    }
+
+    // Attach the loading provider to the GridView
+    gifsGridView.setGiphyLoadingProvider(loadingProviderClient)
+
+```
 
 ## Callbacks
 In order to interact with the `GiphyGridView` you can apply the following callbacks
@@ -263,7 +299,7 @@ gridView.searchCallback = object: GPHSearchGridCallback {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun didScroll() {
+    override fun didScroll(dx: Int, dy: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
