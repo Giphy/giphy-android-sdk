@@ -9,4 +9,5 @@ object DemoConfig {
     var mediaType = MediaType.gif
     var direction = GiphyGridView.VERTICAL
     var fixedSizeCells = false
+    var showCheckeredBackground = true
 }

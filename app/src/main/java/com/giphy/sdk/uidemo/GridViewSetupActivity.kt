@@ -75,6 +75,10 @@ class GridViewSetupActivity : AppCompatActivity() {
             DemoConfig.fixedSizeCells = value
         }
 
+        showCheckeredBackground.setOnCheckedChangeListener { _, value ->
+            DemoConfig.showCheckeredBackground = value
+        }
+
         launchGrid.setOnClickListener {
             val intent = Intent(this, GridViewDemoActivity::class.java)
             startActivity(intent)
