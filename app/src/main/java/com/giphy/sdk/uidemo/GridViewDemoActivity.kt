@@ -29,6 +29,7 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
         gifsGridView.spanCount = DemoConfig.spanCount
         gifsGridView.cellPadding = DemoConfig.cellPadding
         gifsGridView.fixedSizeCells = DemoConfig.fixedSizeCells
+        gifsGridView.showCheckeredBackground = DemoConfig.showCheckeredBackground
         setTrendingQuery()
         if (DemoConfig.mediaType == MediaType.emoji) {
             searchInput.isEnabled = false

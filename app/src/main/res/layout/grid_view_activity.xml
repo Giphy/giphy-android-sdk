@@ -170,6 +170,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mediaTypeContainer" />
 
+    <CheckBox
+        android:id="@+id/showCheckeredBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:checked="true"
+        android:text="Show checkered background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fixedSizeCells" />
+
     <Button
         android:id="@+id/launchGrid"
         android:layout_width="wrap_content"
@@ -182,5 +193,5 @@
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fixedSizeCells" />
+        app:layout_constraintTop_toBottomOf="@+id/showCheckeredBackground" />
 </androidx.constraintlayout.widget.ConstraintLayout>
