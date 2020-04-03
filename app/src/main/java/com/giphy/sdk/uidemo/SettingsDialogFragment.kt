@@ -65,7 +65,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                 GPHContentType.sticker -> R.id.typeStickers
                 GPHContentType.text -> R.id.typeText
                 GPHContentType.emoji -> R.id.typeEmoji
-                GPHContentType.recents -> throw NotImplementedError("MediaType not supported")
+                GPHContentType.recents -> R.id.typeRecents
             }
             mediaTypeSelector.setToggled(id, true)
         }
@@ -113,6 +113,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                 R.id.typeStickers -> contentTypes.add(GPHContentType.sticker)
                 R.id.typeText -> contentTypes.add(GPHContentType.text)
                 R.id.typeEmoji -> contentTypes.add(GPHContentType.emoji)
+                R.id.typeRecents -> contentTypes.add(GPHContentType.recents)
             }
         }
 

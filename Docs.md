@@ -18,7 +18,7 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:1.2.4'
+implementation 'com.giphy.sdk:ui:1.2.5'
 ``` 
     
 ### Basic Setup
@@ -82,6 +82,15 @@ settings.gridType = GridType.waterfall
 <br> **Note**: Emoji only is not available for the carousel layout option. 
 ```kotlin
 settings.mediaTypeConfig = arrayOf(GPHContentType.gif, GPHContentType.sticker, GPHContentType.text, GPHContentType.emoji)
+```
+
+- **Recently Picked**: As of version `1.2.5` you can add an additional `GPHContentType` to you `mediaConfigs` array, called `GPHContentType.recents` which will automatically add a new tab with the recently picked GIFs and Stickers by the user. The tab will appear automatically if the user has picked any GIFs or Stickers.
+```kotlin
+val mediaTypeConfig = arrayOf(
+    GPHContentType.gif,
+    GPHContentType.sticker,
+    GPHContentType.recents
+)
 ```
 
 - **Confirmation screen**:  we provide the option to show a secondary confirmation screen when the user taps a GIF, which shows a larger rendition of the asset.
