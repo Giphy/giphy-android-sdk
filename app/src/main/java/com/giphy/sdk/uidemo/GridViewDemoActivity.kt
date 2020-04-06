@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.core.models.enums.MediaType
+import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.GiphyLoadingProvider
 import com.giphy.sdk.ui.pagination.GPHContent
 import com.giphy.sdk.ui.views.GPHGridCallback
@@ -115,11 +116,12 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
     }
 
     private fun setTrendingQuery() {
-        gifsGridView.content = when (DemoConfig.mediaType) {
-            MediaType.gif -> GPHContent.trendingGifs
-            MediaType.sticker -> GPHContent.trendingStickers
-            MediaType.text -> GPHContent.trendingText
-            MediaType.emoji -> GPHContent.emoji
+        gifsGridView.content = when (DemoConfig.contentType) {
+            GPHContentType.gif -> GPHContent.trendingGifs
+            GPHContentType.sticker -> GPHContent.trendingStickers
+            GPHContentType.text -> GPHContent.trendingText
+            GPHContentType.emoji -> GPHContent.emoji
+            GPHContentType.recents -> GPHContent.recents
             else -> throw Exception("MediaType ${DemoConfig.mediaType} not supported ")
         }
     }

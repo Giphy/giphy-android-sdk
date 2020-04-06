@@ -18,7 +18,7 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:1.2.5'
+implementation 'com.giphy.sdk:ui:1.2.6'
 ``` 
     
 ### Basic Setup
@@ -84,7 +84,7 @@ settings.gridType = GridType.waterfall
 settings.mediaTypeConfig = arrayOf(GPHContentType.gif, GPHContentType.sticker, GPHContentType.text, GPHContentType.emoji)
 ```
 
-- **Recently Picked**: As of version `1.2.5` you can add an additional `GPHContentType` to you `mediaConfigs` array, called `GPHContentType.recents` which will automatically add a new tab with the recently picked GIFs and Stickers by the user. The tab will appear automatically if the user has picked any GIFs or Stickers.
+- **Recently Picked**: As of version `1.2.6` you can add an additional `GPHContentType` to you `mediaConfigs` array, called `GPHContentType.recents` which will automatically add a new tab with the recently picked GIFs and Stickers by the user. The tab will appear automatically if the user has picked any GIFs or Stickers.
 ```kotlin
 val mediaTypeConfig = arrayOf(
     GPHContentType.gif,
@@ -92,6 +92,7 @@ val mediaTypeConfig = arrayOf(
     GPHContentType.recents
 )
 ```
+Users can remove gifs from recents with a long-press on the GIF in the recents grid.
 
 - **Confirmation screen**:  we provide the option to show a secondary confirmation screen when the user taps a GIF, which shows a larger rendition of the asset.
 This confirmation screen is only available for `.waterfall` mode - this property will be ignored if the `layout` is `.carousel`. 
@@ -212,9 +213,25 @@ Use one of the convenience methods avaiable in the `GPHContent` in order to crea
 ## Execute the query
 After you have have defined your query using a `GPHContent` object, to load the media content pass this object to `GiphyGridView`
 ```kotlin
-    val gifsContent = GPHContent.searchQuery("cats")
-    gifsGridView.updateContent(gifsContent)
+val gifsContent = GPHContent.searchQuery("cats")
+gifsGridView.updateContent(gifsContent)
 ```
+
+- **Recently Picked**: 
+Show a user a collection of his recently picked GIFs/Stickers:
+```kotlin
+val gifsContent = GPHContent.recents
+gifsGridView.updateContent(gifsContent)
+```
+Before showing a recents tab, make sure that the user actually has recent gifs stored, by checking the following property:
+ ```kotlin
+val recentsCount = Giphy.recents.count
+```
+Optionally, you can clear the recent gifs:
+```kotlin
+Giphy.recents.clear()
+```
+Users can remove gifs from recents with a long-press on the GIF in the recents grid.
 
 ## Integrating the `GiphyGridView`
 
