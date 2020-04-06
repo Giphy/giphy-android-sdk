@@ -3,8 +3,10 @@ package com.giphy.sdk.uidemo
 import android.content.Intent
 import android.os.Bundle
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.giphy.sdk.core.models.enums.MediaType
+import com.giphy.sdk.ui.GPHContentType
+import com.giphy.sdk.ui.Giphy
 import kotlinx.android.synthetic.main.grid_view_activity.*
 import kotlinx.android.synthetic.main.grid_view_activity.orientationToggle
 import kotlinx.android.synthetic.main.grid_view_activity.paddingBar
@@ -40,10 +42,11 @@ class GridViewSetupActivity : AppCompatActivity() {
 
         mediaTypeContainer.setOnCheckedChangeListener { radioGroup, id ->
             when (id) {
-                R.id.mediaGif -> DemoConfig.mediaType = MediaType.gif
-                R.id.mediaStickers -> DemoConfig.mediaType = MediaType.sticker
-                R.id.mediaText -> DemoConfig.mediaType = MediaType.text
-                R.id.mediaEmoji -> DemoConfig.mediaType = MediaType.emoji
+                R.id.mediaGif -> DemoConfig.contentType = GPHContentType.gif
+                R.id.mediaStickers -> DemoConfig.contentType = GPHContentType.sticker
+                R.id.mediaText -> DemoConfig.contentType = GPHContentType.text
+                R.id.mediaEmoji -> DemoConfig.contentType = GPHContentType.emoji
+                R.id.mediaRecents -> DemoConfig.contentType = GPHContentType.recents
             }
             when (id) {
                 R.id.mediaStickers,
@@ -80,6 +83,10 @@ class GridViewSetupActivity : AppCompatActivity() {
         }
 
         launchGrid.setOnClickListener {
+            if (DemoConfig.contentType == GPHContentType.recents && Giphy.recents.count == 0) {
+                Toast.makeText(applicationContext, "No recent GIFs found. Select other media type to click them.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             val intent = Intent(this, GridViewDemoActivity::class.java)
             startActivity(intent)
         }
