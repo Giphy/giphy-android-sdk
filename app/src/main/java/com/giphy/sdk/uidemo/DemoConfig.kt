@@ -8,7 +8,7 @@ object DemoConfig {
     var spanCount = 2
     var cellPadding = 0
     var mediaType = MediaType.gif
-    var contentType = GPHContentType.recents
+    var contentType = GPHContentType.gif
     var direction = GiphyGridView.VERTICAL
     var fixedSizeCells = false
     var showCheckeredBackground = true

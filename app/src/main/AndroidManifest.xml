@@ -21,7 +21,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GridActivity" />
         <activity android:name=".GridViewSetupActivity" />
         <activity android:name=".GridViewExtensionsActivity" />
         <activity android:name=".GridViewDemoActivity" />

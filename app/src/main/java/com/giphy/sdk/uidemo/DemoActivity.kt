@@ -68,7 +68,7 @@ class DemoActivity : AppCompatActivity() {
             Log.d(TAG, "didSearchTerm $term")
         }
 
-        override fun onGifSelected(media: Media) {
+        override fun onGifSelected(media: Media, searchTerm: String?) {
             Log.d(TAG, "onGifSelected")
             messageItems.add(GifItem(media, Author.Me))
             feedAdapter?.notifyItemInserted(messageItems.size - 1)
@@ -91,12 +91,6 @@ class DemoActivity : AppCompatActivity() {
 
     private fun setupToolbar() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
-    }
-
-    private fun openGridDemo(): Boolean {
-        val intent = Intent(this, GridActivity::class.java)
-        startActivity(intent)
-        return true
     }
 
     private fun openGridViewDemo(): Boolean {
