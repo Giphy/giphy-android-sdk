@@ -18,7 +18,7 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:1.2.6'
+implementation 'com.giphy.sdk:ui:1.2.8'
 ``` 
     
 ### Basic Setup
@@ -110,7 +110,19 @@ settings.rating = RatingType.pg13
 settings.renditionType = RenditionType.fixedWidth
 settings.confirmationRenditionType = RenditionType.original 
 ```
+- **Checkered Background**: You can enable/disabled the checkered background for stickers and text media type.
+```kotlin
+settings.showCheckeredBackground = true
+```
 
+- **Blurred Background**: Use a translucent blurred background of the template container
+```
+settings.useBlurredBackground = true
+```
+- **Stickers Column Count**: Customise the number of columns for stickers (Accepted values between 2 and 4). We recommend using 3 columns for blurred mode.
+```kotlin
+settings.stickerColumnCount: Int = 3
+```
 #### Presentation 
 Show your `GiphyDialogFragment` using the `SupportFragmentManager` and watch as the GIFs start flowin'.
 
@@ -119,10 +131,28 @@ gifsDialog.show(supportFragmentManager, "gifs_dialog")
 ```
 
 #### Events 
-To handle GIF selection you need to implement the `GifSelectionListener` interface.
+**Activity**
+To handle GIF selection you need to implement the `GifSelectionListener` interface. If you are calling the GiphyDialogFragment from an activity instance, it is recommended that your activity implements the interface `GifSelectionListener`. When using this approach, the Giphy dialog will check at creation time, if the activity is implementing the `GifSelectionListener` protocol and set the activity as a callback, if no other listeners are set programatically.
+``` kotlin
+ class DemoActivity : AppCompatActivity(), GiphyDialogFragment.GifSelectionListener {
+    fun onGifSelected(media: Media, searchTerm: String?)
+        //Your user tapped a GIF
+    }
+
+    override fun onDismissed() {
+        //Your user dismissed the dialog without selecting a GIF
+    }
+    override fun didSearchTerm(term: String) {
+        //Callback for search terms
+    }
+}
+```
+
+**Fragment**
+- Option A: If you are calling the `GiphyDialogFragment` from a fragment context, you can also create a listener object to handle events.
 ``` kotlin
  giphyDialog.gifSelectionListener = object: GiphyDialogFragment.GifSelectionListener {
-    override fun onGifSelected(media: Media) {
+    fun onGifSelected(media: Media, searchTerm: String?)
         //Your user tapped a GIF
     }
 
@@ -139,10 +169,14 @@ To handle GIF selection you need to implement the `GifSelectionListener` interfa
 As the `GiphyDialogFragment` is based on `DialogFragment`, this means that if the dialog is recreated after a process death caused by the Android System, your listener will not have a change to get set again so gif delivery will fail for that session.
 To prevent such problems, we also implemented the android `setTargetFragment` API, to allow callbacks to be made reliably to the caller fragment in the event of process death.   
 
+- Option B: `GiphyDialogFragment` also implements support for the `setTargetFragment` API. If it detects a target fragment attached, **it will deliver the content to the target fragment and ignore the `GifSelectionListener`**. Response data will contain the `Media` object selected and the search term used to discover that `Media`.
 ```kotlin
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_GIFS && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_GIFS) {
             val media = data?.getParcelableExtra<Media>(GiphyDialogFragment.MEDIA_DELIVERY_KEY)
+            val keyword = data?.getStringExtra(GiphyDialogFragment.SEARCH_TERM_KEY)
+            //TODO: handle received data
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
