@@ -129,6 +129,27 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/showAttributionCheck" />
 
+            <CheckBox
+                android:id="@+id/useBlurredBackground"
+                style="@style/SettingHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Use blurred background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/showConfirmationScreen" />
+
+            <CheckBox
+                android:id="@+id/showCheckeredBackground"
+                style="@style/SettingHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Show checkered background (stickers)"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/useBlurredBackground" />
             <TextView
                 android:id="@+id/renditionTitle"
                 style="@style/SettingHeader"
@@ -138,7 +159,7 @@
                 android:layout_marginTop="16dp"
                 android:text="Change Rendition Type"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/showConfirmationScreen" />
+                app:layout_constraintTop_toBottomOf="@+id/showCheckeredBackground" />
 
             <LinearLayout
                 android:layout_width="match_parent"

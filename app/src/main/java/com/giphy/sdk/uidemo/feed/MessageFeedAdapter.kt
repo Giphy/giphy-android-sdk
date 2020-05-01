@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.giphy.sdk.ui.themes.LightTheme
-import com.giphy.sdk.ui.themes.Theme
 import com.giphy.sdk.uidemo.R
 import kotlinx.android.synthetic.main.gif_item.view.*
 import kotlinx.android.synthetic.main.message_item.view.*
@@ -16,8 +14,6 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
     private val ITEM_GIF = 101
     private val ITEM_NONE = 102
     private val ITEM_INVALID_API = 103
-
-    var theme: Theme = LightTheme
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -55,15 +51,16 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
     inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindMessage(message: MessageItem) {
             itemView.textMessage.text = message.text
-            itemView.textMessage.setTextColor(theme.textColor)
-            itemView.textMessage.setBackgroundResource(if (theme == LightTheme) R.drawable.message_background_light else R.drawable.message_background_dark)
-            itemView.timeView.setTextColor(theme.textColor)
+//            itemView.textMessage.setTextColor(theme.textColor)
+//            itemView.textMessage.setBackgroundResource(if (theme == LightTheme) R.drawable.message_background_light else R.drawable.message_background_dark)
+//            itemView.timeView.setTextColor(theme.textColor)
         }
     }
 
     inner class GifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindMessage(message: GifItem) {
             itemView.gifView.setMedia(message.media)
+            itemView.gifView.isBackgroundVisible = false
         }
     }
 
