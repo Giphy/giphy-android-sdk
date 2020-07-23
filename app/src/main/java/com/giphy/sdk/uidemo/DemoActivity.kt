@@ -31,7 +31,7 @@ class DemoActivity : AppCompatActivity() {
         val INVALID_KEY = "NOT_A_VALID_KEY"
     }
 
-    var settings = GPHSettings(gridType = GridType.waterfall, useBlurredBackground = true, theme = GPHTheme.Light, stickerColumnCount = 3)
+    var settings = GPHSettings(gridType = GridType.waterfall, useBlurredBackground = false, theme = GPHTheme.Light, stickerColumnCount = 3)
     var feedAdapter: MessageFeedAdapter? = null
     var messageItems = ArrayList<FeedDataItem>()
 
