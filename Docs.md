@@ -18,7 +18,7 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:1.3.0'
+implementation 'com.giphy.sdk:ui:1.3.1'
 ``` 
     
 ### Basic Setup
@@ -84,6 +84,11 @@ settings.gridType = GridType.waterfall
 settings.mediaTypeConfig = arrayOf(GPHContentType.gif, GPHContentType.sticker, GPHContentType.text, GPHContentType.emoji)
 ```
 
+Set default `GPHContentType`:
+``` kotlin
+settings.selectedContentType = GPHContentType.emoji
+```
+
 - **Recently Picked**: As of version `1.2.6` you can add an additional `GPHContentType` to you `mediaConfigs` array, called `GPHContentType.recents` which will automatically add a new tab with the recently picked GIFs and Stickers by the user. The tab will appear automatically if the user has picked any GIFs or Stickers.
 ```kotlin
 val mediaTypeConfig = arrayOf(
@@ -135,11 +140,11 @@ gifsDialog.show(supportFragmentManager, "gifs_dialog")
 To handle GIF selection you need to implement the `GifSelectionListener` interface. If you are calling the GiphyDialogFragment from an activity instance, it is recommended that your activity implements the interface `GifSelectionListener`. When using this approach, the Giphy dialog will check at creation time, if the activity is implementing the `GifSelectionListener` protocol and set the activity as a callback, if no other listeners are set programatically.
 ``` kotlin
  class DemoActivity : AppCompatActivity(), GiphyDialogFragment.GifSelectionListener {
-    fun onGifSelected(media: Media, searchTerm: String?)
+    override fun onGifSelected(media: Media, searchTerm: String?, selectedContentType: GPHContentType)
         //Your user tapped a GIF
     }
 
-    override fun onDismissed() {
+    override fun onDismissed(selectedContentType: GPHContentType) {
         //Your user dismissed the dialog without selecting a GIF
     }
     override fun didSearchTerm(term: String) {
@@ -209,10 +214,28 @@ Create a `GPHMediaView` to display the media. Optionaly, you can pass a renditio
 val mediaView = GPHMediaView(context)
 mediaView.setMedia(media, RenditionType.original)
 ```
-You can also populate a `GPHMediaView` with a media `id` like so: 
+You can populate a `GPHMediaView` with a media `id` like so:
 ```kotlin
-mediaView.setMediaWithId(media.id)  
+mediaView.setMediaWithId(media.id) { result, e ->                
+    e?.let {
+        //your code here
+    }
+}  
 ```
+Or just fetch media response for your needs
+```kotlin
+GPHCore.gifById(id) { result, e ->
+    gifView.setMedia(result?.data, RenditionType.original)
+    e?.let {
+        //your code here
+    }
+}
+```
+Use the media's aspectRatio property to size the view:
+```kotlin
+val aspectRatio = media.aspectRatio 
+```
+
 
 ## Grid-Only and `GiphyGridView`
 
