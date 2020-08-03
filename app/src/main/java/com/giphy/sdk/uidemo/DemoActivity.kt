@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.giphy.sdk.core.models.Media
+import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.themes.GPHTheme
@@ -61,12 +62,16 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun getGifSelectionListener() = object : GiphyDialogFragment.GifSelectionListener {
-        override fun onGifSelected(media: Media, searchTerm: String?) {
+        override fun onGifSelected(
+            media: Media,
+            searchTerm: String?,
+            selectedContentType: GPHContentType
+        ) {
             Log.d(TAG, "onGifSelected")
             messageItems.add(GifItem(media, Author.Me))
             feedAdapter?.notifyItemInserted(messageItems.size - 1) }
 
-        override fun onDismissed() {
+        override fun onDismissed(selectedContentType: GPHContentType) {
             Log.d(TAG, "onDismissed")
         }
 
