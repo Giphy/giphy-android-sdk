@@ -18,7 +18,7 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:1.3.3'
+implementation 'com.giphy.sdk:ui:2.0'
 ``` 
     
 ### Basic Setup
