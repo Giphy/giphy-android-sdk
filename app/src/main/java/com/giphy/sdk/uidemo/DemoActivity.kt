@@ -53,12 +53,6 @@ class DemoActivity : AppCompatActivity() {
             dialog.gifSelectionListener = getGifSelectionListener()
             dialog.show(supportFragmentManager, "gifs_dialog")
         }
-
-        emojiBtn.setOnClickListener {
-            val dialog = GiphyDialogFragment.newInstance(settings.copy(gridType = GridType.emoji))
-            dialog.gifSelectionListener = getGifSelectionListener()
-            dialog.show(supportFragmentManager, "emoji_dialog")
-        }
     }
 
     private fun getGifSelectionListener() = object : GiphyDialogFragment.GifSelectionListener {

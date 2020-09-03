@@ -64,21 +64,10 @@
             android:hint="Type a message"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/emojiBtn"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/launchGiphyBtn"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_goneMarginStart="10dp" />
-
-        <ImageView
-            android:id="@+id/emojiBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:tint="@color/emoji_input_tint"
-            android:src="@drawable/ic_emoji_btn"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
