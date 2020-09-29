@@ -4,7 +4,7 @@
 
 - Giphy UI SDK only supports projects that have been upgraded to [androidx](https://developer.android.com/jetpack/androidx/). 
 - Requires minSdkVersion 19
-- A Giphy API key from the [Giphy Developer Portal](https://developers.giphy.com/dashboard/?create=true).
+- A Giphy Android SDK key from the [Giphy Developer Portal](https://developers.giphy.com/dashboard/?create=true).
 
 ### Installation
 
@@ -22,7 +22,7 @@ implementation 'com.giphy.sdk:ui:2.0.2'
 ``` 
     
 ### Basic Setup
-Here's a basic setup to make sure everything's working. Configure the GIPHY SDK with your API key.
+Here's a basic setup to make sure everything's working. Configure the GIPHY SDK with your API key. Apply for a new __Android SDK__ key. Please remember, you should use a separate key for every platform (Android, iOS, Web) you add our SDKs to.
 
 ```kotlin
 
@@ -31,7 +31,7 @@ class GiphyActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Giphy.configure(this, YOUR_API_KEY)
+        Giphy.configure(this, YOUR_ANDROID_SDK_KEY)
         
         GiphyDialogFragment.newInstance().show(supportFragmentManager, "giphy_dialog")
     }
@@ -48,10 +48,10 @@ _Skip ahead to [Grid-Only section](#the-giphy-grid)_
 
 ### Templates: `GiphyDialogFragment`
 
-Configure the SDK with your API key. 
+Configure the SDK with your API key. Apply for a new __Android SDK__ key. Please remember, you should use a separate key for every platform (Android, iOS, Web) you add our SDKs to.
 
 ```kotlin
-    Giphy.configure(this, YOUR_API_KEY)
+    Giphy.configure(this, YOUR_ANDROID_SDK_KEY)
 ```
  
 Create a new instance of `GiphyDialogFragment`, which takes care of all the magic. Adjust the layout and theme by passing a `GPHSettings` object when creating the dialog.
