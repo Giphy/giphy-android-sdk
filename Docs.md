@@ -18,7 +18,7 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.0.3'
+implementation 'com.giphy.sdk:ui:2.0.4'
 ``` 
     
 ### Basic Setup
@@ -56,7 +56,7 @@ Configure the SDK with your API key. Apply for a new __Android SDK__ key. Please
  
 Create a new instance of `GiphyDialogFragment`, which takes care of all the magic. Adjust the layout and theme by passing a `GPHSettings` object when creating the dialog.
  
-``` kotlin 
+```kotlin 
 val settings = GPHSettings(GridType.waterfall, GPHTheme.Dark)
 ``` 
 
@@ -65,6 +65,18 @@ Instantiate a `GiphyDialogFragment` with the settings object.
 ``` kotlin
 val gifsDialog = GiphyDialogFragment.newInstance(settings)
 ```
+
+#### `Fresco` initialization
+The SDK has special `Fresco` setup to support our use case, though this should not pose any conflicts with your use of `Fresco` outside of the GIPHY SDK. 
+You can use our `GiphyFrescoHandler`:
+``` kotlin
+Giphy.configure(context, YOUR_API_KEY, verificationMode, frescoHandler = object : GiphyFrescoHandler {
+                override fun handle(imagePipelineConfigBuilder: ImagePipelineConfig.Builder) {                    
+                }
+                override fun handle(okHttpClientBuilder: OkHttpClient.Builder) {                    
+                }
+}
+``` 
 
 #### `GPHSettings` properties
 
@@ -128,6 +140,12 @@ settings.useBlurredBackground = true
 ```kotlin
 settings.stickerColumnCount: Int = 3
 ```
+
+- **Suggestions bar**: As of version `2.0.4` you can hide suggestions bar
+```kotlin
+settings.showSuggestionsBar = false
+```
+
 #### Presentation 
 Show your `GiphyDialogFragment` using the `SupportFragmentManager` and watch as the GIFs start flowin'.
 
