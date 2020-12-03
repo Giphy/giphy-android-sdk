@@ -18,7 +18,7 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.0.5'
+implementation 'com.giphy.sdk:ui:2.0.6'
 ``` 
     
 ### Basic Setup
@@ -36,6 +36,12 @@ class GiphyActivity: AppCompatActivity() {
         GiphyDialogFragment.newInstance().show(supportFragmentManager, "giphy_dialog")
     }
 }
+```
+
+or pass your API key as a fragment argument to configure the GIPHY SDK right before opening `GiphyDialogFragment` :
+
+```kotlin
+val dialog = GiphyDialogFragment.newInstance(settings.copy(selectedContentType = contentType), YOUR_ANDROID_SDK_KEY)
 ```
 
 ### Custom UI
