@@ -18,7 +18,7 @@ maven {
 
 Then add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.0.7'
+implementation 'com.giphy.sdk:ui:2.0.8'
 ``` 
     
 ### Basic Setup
@@ -152,6 +152,11 @@ settings.stickerColumnCount: Int = 3
 settings.showSuggestionsBar = false
 ```
 
+- **Image Format**: You can choose a file type for the grid.
+```kotlin
+settings.imageFormat = ImageFormat.WEBP
+```
+
 #### Presentation 
 Show your `GiphyDialogFragment` using the `SupportFragmentManager` and watch as the GIFs start flowin'.
 
@@ -273,6 +278,7 @@ If you require a more flexible experience, use the `GiphyGridView` instead of th
 - **cellPadding** - spacing between rendered GIFs
 - **showViewOnGiphy** - enables/disables the `Show on Giphy` action in the long-press menu
 - **showCheckeredBackground** - use a checkered background (for stickers only)
+- **imageFormat** - choose a file type for the grid
 - **fixedSizeCells** - display content in equally sized cells (for stickers only)
 
 ## Loading GIFs using `GPHContent`
@@ -373,6 +379,9 @@ In order to interact with the `GiphyGridView` you can apply the following callba
 
 ```kotlin
 interface GPHGridCallback {
+    /**
+     * @param resultCount results count, in case of error it equals -1
+     */
     fun contentDidUpdate(resultCount: Int)
     fun didSelectMedia(media: Media)
 }
