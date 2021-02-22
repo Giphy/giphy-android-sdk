@@ -16,8 +16,8 @@ allprojects {
         jcenter()
         maven("https://jitpack.io")
         mavenLocal()
+        mavenCentral()
         google()
-        maven("https://giphy.bintray.com/giphy-sdk")
     }
 }
 
