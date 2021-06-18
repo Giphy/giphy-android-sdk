@@ -12,7 +12,7 @@ The latest release is available on [Maven Central](https://search.maven.org/arti
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.1.0'
+implementation 'com.giphy.sdk:ui:2.1.1'
 ``` 
     
 ### Basic Setup
@@ -132,11 +132,7 @@ settings.confirmationRenditionType = RenditionType.original
 settings.showCheckeredBackground = true
 ```
 
-- **Blurred Background**: Use a translucent blurred background of the template container
-```
-settings.useBlurredBackground = true
-```
-- **Stickers Column Count**: Customise the number of columns for stickers (Accepted values between 2 and 4). We recommend using 3 columns for blurred mode.
+- **Stickers Column Count**: Customise the number of columns for stickers (Accepted values between 2 and 4).
 ```kotlin
 settings.stickerColumnCount: Int = 3
 ```

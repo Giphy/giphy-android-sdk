@@ -87,7 +87,6 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
         }
         showAttributionCheck.isChecked = settings.showAttribution
         showConfirmationScreen.isChecked = settings.showConfirmationScreen
-        useBlurredBackground.isChecked = settings.useBlurredBackground
         showCheckeredBackground.isChecked = settings.showCheckeredBackground
 
         themeSelector.onToggledListener = { toggle, selected ->
@@ -122,7 +121,6 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
         settings.mediaTypeConfig = contentTypes.toTypedArray()
         settings.showAttribution = showAttributionCheck.isChecked
         settings.showConfirmationScreen = showConfirmationScreen.isChecked
-        settings.useBlurredBackground = useBlurredBackground.isChecked
         settings.showCheckeredBackground = showCheckeredBackground.isChecked
         dismissListener(settings)
         super.onDismiss(dialog)
