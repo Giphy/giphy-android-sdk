@@ -142,6 +142,13 @@
             android:text="GIFs" />
 
         <RadioButton
+                android:id="@+id/mediaClips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Clips" />
+
+        <RadioButton
             android:id="@+id/mediaStickers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

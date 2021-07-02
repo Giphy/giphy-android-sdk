@@ -15,6 +15,18 @@
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
+    <style name="ClipsDialogStyle" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+
+        <item name="android:windowBackground">@color/gph_dark_grey</item>
+        <item name="android:windowMinWidthMajor">100%</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+
     <style name="SettingHeader">
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textSize">16dp</item>

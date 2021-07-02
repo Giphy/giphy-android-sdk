@@ -15,4 +15,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <com.giphy.sdk.ui.views.GPHVideoPlayerView
+            android:id="@+id/gphVideoPlayerView"
+            android:visibility="gone"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/gifView"
+            app:layout_constraintEnd_toEndOf="@id/gifView"
+            app:layout_constraintStart_toStartOf="@id/gifView"
+            app:layout_constraintTop_toTopOf="@id/gifView"
+            />
+
+    <ImageView
+            android:translationZ="90dp"
+            android:id="@+id/soundIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitCenter"
+            android:padding="10dp"
+            android:src="@drawable/gph_ic_no_sound"
+            app:layout_constraintEnd_toEndOf="@id/gifView"
+            app:layout_constraintTop_toTopOf="@id/gifView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

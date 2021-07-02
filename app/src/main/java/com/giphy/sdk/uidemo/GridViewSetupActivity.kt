@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.giphy.sdk.core.models.enums.MediaType
 import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.Giphy
 import kotlinx.android.synthetic.main.grid_view_activity.*
@@ -41,8 +42,14 @@ class GridViewSetupActivity : AppCompatActivity() {
         })
 
         mediaTypeContainer.setOnCheckedChangeListener { radioGroup, id ->
+            if (id == R.id.mediaClips) {
+                DemoConfig.mediaType = MediaType.video
+            } else {
+                DemoConfig.mediaType = MediaType.gif
+            }
             when (id) {
                 R.id.mediaGif -> DemoConfig.contentType = GPHContentType.gif
+                R.id.mediaClips -> DemoConfig.contentType = GPHContentType.clips
                 R.id.mediaStickers -> DemoConfig.contentType = GPHContentType.sticker
                 R.id.mediaText -> DemoConfig.contentType = GPHContentType.text
                 R.id.mediaEmoji -> DemoConfig.contentType = GPHContentType.emoji
@@ -98,5 +105,15 @@ class GridViewSetupActivity : AppCompatActivity() {
     private fun displayConfig() {
         spanCountView.text = DemoConfig.spanCount.toString()
         paddingView.text = DemoConfig.cellPadding.toString()
+        when (DemoConfig.contentType) {
+            GPHContentType.clips -> mediaClips.isChecked = true
+            GPHContentType.gif -> mediaGif.isChecked = true
+            GPHContentType.sticker -> mediaStickers.isChecked = true
+            GPHContentType.text -> mediaText.isChecked = true
+            GPHContentType.emoji -> mediaEmoji.isChecked = true
+            GPHContentType.recents -> mediaRecents.isChecked = true
+        }
+        fixedSizeCells.isChecked = DemoConfig.fixedSizeCells
+        showCheckeredBackground.isChecked = DemoConfig.showCheckeredBackground
     }
 }

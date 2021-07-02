@@ -19,18 +19,26 @@ import kotlinx.android.synthetic.main.fragment_settings.*
  */
 class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
 
+    enum class ClipsPlaybackSetting {
+        inline,
+        popup;
+    }
+
     private var settings: GPHSettings = GPHSettings()
-    var dismissListener: (GPHSettings) -> Unit = { settings -> }
+    private var clipsPlaybackSetting = ClipsPlaybackSetting.inline
+    var dismissListener: (GPHSettings, ClipsPlaybackSetting) -> Unit = { settings, clipsPlaybackSetting -> }
 
     companion object {
         private const val PICK_GRID_RENDITION = 201
         private const val PICK_ATTRIBUTION_RENDTION = 202
 
         private val KEY_SETTINGS = "key_settings"
-        fun newInstance(gphSettings: GPHSettings): SettingsDialogFragment {
+        private val KEY_SETTINGS_CLIPS = "key_settings_clips"
+        fun newInstance(gphSettings: GPHSettings, clipsPlaybackSetting: ClipsPlaybackSetting): SettingsDialogFragment {
             val fragment = SettingsDialogFragment()
             val bundle = Bundle()
             bundle.putParcelable(KEY_SETTINGS, gphSettings)
+            bundle.putSerializable(KEY_SETTINGS_CLIPS, clipsPlaybackSetting)
             fragment.arguments = bundle
             return fragment
         }
@@ -43,6 +51,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         settings = arguments!!.getParcelable(KEY_SETTINGS)
+        clipsPlaybackSetting = arguments!!.getSerializable(KEY_SETTINGS_CLIPS) as ClipsPlaybackSetting
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -58,10 +67,15 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
             GPHTheme.Automatic -> R.id.autoTheme
         }, true)
         layoutSelector.setToggled(if (settings.gridType == GridType.waterfall) R.id.waterfall else R.id.carousel, true)
+        clipsPlaybackSettingsSelector.setToggled(
+            if (clipsPlaybackSetting == ClipsPlaybackSetting.inline) R.id.inline else R.id.popup,
+            true
+        )
         mediaTypeSelector.inflateMenu(if (settings.gridType == GridType.waterfall) R.menu.waterfal_media_types else R.menu.carousel_media_types)
         settings.mediaTypeConfig.forEach {
             val id = when (it) {
                 GPHContentType.gif -> R.id.typeGif
+                GPHContentType.clips -> R.id.typeClips
                 GPHContentType.sticker -> R.id.typeStickers
                 GPHContentType.text -> R.id.typeText
                 GPHContentType.emoji -> R.id.typeEmoji
@@ -85,6 +99,17 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                 }
             }
         }
+
+        clipsPlaybackSettingsSelector.onToggledListener = { toggle, selected ->
+            if (toggle.id == R.id.inline) {
+                clipsPlaybackSetting = ClipsPlaybackSetting.inline
+                clipsPlaybackSettingsSelector.setToggled(R.id.inline, true)
+            } else {
+                clipsPlaybackSetting = ClipsPlaybackSetting.popup
+                clipsPlaybackSettingsSelector.setToggled(R.id.popup, true)
+            }
+        }
+
         showAttributionCheck.isChecked = settings.showAttribution
         showConfirmationScreen.isChecked = settings.showConfirmationScreen
         showCheckeredBackground.isChecked = settings.showCheckeredBackground
@@ -111,6 +136,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
         mediaTypeSelector.selectedToggles().forEach {
             when (it.id) {
                 R.id.typeGif -> contentTypes.add(GPHContentType.gif)
+                R.id.typeClips -> contentTypes.add(GPHContentType.clips)
                 R.id.typeStickers -> contentTypes.add(GPHContentType.sticker)
                 R.id.typeText -> contentTypes.add(GPHContentType.text)
                 R.id.typeEmoji -> contentTypes.add(GPHContentType.emoji)
@@ -122,7 +148,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
         settings.showAttribution = showAttributionCheck.isChecked
         settings.showConfirmationScreen = showConfirmationScreen.isChecked
         settings.showCheckeredBackground = showCheckeredBackground.isChecked
-        dismissListener(settings)
+        dismissListener(settings, clipsPlaybackSetting)
         super.onDismiss(dialog)
     }
 
