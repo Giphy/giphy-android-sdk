@@ -117,6 +117,7 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
 
     private fun setTrendingQuery() {
         gifsGridView.content = when (DemoConfig.contentType) {
+            GPHContentType.clips -> GPHContent.trendingVideos
             GPHContentType.gif -> GPHContent.trendingGifs
             GPHContentType.sticker -> GPHContent.trendingStickers
             GPHContentType.text -> GPHContent.trendingText

@@ -7,18 +7,16 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.giphy.sdk.core.models.Media
+import com.giphy.sdk.tracking.isVideo
 import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.themes.GridType
+import com.giphy.sdk.ui.views.GPHVideoPlayer
+import com.giphy.sdk.ui.views.GPHVideoPlayerState
 import com.giphy.sdk.ui.views.GiphyDialogFragment
-import com.giphy.sdk.uidemo.feed.Author
-import com.giphy.sdk.uidemo.feed.FeedDataItem
-import com.giphy.sdk.uidemo.feed.GifItem
-import com.giphy.sdk.uidemo.feed.InvalidKeyItem
-import com.giphy.sdk.uidemo.feed.MessageFeedAdapter
-import com.giphy.sdk.uidemo.feed.MessageItem
+import com.giphy.sdk.uidemo.feed.*
 import kotlinx.android.synthetic.main.activity_demo.*
 import timber.log.Timber
 
@@ -35,9 +33,13 @@ class DemoActivity : AppCompatActivity() {
     var settings = GPHSettings(gridType = GridType.waterfall, theme = GPHTheme.Light, stickerColumnCount = 3)
     var feedAdapter: MessageFeedAdapter? = null
     var messageItems = ArrayList<FeedDataItem>()
+    var contentType = GPHContentType.gif
 
     //TODO: Set a valid API KEY
     val YOUR_API_KEY = INVALID_KEY
+
+    val player: GPHVideoPlayer = createVideoPlayer()
+    private var clipsPlaybackSetting = SettingsDialogFragment.ClipsPlaybackSetting.inline
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +51,26 @@ class DemoActivity : AppCompatActivity() {
         setupFeed()
 
         launchGiphyBtn.setOnClickListener {
-            val dialog = GiphyDialogFragment.newInstance(settings)
+            player.onPause()
+            val dialog = GiphyDialogFragment.newInstance(settings.copy(selectedContentType = contentType))
             dialog.gifSelectionListener = getGifSelectionListener()
             dialog.show(supportFragmentManager, "gifs_dialog")
         }
+    }
+
+    override fun onDestroy() {
+        player.onDestroy()
+        super.onDestroy()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        player.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        player.onResume()
     }
 
     private fun getGifSelectionListener() = object : GiphyDialogFragment.GifSelectionListener {
@@ -62,11 +80,19 @@ class DemoActivity : AppCompatActivity() {
             selectedContentType: GPHContentType
         ) {
             Log.d(TAG, "onGifSelected")
-            messageItems.add(GifItem(media, Author.Me))
-            feedAdapter?.notifyItemInserted(messageItems.size - 1) }
+            if (selectedContentType == GPHContentType.clips && media.isVideo) {
+                messageItems.add(ClipItem(media, Author.Me))
+            } else {
+                messageItems.add(GifItem(media, Author.Me))
+            }
+            feedAdapter?.notifyItemInserted(messageItems.size - 1)
+            contentType = selectedContentType
+        }
+
 
         override fun onDismissed(selectedContentType: GPHContentType) {
             Log.d(TAG, "onDismissed")
+            contentType = selectedContentType
         }
 
         override fun didSearchTerm(term: String) {
@@ -121,19 +147,67 @@ class DemoActivity : AppCompatActivity() {
             messageItems.add(InvalidKeyItem(Author.GifBot))
         }
         feedAdapter = MessageFeedAdapter(messageItems)
+        feedAdapter?.itemSelectedListener = ::onGifSelected
+        feedAdapter?.adapterHelper?.player = player
+        feedAdapter?.adapterHelper?.clipsPlaybackSetting = clipsPlaybackSetting
+
         messageFeed.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         messageFeed.adapter = feedAdapter
     }
 
+    private fun createVideoPlayer(): GPHVideoPlayer {
+        val player = GPHVideoPlayer(null, true)
+        player.addListener { playerState ->
+            when (playerState) {
+                is GPHVideoPlayerState.MediaChanged -> {
+                    val position = messageItems.map {
+                        if (it is ClipItem) {
+                            return@map it.media
+                        }
+                        return@map null
+                    }.indexOfFirst {
+                        it?.id == playerState.media.id
+                    }
+                    if (position > -1) {
+                        messageFeed.smoothScrollToPosition(position)
+                    }
+                }
+                else -> return@addListener
+            }
+        }
+        return player
+    }
+
+    private fun onGifSelected(itemData: FeedDataItem) {
+        if (itemData is MessageItem) {
+            Timber.d("onItemSelected ${itemData.text}")
+        } else if (itemData is InvalidKeyItem) {
+            Timber.d("onItemSelected InvalidKeyItem")
+        } else if (itemData is GifItem) {
+            Timber.d("onItemSelected ${itemData.media}")
+        } else if (itemData is ClipItem) {
+            Timber.d("onItemSelected ${itemData.media}")
+            showVideoPlayerDialog(itemData.media)
+        }
+    }
+
     private fun showSettingsDialog(): Boolean {
-        val dialog = SettingsDialogFragment.newInstance(settings)
+        val dialog = SettingsDialogFragment.newInstance(settings, clipsPlaybackSetting)
         dialog.dismissListener = ::applyNewSettings
         dialog.show(supportFragmentManager, "settings_dialog")
         return true
     }
 
-    private fun applyNewSettings(settings: GPHSettings) {
+    private fun showVideoPlayerDialog(media: Media): Boolean {
+        val dialog = ClipDialogFragment.newInstance(media)
+        dialog.show(supportFragmentManager, "video_player_dialog")
+        return true
+    }
+
+    private fun applyNewSettings(settings: GPHSettings, clipsPlaybackSetting: SettingsDialogFragment.ClipsPlaybackSetting) {
         this.settings = settings
+        this.clipsPlaybackSetting = clipsPlaybackSetting
+        feedAdapter?.adapterHelper?.clipsPlaybackSetting = clipsPlaybackSetting
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
