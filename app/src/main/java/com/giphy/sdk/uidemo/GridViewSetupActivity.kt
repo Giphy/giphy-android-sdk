@@ -42,18 +42,32 @@ class GridViewSetupActivity : AppCompatActivity() {
         })
 
         mediaTypeContainer.setOnCheckedChangeListener { radioGroup, id ->
-            if (id == R.id.mediaClips) {
-                DemoConfig.mediaType = MediaType.video
-            } else {
-                DemoConfig.mediaType = MediaType.gif
-            }
             when (id) {
-                R.id.mediaGif -> DemoConfig.contentType = GPHContentType.gif
-                R.id.mediaClips -> DemoConfig.contentType = GPHContentType.clips
-                R.id.mediaStickers -> DemoConfig.contentType = GPHContentType.sticker
-                R.id.mediaText -> DemoConfig.contentType = GPHContentType.text
-                R.id.mediaEmoji -> DemoConfig.contentType = GPHContentType.emoji
-                R.id.mediaRecents -> DemoConfig.contentType = GPHContentType.recents
+                R.id.mediaClips -> {
+                    DemoConfig.contentType = GPHContentType.clips
+                    DemoConfig.mediaType = MediaType.video
+                }
+                R.id.mediaGif -> {
+                    DemoConfig.contentType = GPHContentType.gif
+                    DemoConfig.mediaType = MediaType.gif
+                }
+                R.id.mediaStickers -> {
+                    DemoConfig.contentType = GPHContentType.sticker
+                    DemoConfig.mediaType = MediaType.sticker
+                }
+                R.id.mediaText -> {
+                    DemoConfig.contentType = GPHContentType.text
+                    DemoConfig.mediaType = MediaType.text
+                }
+                R.id.mediaEmoji -> {
+                    DemoConfig.contentType = GPHContentType.emoji
+                    DemoConfig.mediaType = MediaType.emoji
+                }
+                R.id.mediaRecents -> {
+                    DemoConfig.contentType = GPHContentType.recents
+                    DemoConfig.mediaType = MediaType.gif
+                }
+
             }
             when (id) {
                 R.id.mediaStickers,
