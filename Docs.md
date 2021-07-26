@@ -291,14 +291,14 @@ Use one of the convenience methods avaiable in the `GPHContent` in order to crea
 After you have have defined your query using a `GPHContent` object, to load the media content pass this object to `GiphyGridView`
 ```kotlin
 val gifsContent = GPHContent.searchQuery("cats")
-gifsGridView.updateContent(gifsContent)
+gifsGridView.content = gifsContent
 ```
 
 - **Recently Picked**: 
 Show a user a collection of his recently picked GIFs/Stickers:
 ```kotlin
 val gifsContent = GPHContent.recents
-gifsGridView.updateContent(gifsContent)
+gifsGridView.content = gifsContent
 ```
 Before showing a recents tab, make sure that the user actually has recent gifs stored, by checking the following property:
  ```kotlin
@@ -328,7 +328,7 @@ It can be done by embedding in your layout XML. UI properties can also be applie
 
 Perform a query
 ```kotlin
-gifsGridView.updateContent(GPHContent.searchQuery("dogs"))
+gifsGridView.content = GPHContent.searchQuery("dogs")
 ```
 
 #### Method B
