@@ -6,12 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.tracking.isVideo
+import com.giphy.sdk.ui.utils.videoUrl
 import com.giphy.sdk.ui.views.GPHVideoPlayer
 import com.giphy.sdk.ui.views.GPHVideoPlayerState
 import com.giphy.sdk.uidemo.R
 import com.giphy.sdk.uidemo.SettingsDialogFragment
-import kotlinx.android.synthetic.main.gif_item.view.*
-import kotlinx.android.synthetic.main.message_item.view.*
+import com.giphy.sdk.uidemo.databinding.GifItemBinding
+import com.giphy.sdk.uidemo.databinding.MessageItemBinding
 
 class ClipsAdapterHelper {
     lateinit var player: GPHVideoPlayer
@@ -47,8 +48,12 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
     override fun onBindViewHolder(p0: RecyclerView.ViewHolder, p1: Int) {
         when (items[p1]) {
             is MessageItem -> (p0 as MessageViewHolder).bindMessage(items[p1] as MessageItem)
-            is GifItem -> (p0 as GifViewHolder).bindMessage(items[p1] as GifItem)
-            is ClipItem -> { (p0 as ClipViewHolder).bindMessage(items[p1] as ClipItem) }
+            is GifItem -> {
+                (p0 as GifViewHolder).bindMessage(items[p1] as GifItem)
+            }
+            is ClipItem -> {
+                (p0 as ClipViewHolder).bindMessage(items[p1] as ClipItem)
+            }
             is InvalidKeyItem -> {
                 // Nothing to do
             }
@@ -68,18 +73,21 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
 
     inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindMessage(message: MessageItem) {
-            itemView.textMessage.text = message.text
-//            itemView.textMessage.setTextColor(theme.textColor)
-//            itemView.textMessage.setBackgroundResource(if (theme == LightTheme) R.drawable.message_background_light else R.drawable.message_background_dark)
-//            itemView.timeView.setTextColor(theme.textColor)
+            MessageItemBinding.bind(itemView).textMessage.text = message.text
         }
     }
 
     inner class GifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindMessage(message: GifItem) {
-            itemView.gifView.setMedia(message.media)
-            itemView.gifView.isBackgroundVisible = false
-            itemView.soundIcon.visibility = if (message.media.isVideo) View.VISIBLE else View.GONE
+            GifItemBinding.bind(itemView).apply {
+                gifView.setOnClickListener {
+                    itemSelectedListener(message)
+                }
+
+                gifView.setMedia(message.media)
+                gifView.isBackgroundVisible = false
+                soundIcon.visibility = if (message.media.isVideo) View.VISIBLE else View.GONE
+            }
         }
     }
 
@@ -88,6 +96,8 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
 
         lateinit var media: Media
         lateinit var player: GPHVideoPlayer
+
+        val viewBinding = GifItemBinding.bind(itemView)
 
         fun bindMessage(message: ClipItem) {
             media = message.media
@@ -101,11 +111,11 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
                     is GPHVideoPlayerState.MediaChanged -> {
                         updateSoundModeIcon()
                         if (media.id != playerState.media.id) {
-                            itemView.gifView.visibility = View.VISIBLE
-                            itemView.gphVideoPlayerView.visibility = View.GONE
+                            viewBinding.gifView.visibility = View.VISIBLE
+                            viewBinding.gphVideoPlayerView.visibility = View.GONE
                         } else {
-                            itemView.gphVideoPlayerView.visibility = View.VISIBLE
-                            itemView.gifView.visibility = View.INVISIBLE
+                            viewBinding.gphVideoPlayerView.visibility = View.VISIBLE
+                            viewBinding.gifView.visibility = View.INVISIBLE
                         }
                     }
                     else -> return@addListener
@@ -121,18 +131,18 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
                 }
             }
 
-            itemView.gifView.setOnClickListener(clickListener)
-            itemView.gphVideoPlayerView.setOnClickListener(clickListener)
+            viewBinding.gifView.setOnClickListener(clickListener)
+            viewBinding.gphVideoPlayerView.setOnClickListener(clickListener)
 
-            itemView.gifView.setMedia(message.media)
-            itemView.gifView.isBackgroundVisible = false
-            itemView.soundIcon.visibility =
+            viewBinding.gifView.setMedia(message.media)
+            viewBinding.gifView.isBackgroundVisible = false
+            viewBinding.soundIcon.visibility =
                 if (message.media.isVideo) View.VISIBLE else View.GONE
         }
 
         private fun playVideo() {
             if (this::player.isInitialized) {
-                player.loadMedia(media, view = itemView.gphVideoPlayerView)
+                media.let { player.loadMedia(it, view = viewBinding.gphVideoPlayerView) }
             }
         }
 
@@ -144,9 +154,9 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
 
         private fun updateSoundModeIcon() {
             if (this::player.isInitialized && player.getVolume() > 0 && player.media.id == media.id) {
-                itemView.soundIcon.setImageResource(if (player.getVolume() > 0) com.giphy.sdk.ui.R.drawable.gph_ic_sound else com.giphy.sdk.ui.R.drawable.gph_ic_no_sound)
+                viewBinding.soundIcon.setImageResource(if (player.getVolume() > 0) com.giphy.sdk.ui.R.drawable.gph_ic_sound else com.giphy.sdk.ui.R.drawable.gph_ic_no_sound)
             } else {
-                itemView.soundIcon.setImageResource(com.giphy.sdk.ui.R.drawable.gph_ic_no_sound)
+                viewBinding.soundIcon.setImageResource(com.giphy.sdk.ui.R.drawable.gph_ic_no_sound)
             }
         }
     }

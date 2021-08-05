@@ -8,20 +8,20 @@ import androidx.appcompat.app.AppCompatActivity
 import com.giphy.sdk.core.models.enums.MediaType
 import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.Giphy
-import kotlinx.android.synthetic.main.grid_view_activity.*
-import kotlinx.android.synthetic.main.grid_view_activity.orientationToggle
-import kotlinx.android.synthetic.main.grid_view_activity.paddingBar
-import kotlinx.android.synthetic.main.grid_view_activity.spanCountBar
+import com.giphy.sdk.uidemo.databinding.GridViewActivityBinding
 
 class GridViewSetupActivity : AppCompatActivity() {
+
+    private lateinit var binding: GridViewActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         title = "Giphy Grid for Applications"
 
-        setContentView(R.layout.grid_view_activity)
+        binding = GridViewActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        spanCountBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.spanCountBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 DemoConfig.spanCount = (seekBar?.progress ?: 1) + 1
                 displayConfig()
@@ -31,7 +31,7 @@ class GridViewSetupActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
 
-        paddingBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.paddingBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 DemoConfig.cellPadding = seekBar?.progress ?: 0
                 displayConfig()
@@ -41,7 +41,7 @@ class GridViewSetupActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
 
-        mediaTypeContainer.setOnCheckedChangeListener { radioGroup, id ->
+        binding.mediaTypeContainer.setOnCheckedChangeListener { _, id ->
             when (id) {
                 R.id.mediaClips -> {
                     DemoConfig.contentType = GPHContentType.clips
@@ -72,38 +72,38 @@ class GridViewSetupActivity : AppCompatActivity() {
             when (id) {
                 R.id.mediaStickers,
                 R.id.mediaText -> {
-                    fixedSizeCells.isEnabled = true
+                    binding.fixedSizeCells.isEnabled = true
                 }
                 else -> {
                     DemoConfig.fixedSizeCells = false
-                    fixedSizeCells.isEnabled = false
-                    fixedSizeCells.isChecked = false
+                    binding.fixedSizeCells.isEnabled = false
+                    binding.fixedSizeCells.isChecked = false
                 }
             }
         }
 
-        orientationToggle.setOnCheckedChangeListener { _, isChecked ->
+        binding.orientationToggle.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 DemoConfig.direction = androidx.recyclerview.widget.RecyclerView.HORIZONTAL
-                spanCountBar.max = 1
-                spanCountBar.progress = 0
+                binding.spanCountBar.max = 1
+                binding.spanCountBar.progress = 0
             } else {
                 DemoConfig.direction = androidx.recyclerview.widget.RecyclerView.VERTICAL
-                spanCountBar.max = 4
-                spanCountBar.progress = 1
+                binding.spanCountBar.max = 4
+                binding.spanCountBar.progress = 1
             }
-            spanCountBar.invalidate()
+            binding.spanCountBar.invalidate()
         }
 
-        fixedSizeCells.setOnCheckedChangeListener { _, value ->
+        binding.fixedSizeCells.setOnCheckedChangeListener { _, value ->
             DemoConfig.fixedSizeCells = value
         }
 
-        showCheckeredBackground.setOnCheckedChangeListener { _, value ->
+        binding.showCheckeredBackground.setOnCheckedChangeListener { _, value ->
             DemoConfig.showCheckeredBackground = value
         }
 
-        launchGrid.setOnClickListener {
+        binding.launchGrid.setOnClickListener {
             if (DemoConfig.contentType == GPHContentType.recents && Giphy.recents.count == 0) {
                 Toast.makeText(applicationContext, "No recent GIFs found. Select other media type to click them.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -111,23 +111,25 @@ class GridViewSetupActivity : AppCompatActivity() {
             val intent = Intent(this, GridViewDemoActivity::class.java)
             startActivity(intent)
         }
-        spanCountBar.progress = DemoConfig.spanCount
-        paddingBar.progress = DemoConfig.cellPadding
+        binding.spanCountBar.progress = DemoConfig.spanCount
+        binding.paddingBar.progress = DemoConfig.cellPadding
         displayConfig()
     }
 
     private fun displayConfig() {
-        spanCountView.text = DemoConfig.spanCount.toString()
-        paddingView.text = DemoConfig.cellPadding.toString()
-        when (DemoConfig.contentType) {
-            GPHContentType.clips -> mediaClips.isChecked = true
-            GPHContentType.gif -> mediaGif.isChecked = true
-            GPHContentType.sticker -> mediaStickers.isChecked = true
-            GPHContentType.text -> mediaText.isChecked = true
-            GPHContentType.emoji -> mediaEmoji.isChecked = true
-            GPHContentType.recents -> mediaRecents.isChecked = true
+        binding.apply {
+            spanCountView.text = DemoConfig.spanCount.toString()
+            paddingView.text = DemoConfig.cellPadding.toString()
+            when (DemoConfig.contentType) {
+                GPHContentType.clips -> mediaClips.isChecked = true
+                GPHContentType.gif -> mediaGif.isChecked = true
+                GPHContentType.sticker -> mediaStickers.isChecked = true
+                GPHContentType.text -> mediaText.isChecked = true
+                GPHContentType.emoji -> mediaEmoji.isChecked = true
+                GPHContentType.recents -> mediaRecents.isChecked = true
+            }
+            fixedSizeCells.isChecked = DemoConfig.fixedSizeCells
+            showCheckeredBackground.isChecked = DemoConfig.showCheckeredBackground
         }
-        fixedSizeCells.isChecked = DemoConfig.fixedSizeCells
-        showCheckeredBackground.isChecked = DemoConfig.showCheckeredBackground
     }
 }

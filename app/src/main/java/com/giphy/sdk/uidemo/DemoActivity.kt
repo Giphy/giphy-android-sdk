@@ -17,7 +17,7 @@ import com.giphy.sdk.ui.views.GPHVideoPlayer
 import com.giphy.sdk.ui.views.GPHVideoPlayerState
 import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.giphy.sdk.uidemo.feed.*
-import kotlinx.android.synthetic.main.activity_demo.*
+import com.giphy.sdk.uidemo.databinding.ActivityDemoBinding
 import timber.log.Timber
 
 /**
@@ -29,7 +29,7 @@ class DemoActivity : AppCompatActivity() {
         val TAG = DemoActivity::class.java.simpleName
         val INVALID_KEY = "NOT_A_VALID_KEY"
     }
-
+    private lateinit var binding: ActivityDemoBinding
     var settings = GPHSettings(gridType = GridType.waterfall, theme = GPHTheme.Light, stickerColumnCount = 3)
     var feedAdapter: MessageFeedAdapter? = null
     var messageItems = ArrayList<FeedDataItem>()
@@ -46,11 +46,12 @@ class DemoActivity : AppCompatActivity() {
 
         Giphy.configure(this, YOUR_API_KEY, true)
 
-        setContentView(R.layout.activity_demo)
+        binding = ActivityDemoBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setupToolbar()
         setupFeed()
 
-        launchGiphyBtn.setOnClickListener {
+        binding.launchGiphyBtn.setOnClickListener {
             player.onPause()
             val dialog = GiphyDialogFragment.newInstance(settings.copy(selectedContentType = contentType))
             dialog.gifSelectionListener = getGifSelectionListener()
@@ -151,8 +152,8 @@ class DemoActivity : AppCompatActivity() {
         feedAdapter?.adapterHelper?.player = player
         feedAdapter?.adapterHelper?.clipsPlaybackSetting = clipsPlaybackSetting
 
-        messageFeed.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
-        messageFeed.adapter = feedAdapter
+        binding.messageFeed.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        binding.messageFeed.adapter = feedAdapter
     }
 
     private fun createVideoPlayer(): GPHVideoPlayer {
@@ -169,7 +170,7 @@ class DemoActivity : AppCompatActivity() {
                         it?.id == playerState.media.id
                     }
                     if (position > -1) {
-                        messageFeed.smoothScrollToPosition(position)
+                        binding.messageFeed.smoothScrollToPosition(position)
                     }
                 }
                 else -> return@addListener
