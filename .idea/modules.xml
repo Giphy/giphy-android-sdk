@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="giphy-android-sdk-ui-example/app" />
-      <module fileurl="file://$PROJECT_DIR$/giphy-android-sdk-ui-example.iml" filepath="$PROJECT_DIR$/giphy-android-sdk-ui-example.iml" group="giphy-android-sdk-ui-example" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/giphy-android-sdk-ui-example.iml" filepath="$PROJECT_DIR$/.idea/modules/giphy-android-sdk-ui-example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/giphy-android-sdk-ui-example.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/giphy-android-sdk-ui-example.app.iml" />
     </modules>
   </component>
 </project>

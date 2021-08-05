@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.ui.views.GPHVideoPlayer
-import kotlinx.android.synthetic.main.fragment_video_player.*
+
+import com.giphy.sdk.uidemo.databinding.FragmentVideoPlayerBinding
 
 class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
+
+    lateinit var binding: FragmentVideoPlayerBinding
 
     private var media: Media? = null
     private var videoPlayer: GPHVideoPlayer? = null
@@ -30,7 +33,6 @@ class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         media = arguments!!.getParcelable(KEY_VIDEO_PLAYER)
     }
 
@@ -39,7 +41,8 @@ class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_video_player, container, false)
+        binding = FragmentVideoPlayerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -59,11 +62,13 @@ class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        media?.let { media ->
-            gphVideoPlayerView.preloadFirstFrame(media)
-            videoPlayer?.onDestroy()
-            videoPlayer = GPHVideoPlayer(gphVideoPlayerView, true)
-            videoPlayer?.loadMedia(media)
+        binding.apply {
+            media?.let { media ->
+                gphVideoPlayerView.preloadFirstFrame(media)
+                videoPlayer?.onDestroy()
+                videoPlayer = GPHVideoPlayer(gphVideoPlayerView, true)
+                videoPlayer?.loadMedia(media)
+            }
         }
     }
 }

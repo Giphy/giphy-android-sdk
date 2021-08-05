@@ -8,18 +8,20 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.giphy.sdk.core.models.enums.MediaType
 import com.giphy.sdk.ui.pagination.GPHContent
-import kotlinx.android.synthetic.main.grid_view_extensions_activity.*
+import com.giphy.sdk.uidemo.databinding.GridViewExtensionsActivityBinding
 
 class GridViewExtensionsActivity : AppCompatActivity() {
+
+    private lateinit var binding: GridViewExtensionsActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         title = "Giphy Grid for Extensions"
-//        GiphyCoreUI.configure(this, "oUThALwXNzrOG4b1jRyoPDtmZJmmW5HU")
 
-        setContentView(R.layout.grid_view_extensions_activity)
+        binding = GridViewExtensionsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        spanCountBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.spanCountBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
             }
 
@@ -27,11 +29,11 @@ class GridViewExtensionsActivity : AppCompatActivity() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                gifsGridView?.spanCount = (seekBar?.progress ?: 1) + 1
+                binding.gifsGridView.spanCount = (seekBar?.progress ?: 1) + 1
             }
         })
 
-        paddingBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.paddingBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
             }
 
@@ -39,20 +41,20 @@ class GridViewExtensionsActivity : AppCompatActivity() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                gifsGridView?.cellPadding = seekBar?.progress ?: 0
+                binding.gifsGridView.cellPadding = seekBar?.progress ?: 0
             }
         })
 
-        orientationToggle.setOnCheckedChangeListener { buttonView, isChecked ->
-            gifsGridView?.direction = if (isChecked) androidx.recyclerview.widget.RecyclerView.HORIZONTAL else androidx.recyclerview.widget.RecyclerView.VERTICAL
+        binding.orientationToggle.setOnCheckedChangeListener { _, isChecked ->
+            binding.gifsGridView.direction = if (isChecked) androidx.recyclerview.widget.RecyclerView.HORIZONTAL else androidx.recyclerview.widget.RecyclerView.VERTICAL
         }
 
-        searchBtn.setOnClickListener {
+        binding.searchBtn.setOnClickListener {
             dismissKeyboard()
             performCustomSearch()
         }
 
-        searchInput.setOnEditorActionListener { view, actionId, event ->
+        binding.searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_GO) {
                 dismissKeyboard()
                 performCustomSearch()
@@ -63,11 +65,11 @@ class GridViewExtensionsActivity : AppCompatActivity() {
     }
 
     private fun performCustomSearch() {
-        gifsGridView?.content = GPHContent.searchQuery(searchInput.text.toString(), MediaType.gif)
+        binding.gifsGridView.content = GPHContent.searchQuery(binding.searchInput.text.toString(), MediaType.gif)
     }
 
     fun dismissKeyboard() {
         val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(searchInput.windowToken, 0)
+        imm.hideSoftInputFromWindow(binding.searchInput.windowToken, 0)
     }
 }

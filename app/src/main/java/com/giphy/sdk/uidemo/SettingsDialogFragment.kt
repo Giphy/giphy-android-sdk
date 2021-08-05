@@ -12,7 +12,7 @@ import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.themes.GridType
-import kotlinx.android.synthetic.main.fragment_settings.*
+import com.giphy.sdk.uidemo.databinding.FragmentSettingsBinding
 
 /**
  * Created by Cristian Holdunu on 13/03/2019.
@@ -23,6 +23,9 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
         inline,
         popup;
     }
+
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
 
     private var settings: GPHSettings = GPHSettings()
     private var clipsPlaybackSetting = ClipsPlaybackSetting.inline
@@ -54,86 +57,106 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
         clipsPlaybackSetting = arguments!!.getSerializable(KEY_SETTINGS_CLIPS) as ClipsPlaybackSetting
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return _binding?.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        themeSelector.setToggled(when (settings.theme) {
-            GPHTheme.Light -> R.id.lightTheme
-            GPHTheme.Dark -> R.id.darkTheme
-            GPHTheme.Automatic -> R.id.autoTheme
-        }, true)
-        layoutSelector.setToggled(if (settings.gridType == GridType.waterfall) R.id.waterfall else R.id.carousel, true)
-        clipsPlaybackSettingsSelector.setToggled(
-            if (clipsPlaybackSetting == ClipsPlaybackSetting.inline) R.id.inline else R.id.popup,
-            true
-        )
-        mediaTypeSelector.inflateMenu(if (settings.gridType == GridType.waterfall) R.menu.waterfal_media_types else R.menu.carousel_media_types)
-        settings.mediaTypeConfig.forEach {
-            val id = when (it) {
-                GPHContentType.gif -> R.id.typeGif
-                GPHContentType.clips -> R.id.typeClips
-                GPHContentType.sticker -> R.id.typeStickers
-                GPHContentType.text -> R.id.typeText
-                GPHContentType.emoji -> R.id.typeEmoji
-                GPHContentType.recents -> R.id.typeRecents
+        binding.apply {
+            themeSelector.setToggled(
+                when (settings.theme) {
+                    GPHTheme.Light -> R.id.lightTheme
+                    GPHTheme.Dark -> R.id.darkTheme
+                    GPHTheme.Automatic -> R.id.autoTheme
+                }, true
+            )
+            layoutSelector.setToggled(
+                if (settings.gridType == GridType.waterfall) R.id.waterfall else R.id.carousel,
+                true
+            )
+            clipsPlaybackSettingsSelector.setToggled(
+                if (clipsPlaybackSetting == ClipsPlaybackSetting.inline) R.id.inline else R.id.popup,
+                true
+            )
+            mediaTypeSelector.inflateMenu(if (settings.gridType == GridType.waterfall) R.menu.waterfal_media_types else R.menu.carousel_media_types)
+            settings.mediaTypeConfig.forEach {
+                val id = when (it) {
+                    GPHContentType.gif -> R.id.typeGif
+                    GPHContentType.clips -> R.id.typeClips
+                    GPHContentType.sticker -> R.id.typeStickers
+                    GPHContentType.text -> R.id.typeText
+                    GPHContentType.emoji -> R.id.typeEmoji
+                    GPHContentType.recents -> R.id.typeRecents
+                }
+                mediaTypeSelector.setToggled(id, true)
             }
-            mediaTypeSelector.setToggled(id, true)
-        }
 
-        layoutSelector.onToggledListener = { toggle, selected ->
-            (mediaTypeSelector.getChildAt(0) as LinearLayout).removeAllViews()
-            mediaTypeSelector.toggles.clear()
-            if (toggle.id == R.id.carousel) {
-                mediaTypeSelector.multipleSelection = false
-                mediaTypeSelector.inflateMenu(R.menu.carousel_media_types)
-                mediaTypeSelector.setToggled(R.id.typeGif, true)
-            } else {
-                mediaTypeSelector.multipleSelection = true
-                mediaTypeSelector.inflateMenu(R.menu.waterfal_media_types)
-                mediaTypeSelector.toggles.forEach {
-                    mediaTypeSelector.setToggled(it.id, true)
+            layoutSelector.onToggledListener = { toggle, selected ->
+                (mediaTypeSelector.getChildAt(0) as LinearLayout).removeAllViews()
+                mediaTypeSelector.toggles.clear()
+                if (toggle.id == R.id.carousel) {
+                    mediaTypeSelector.multipleSelection = false
+                    mediaTypeSelector.inflateMenu(R.menu.carousel_media_types)
+                    mediaTypeSelector.setToggled(R.id.typeGif, true)
+                } else {
+                    mediaTypeSelector.multipleSelection = true
+                    mediaTypeSelector.inflateMenu(R.menu.waterfal_media_types)
+                    mediaTypeSelector.toggles.forEach {
+                        mediaTypeSelector.setToggled(it.id, true)
+                    }
                 }
             }
-        }
 
-        clipsPlaybackSettingsSelector.onToggledListener = { toggle, selected ->
-            if (toggle.id == R.id.inline) {
-                clipsPlaybackSetting = ClipsPlaybackSetting.inline
-                clipsPlaybackSettingsSelector.setToggled(R.id.inline, true)
-            } else {
-                clipsPlaybackSetting = ClipsPlaybackSetting.popup
-                clipsPlaybackSettingsSelector.setToggled(R.id.popup, true)
+            clipsPlaybackSettingsSelector.onToggledListener = { toggle, selected ->
+                if (toggle.id == R.id.inline) {
+                    clipsPlaybackSetting = ClipsPlaybackSetting.inline
+                    clipsPlaybackSettingsSelector.setToggled(R.id.inline, true)
+                } else {
+                    clipsPlaybackSetting = ClipsPlaybackSetting.popup
+                    clipsPlaybackSettingsSelector.setToggled(R.id.popup, true)
+                }
+            }
+
+            showAttributionCheck.isChecked = settings.showAttribution
+            showConfirmationScreen.isChecked = settings.showConfirmationScreen
+            showCheckeredBackground.isChecked = settings.showCheckeredBackground
+
+            themeSelector.onToggledListener = { toggle, selected ->
+                settings.theme = when (toggle.id) {
+                    R.id.lightTheme -> GPHTheme.Light
+                    R.id.darkTheme -> GPHTheme.Dark
+                    else -> GPHTheme.Automatic
+                }
+            }
+            dismissBtn.setOnClickListener { dismiss() }
+            gridRenditionType.setOnClickListener { openRenditionPicker(PICK_GRID_RENDITION) }
+            attributionRenditionType.setOnClickListener {
+                openRenditionPicker(
+                    PICK_ATTRIBUTION_RENDTION
+                )
             }
         }
-
-        showAttributionCheck.isChecked = settings.showAttribution
-        showConfirmationScreen.isChecked = settings.showConfirmationScreen
-        showCheckeredBackground.isChecked = settings.showCheckeredBackground
-
-        themeSelector.onToggledListener = { toggle, selected ->
-            settings.theme = when (toggle.id) {
-                R.id.lightTheme -> GPHTheme.Light
-                R.id.darkTheme -> GPHTheme.Dark
-                else -> GPHTheme.Automatic
-            }
-        }
-        dismissBtn.setOnClickListener { dismiss() }
-        gridRenditionType.setOnClickListener { openRenditionPicker(PICK_GRID_RENDITION) }
-        attributionRenditionType.setOnClickListener { openRenditionPicker(PICK_ATTRIBUTION_RENDTION) }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        settings.gridType = when (layoutSelector.selectedToggles().firstOrNull()?.id) {
+        settings.gridType = when (binding.layoutSelector.selectedToggles().firstOrNull()?.id) {
             R.id.waterfall -> GridType.waterfall
             R.id.carousel -> GridType.carousel
             else -> GridType.waterfall
         }
         val contentTypes = ArrayList<GPHContentType>()
-        mediaTypeSelector.selectedToggles().forEach {
+        binding.mediaTypeSelector.selectedToggles().forEach {
             when (it.id) {
                 R.id.typeGif -> contentTypes.add(GPHContentType.gif)
                 R.id.typeClips -> contentTypes.add(GPHContentType.clips)
@@ -143,11 +166,12 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                 R.id.typeRecents -> contentTypes.add(GPHContentType.recents)
             }
         }
-
-        settings.mediaTypeConfig = contentTypes.toTypedArray()
-        settings.showAttribution = showAttributionCheck.isChecked
-        settings.showConfirmationScreen = showConfirmationScreen.isChecked
-        settings.showCheckeredBackground = showCheckeredBackground.isChecked
+        binding.apply {
+            settings.mediaTypeConfig = contentTypes.toTypedArray()
+            settings.showAttribution = showAttributionCheck.isChecked
+            settings.showConfirmationScreen = showConfirmationScreen.isChecked
+            settings.showCheckeredBackground = showCheckeredBackground.isChecked
+        }
         dismissListener(settings, clipsPlaybackSetting)
         super.onDismiss(dialog)
     }

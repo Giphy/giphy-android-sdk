@@ -19,34 +19,41 @@ import com.giphy.sdk.ui.views.GPHGridCallback
 import com.giphy.sdk.ui.views.GPHSearchGridCallback
 import com.giphy.sdk.ui.views.GifView
 import com.giphy.sdk.ui.views.GiphyGridView
-import kotlinx.android.synthetic.main.grid_view_demo_activity.*
+import com.giphy.sdk.uidemo.databinding.GridViewDemoActivityBinding
 import timber.log.Timber
 
 class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity) {
 
+    private lateinit var binding: GridViewDemoActivityBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        gifsGridView.direction = DemoConfig.direction
-        gifsGridView.spanCount = DemoConfig.spanCount
-        gifsGridView.cellPadding = DemoConfig.cellPadding
-        gifsGridView.fixedSizeCells = DemoConfig.fixedSizeCells
-        gifsGridView.showCheckeredBackground = DemoConfig.showCheckeredBackground
-        setTrendingQuery()
-        if (DemoConfig.mediaType == MediaType.emoji) {
-            searchInput.isEnabled = false
-            searchBtn.isEnabled = false
+        binding = GridViewDemoActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.apply {
+            gifsGridView.direction = DemoConfig.direction
+            gifsGridView.spanCount = DemoConfig.spanCount
+            gifsGridView.cellPadding = DemoConfig.cellPadding
+            gifsGridView.fixedSizeCells = DemoConfig.fixedSizeCells
+            gifsGridView.showCheckeredBackground = DemoConfig.showCheckeredBackground
+            setTrendingQuery()
+            if (DemoConfig.mediaType == MediaType.emoji) {
+                searchInput.isEnabled = false
+                searchBtn.isEnabled = false
+            }
         }
 
         if (DemoConfig.direction == GiphyGridView.HORIZONTAL) {
             // Limit height
             val constraints = ConstraintSet()
-            constraints.clone(parentView)
+            constraints.clone(binding.parentView)
             constraints.clear(R.id.gifsGridView, ConstraintSet.BOTTOM)
             constraints.constrainHeight(R.id.gifsGridView, 200 * DemoConfig.spanCount)
-            constraints.applyTo(parentView)
+            constraints.applyTo(binding.parentView)
         }
 
-        gifsGridView.callback = object : GPHGridCallback {
+        binding.gifsGridView.callback = object : GPHGridCallback {
             override fun contentDidUpdate(resultCount: Int) {
                 Timber.d("contentDidUpdate $resultCount")
             }
@@ -61,7 +68,7 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
             }
         }
 
-        gifsGridView.searchCallback = object : GPHSearchGridCallback {
+        binding.gifsGridView.searchCallback = object : GPHSearchGridCallback {
             override fun didTapUsername(username: String) {
                 Timber.d("didTapUsername $username")
             }
@@ -75,14 +82,14 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
             }
         }
 
-        searchBtn.setOnClickListener {
+        binding.searchBtn.setOnClickListener {
             dismissKeyboard()
             performCustomSearch()
         }
 
-        gifsGridView.setGiphyLoadingProvider(loadingProviderClient)
+        binding.gifsGridView.setGiphyLoadingProvider(loadingProviderClient)
 
-        searchInput.setOnEditorActionListener { view, actionId, event ->
+        binding.searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_GO) {
                 dismissKeyboard()
                 performCustomSearch()
@@ -91,7 +98,7 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
             false
         }
 
-        searchInput.addTextChangedListener(object : TextWatcher {
+        binding.searchInput.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) = Unit
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
@@ -103,20 +110,20 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
     }
 
     private fun performCustomSearch() {
-        if (searchInput.text.isNullOrEmpty())
+        if (binding.searchInput.text.isNullOrEmpty())
             setTrendingQuery()
         else
-            gifsGridView?.content =
-                    GPHContent.searchQuery(searchInput.text.toString(), DemoConfig.mediaType)
+            binding.gifsGridView.content =
+                    GPHContent.searchQuery(binding.searchInput.text.toString(), DemoConfig.mediaType)
     }
 
     fun dismissKeyboard() {
         val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(searchInput.windowToken, 0)
+        imm.hideSoftInputFromWindow(binding.searchInput.windowToken, 0)
     }
 
     private fun setTrendingQuery() {
-        gifsGridView.content = when (DemoConfig.contentType) {
+        binding.gifsGridView.content = when (DemoConfig.contentType) {
             GPHContentType.clips -> GPHContent.trendingVideos
             GPHContentType.gif -> GPHContent.trendingGifs
             GPHContentType.sticker -> GPHContent.trendingStickers
