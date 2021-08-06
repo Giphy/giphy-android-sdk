@@ -5,8 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.giphy.sdk.core.models.Media
-import com.giphy.sdk.ui.views.GPHVideoPlayer
-
+import com.giphy.sdk.ui.utils.videoAspectRatio
+import com.giphy.sdk.ui.utils.videoUrl
+import com.giphy.sdk.uidemo.VideoPlayer.VideoPlayer
 import com.giphy.sdk.uidemo.databinding.FragmentVideoPlayerBinding
 
 class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
@@ -14,7 +15,7 @@ class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
     lateinit var binding: FragmentVideoPlayerBinding
 
     private var media: Media? = null
-    private var videoPlayer: GPHVideoPlayer? = null
+    private var videoPlayer: VideoPlayer? = null
 
     companion object {
         private val KEY_VIDEO_PLAYER = "key_video_player"
@@ -64,10 +65,10 @@ class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             media?.let { media ->
-                gphVideoPlayerView.preloadFirstFrame(media)
+                videoPlayerView.preloadFirstFrame(media.url)
                 videoPlayer?.onDestroy()
-                videoPlayer = GPHVideoPlayer(gphVideoPlayerView, true)
-                videoPlayer?.loadMedia(media)
+                videoPlayer = VideoPlayer(videoPlayerView, true)
+                videoPlayer?.loadMedia(media.videoUrl ?: "", videoAspectRatio = media.videoAspectRatio)
             }
         }
     }

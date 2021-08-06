@@ -118,3 +118,11 @@ val search = GPHContent.searchQuery("hello", MediaType.video)
 ``` 
 
 We strongly reccomend providing your users with the option to play back the clip, including audio, before enabling them to send or share the clip asset, as is the case with the existing experience offered by the `GiphyDialogFragment`. This can be accomplished by presenting a `GPHVideoPlayerView` following user selection of a clip preview. 
+
+### VideoPlayer + VideoPlayerView
+
+`VideoPlayer` and `VideoPlayerView` are a generic alternative to the `GPHVideoPlayer` and `GPHVideoPlayerView` already included in the SDK.
+
+We're providing source code for the player as it may be useful for developers that want to customize the design as well as the innerworkings.
+
+It may also be a resource for GIPHY integration partners who are interested in adopting the Clips content type, as this video player code is intended to be independent of SDK components.
