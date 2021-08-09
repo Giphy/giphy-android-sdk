@@ -122,6 +122,7 @@ We strongly reccomend providing your users with the option to play back the clip
 ### VideoPlayer + VideoPlayerView
 
 `VideoPlayer` and `VideoPlayerView` are a generic alternative to the `GPHVideoPlayer` and `GPHVideoPlayerView` already included in the SDK.
+Note: You can find these files in the example app - they are not a part of the SDK.
 
 We're providing source code for the player as it may be useful for developers that want to customize the design as well as the innerworkings.
 
