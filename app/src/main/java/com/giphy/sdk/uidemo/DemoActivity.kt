@@ -13,9 +13,13 @@ import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.themes.GridType
+import com.giphy.sdk.ui.utils.videoUrl
 import com.giphy.sdk.ui.views.GPHVideoPlayer
 import com.giphy.sdk.ui.views.GPHVideoPlayerState
 import com.giphy.sdk.ui.views.GiphyDialogFragment
+import com.giphy.sdk.uidemo.VideoPlayer.VideoCache
+import com.giphy.sdk.uidemo.VideoPlayer.VideoPlayer
+import com.giphy.sdk.uidemo.VideoPlayer.VideoPlayerState
 import com.giphy.sdk.uidemo.feed.*
 import com.giphy.sdk.uidemo.databinding.ActivityDemoBinding
 import timber.log.Timber
@@ -38,16 +42,17 @@ class DemoActivity : AppCompatActivity() {
     //TODO: Set a valid API KEY
     val YOUR_API_KEY = INVALID_KEY
 
-    val player: GPHVideoPlayer = createVideoPlayer()
+    val player: VideoPlayer = createVideoPlayer()
     private var clipsPlaybackSetting = SettingsDialogFragment.ClipsPlaybackSetting.inline
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         Giphy.configure(this, YOUR_API_KEY, true)
-
+        VideoCache.initialize(this, 100 * 1024 * 1024)
         binding = ActivityDemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         setupToolbar()
         setupFeed()
 
@@ -75,12 +80,8 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun getGifSelectionListener() = object : GiphyDialogFragment.GifSelectionListener {
-        override fun onGifSelected(
-            media: Media,
-            searchTerm: String?,
-            selectedContentType: GPHContentType
-        ) {
-            Log.d(TAG, "onGifSelected")
+        override fun onGifSelected(media: Media, searchTerm: String?, selectedContentType: GPHContentType) {
+            Timber.d(TAG, "onGifSelected")
             if (selectedContentType == GPHContentType.clips && media.isVideo) {
                 messageItems.add(ClipItem(media, Author.Me))
             } else {
@@ -90,14 +91,13 @@ class DemoActivity : AppCompatActivity() {
             contentType = selectedContentType
         }
 
-
         override fun onDismissed(selectedContentType: GPHContentType) {
-            Log.d(TAG, "onDismissed")
+            Timber.d(TAG, "onDismissed")
             contentType = selectedContentType
         }
 
         override fun didSearchTerm(term: String) {
-            Log.d(TAG, "didSearchTerm $term")
+            Timber.d(TAG, "didSearchTerm $term")
         }
     }
 
@@ -156,18 +156,18 @@ class DemoActivity : AppCompatActivity() {
         binding.messageFeed.adapter = feedAdapter
     }
 
-    private fun createVideoPlayer(): GPHVideoPlayer {
-        val player = GPHVideoPlayer(null, true)
+    private fun createVideoPlayer(): VideoPlayer {
+        val player = VideoPlayer(null, true)
         player.addListener { playerState ->
             when (playerState) {
-                is GPHVideoPlayerState.MediaChanged -> {
+                is VideoPlayerState.MediaChanged -> {
                     val position = messageItems.map {
                         if (it is ClipItem) {
                             return@map it.media
                         }
                         return@map null
                     }.indexOfFirst {
-                        it?.id == playerState.media.id
+                        it?.videoUrl == playerState.mediaUrl
                     }
                     if (position > -1) {
                         binding.messageFeed.smoothScrollToPosition(position)

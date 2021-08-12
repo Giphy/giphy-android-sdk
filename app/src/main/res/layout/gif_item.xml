@@ -16,8 +16,8 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <com.giphy.sdk.ui.views.GPHVideoPlayerView
-            android:id="@+id/gphVideoPlayerView"
+    <com.giphy.sdk.uidemo.VideoPlayer.VideoPlayerView
+            android:id="@+id/videoPlayerView"
             android:visibility="gone"
             android:layout_width="0dp"
             android:layout_height="0dp"

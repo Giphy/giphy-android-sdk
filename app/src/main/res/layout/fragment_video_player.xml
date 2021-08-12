@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.giphy.sdk.ui.views.GPHVideoPlayerView
-        android:id="@+id/gphVideoPlayerView"
+    <com.giphy.sdk.uidemo.VideoPlayer.VideoPlayerView
+        android:id="@+id/videoPlayerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
