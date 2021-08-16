@@ -81,7 +81,7 @@ open class VideoPlayerView @JvmOverloads constructor(
         this.player = player
         this.videoUrl = videoUrl
         prepareTime = SystemClock.elapsedRealtime()
-        player.setVideoSurfaceView(viewBinding.surfaceView)
+        player.setVideoTextureView(viewBinding.textureView)
         isFirstLoading = true
         viewBinding.errorView.visibility = View.GONE
         viewBinding.bufferingAnimation.visibility = View.GONE
@@ -136,7 +136,7 @@ open class VideoPlayerView @JvmOverloads constructor(
 
         val params = LayoutParams(width, height, Gravity.CENTER)
 
-        viewBinding.surfaceView.layoutParams = params
+        viewBinding.textureView.layoutParams = params
 
         viewBinding.initialImage.layoutParams = params
         viewBinding.bufferingAnimation.layoutParams = params

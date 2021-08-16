@@ -7,7 +7,7 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.view.SurfaceView
+import android.view.TextureView
 import android.view.View
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.DefaultLoadControl
@@ -155,6 +155,10 @@ class VideoPlayer(
 
     fun setVideoSurfaceView(surfaceView: SurfaceView?) {
         player?.setVideoSurfaceView(surfaceView)
+    }
+
+    fun setVideoTextureView(textureView: TextureView?) {
+        player?.setVideoTextureView(textureView)
     }
 
     fun addListener(listener: PlayerStateListener) {
