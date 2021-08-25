@@ -127,3 +127,28 @@ Note: You can find these files in the example app - they are not a part of the S
 We're providing source code for the player as it may be useful for developers that want to customize the design as well as the innerworkings.
 
 It may also be a resource for GIPHY integration partners who are interested in adopting the Clips content type, as this video player code is intended to be independent of SDK components.
+
+#### Surfaceview and TextureView
+By default, the video is rendered on an android SurfaceView as it's more performant. If you need to use the potential of TextureView, you can just replace it yourself like so:
+```
+VideoPlayer.kt:
++        fun setVideoTextureView(textureView: TextureView?) {
++            player?.setVideoTextureView(textureView)
++        }
+
+
+VideoPlayerView.kt:
+-        player.setVideoSurfaceView(viewBinding.surfaceView)
++        player.setVideoTextureView(viewBinding.textureView)
+
+-        viewBinding.surfaceView.layoutParams = params
++        viewBinding.textureView.layoutParams = params
+
+
+video_player_view.xml:
+-    <SurfaceView
+-        android:id="@+id/surfaceView"
++    <TextureView
++        android:id="@+id/textureView"
+
+```
