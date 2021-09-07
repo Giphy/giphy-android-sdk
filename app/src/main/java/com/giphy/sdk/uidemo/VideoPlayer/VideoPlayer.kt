@@ -14,12 +14,12 @@ import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import java.io.IOException
 import timber.log.Timber
 import java.util.Timer
 import java.util.TimerTask
@@ -30,6 +30,7 @@ sealed class VideoPlayerState {
     object Buffering : VideoPlayerState()
     object Ended : VideoPlayerState()
     object Unknown : VideoPlayerState()
+    object Repeated : VideoPlayerState()
     object Playing : VideoPlayerState()
     data class Error(val details: String) : VideoPlayerState()
     data class TimelineChanged(val duration: Long) : VideoPlayerState()
@@ -213,7 +214,8 @@ class VideoPlayer(
                 500,
                 500
             ).build()
-
+        lastVideoUrl = videoUrl
+        lastProgress = 0L
         player = SimpleExoPlayer
             .Builder(playerView!!.context)
             .setTrackSelector(DefaultTrackSelector(playerView!!.context))
@@ -221,33 +223,30 @@ class VideoPlayer(
             .build()
             .apply {
                 addListener(this@VideoPlayer)
-                playWhenReady = true
+                playWhenReady = autoPlay
             }
         playerView!!.prepare(videoUrl, this@VideoPlayer)
         player?.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
 
-        if (videoUrl != null) {
-            updateRepeatMode()
-            startProgressTimer()
-            // This is the MediaSource representing the media to be played.
-            val extractoryFactory =
-                DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true)
-            val uri = Uri.parse(videoUrl)
-            val mediaItem = MediaItem.Builder()
-                .setUri(uri)
-                .setCustomCacheKey(uri.buildUpon().clearQuery().build().toString())
-                .build()
-            val videoSource =
-                ProgressiveMediaSource.Factory(VideoCache.cacheDataSourceFactory, extractoryFactory)
-                    .createMediaSource(mediaItem)
-            // Prepare the player with the source.
-            player?.setMediaSource(videoSource)
-            player?.prepare()
-            stopListeningToDeviceVolume()
-            startListeningToDeviceVolume()
-        } else {
-            onPlayerError(ExoPlaybackException.createForSource(IOException("Video url is null")))
-        }
+        updateRepeatMode()
+        startProgressTimer()
+        // This is the MediaSource representing the media to be played.
+        val extractoryFactory =
+            DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true)
+        val uri = Uri.parse(videoUrl)
+        val mediaItem = MediaItem.Builder()
+            .setUri(uri)
+            .setCustomCacheKey(uri.buildUpon().clearQuery().build().toString())
+            .build()
+        val videoSource =
+            ProgressiveMediaSource.Factory(VideoCache.cacheDataSourceFactory, extractoryFactory)
+                .createMediaSource(mediaItem)
+        // Prepare the player with the source.
+        player?.setMediaSource(videoSource)
+        player?.prepare()
+        stopListeningToDeviceVolume()
+        startListeningToDeviceVolume()
+
         Timber.d("loadMedia time=${SystemClock.elapsedRealtime() - t0}")
     }
 
@@ -259,6 +258,15 @@ class VideoPlayer(
 
     private fun updateProgress(position: Long) {
         playerView?.onProgress(position)
+    }
+
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+        super.onMediaItemTransition(mediaItem, reason)
+        if (reason == MEDIA_ITEM_TRANSITION_REASON_REPEAT) {
+            listeners.forEach {
+                it(VideoPlayerState.Repeated)
+            }
+        }
     }
 
     override fun onPlaybackStateChanged(state: Int) {
@@ -349,8 +357,6 @@ class VideoPlayer(
         }
     }
 
-    // we remember the state of the player onPause and restore it onResume
-    private var lastPlayState = false
     private var lastProgress = 0L
 
     private var lastVideoUrl: String? = null
@@ -358,10 +364,7 @@ class VideoPlayer(
 
     fun onPause() {
         paused = true
-        if (player?.playWhenReady == true) {
-            lastPlayState = true
-            player?.playWhenReady = false
-        }
+        player?.pause()
         playerView?.onPause()
         if (videoUrl.isNotEmpty()) {
             lastVideoUrl = videoUrl
@@ -374,10 +377,8 @@ class VideoPlayer(
         paused = false
         playerView?.onResume()
         lastVideoUrl?.let {
-            loadMedia(it, autoPlay = lastPlayState)
+            loadMedia(it)
         }
-        playerView?.onResume()
-        lastPlayState = false
     }
 
     fun onDestroy() {
