@@ -28,6 +28,8 @@ open class VideoPlayerView @JvmOverloads constructor(
     private var prepareTime = 0L
 
     var showControls: Boolean = true
+    private var loopCount = 0
+    var maxLoopsBeforeMute = 3
 
     private lateinit var player: VideoPlayer
 
@@ -56,6 +58,19 @@ open class VideoPlayerView @JvmOverloads constructor(
             VideoPlayerState.Buffering -> {
                 viewBinding.bufferingAnimation.visibility = View.VISIBLE
             }
+            VideoPlayerState.Repeated -> {
+                if (loopCount + 1 > maxLoopsBeforeMute - 1) {
+                    player.setVolume(0f)
+                } else if (player.getVolume() > 0f) {
+                    loopCount += 1
+                }
+            }
+            is VideoPlayerState.MuteChanged -> {
+                if (!it.muted) {
+                    loopCount = 0
+                }
+            }
+
             else -> { }
         }
     }
@@ -78,6 +93,7 @@ open class VideoPlayerView @JvmOverloads constructor(
     }
 
     fun prepare(videoUrl: String, player: VideoPlayer) {
+        loopCount = 0
         this.player = player
         this.videoUrl = videoUrl
         prepareTime = SystemClock.elapsedRealtime()
@@ -174,6 +190,7 @@ open class VideoPlayerView @JvmOverloads constructor(
 
     fun onResume() {
         viewBinding.videoControls.visibility = View.VISIBLE
+        viewBinding.videoControls.onResume()
     }
 
     fun onDestroy() {
@@ -184,6 +201,7 @@ open class VideoPlayerView @JvmOverloads constructor(
 
     fun onPause() {
         viewBinding.videoControls.visibility = View.GONE
+        viewBinding.videoControls.onPause()
     }
 }
 

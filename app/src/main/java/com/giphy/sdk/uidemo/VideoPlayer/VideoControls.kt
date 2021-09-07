@@ -40,7 +40,7 @@ class VideoControls @JvmOverloads constructor(
     private var isDoubleClickPossible = false
     private var clickJob: Job? = null
     private var pauseJob: Job? = null
-    private var pause = false
+    private var pause = true
 
     private val viewBinding: VideoControlsViewBinding =
         VideoControlsViewBinding.bind(ConstraintLayout.inflate(context, R.layout.gph_video_controls_view, this))
@@ -49,6 +49,7 @@ class VideoControls @JvmOverloads constructor(
         viewBinding.progressBar.visibility = View.INVISIBLE
         when (playerState) {
             VideoPlayerState.Playing -> {
+                pause = false
                 viewBinding.progressBar.visibility = View.VISIBLE
                 if (firstStart) {
                     firstStart = false
@@ -136,6 +137,14 @@ class VideoControls @JvmOverloads constructor(
         }
     }
 
+    fun onPause() {
+        pause = true
+    }
+
+    fun onResume() {
+        pause = false
+    }
+
     private fun updatePauseState(pause: Boolean) {
         // TODO:
         // sendAnalytics(if (pause) Events.VIDEO_PAUSE else Events.VIDEO_RESUME)
@@ -166,12 +175,12 @@ class VideoControls @JvmOverloads constructor(
         viewBinding.seekOverlay.visibility = View.VISIBLE
         viewBinding.seekOverlay.alpha = 1f
         hideSeekOverlayAnimation = ViewCompat.animate(viewBinding.seekOverlay)
-                .alpha(0f)
-                .withEndAction {
-                    viewBinding.seekOverlay.visibility = View.GONE
-                }
-                .setDuration(250)
-                .setStartDelay(1000)
+            .alpha(0f)
+            .withEndAction {
+                viewBinding.seekOverlay.visibility = View.GONE
+            }
+            .setDuration(250)
+            .setStartDelay(1000)
         hideSeekOverlayAnimation?.start()
     }
 
@@ -196,12 +205,12 @@ class VideoControls @JvmOverloads constructor(
         hideControlsAnimation = null
 
         hideControlsAnimation = ViewCompat.animate(viewBinding.controls)
-                .alpha(0f)
-                .withEndAction {
-                    viewBinding.controls.visibility = View.GONE
-                }
-                .setDuration(HIDE_CONTROLS_DURATION)
-                .setStartDelay(delay)
+            .alpha(0f)
+            .withEndAction {
+                viewBinding.controls.visibility = View.GONE
+            }
+            .setDuration(HIDE_CONTROLS_DURATION)
+            .setStartDelay(delay)
         hideControlsAnimation?.start()
     }
 
