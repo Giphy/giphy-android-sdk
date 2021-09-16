@@ -24,6 +24,8 @@
         <activity android:name=".GridViewSetupActivity" />
         <activity android:name=".GridViewExtensionsActivity" />
         <activity android:name=".GridViewDemoActivity" />
+        <activity android:name=".DemoActivityJava"
+                  android:exported="true"/>
     </application>
 
 </manifest>
