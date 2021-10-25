@@ -109,7 +109,6 @@ public class DemoActivityJava extends AppCompatActivity {
         settings.setSelectedContentType(GPHContentType.emoji);
 
         settings.setGridType(GridType.waterfall);
-        settings.setTheme(GPHTheme.Light);
         settings.setStickerColumnCount(3);
         final GiphyDialogFragment dialog = GiphyDialogFragment.Companion.newInstance(settings);
         dialog.setGifSelectionListener(listener);
