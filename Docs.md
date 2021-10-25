@@ -12,7 +12,7 @@ The latest release is available on [Maven Central](https://search.maven.org/arti
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.1.8'
+implementation 'com.giphy.sdk:ui:2.1.9'
 ``` 
     
 ### Basic Setup
@@ -164,6 +164,41 @@ settings.theme = GPHTheme.Dark
 ```java
 settings.setTheme(GPHTheme.Dark);
 ```
+
+As of version `2.1.9` you can set a custom theme
+##### kotlin
+#
+```kotlin
+GPHCustomTheme.channelColor= 0xffD8D8D8.toInt()
+GPHCustomTheme.handleBarColor = 0xff888888.toInt()
+GPHCustomTheme.backgroundColor = 0xff121212.toInt()
+GPHCustomTheme.dialogOverlayBackgroundColor = 0xFF4E4E4E.toInt()
+GPHCustomTheme.textColor = 0xffA6A6A6.toInt()
+GPHCustomTheme.activeTextColor = 0xff00FF99.toInt()
+GPHCustomTheme.imageColor = 0xC09A9A9A.toInt()
+GPHCustomTheme.activeImageColor = 0xFF00FF99.toInt()
+GPHCustomTheme.searchBackgroundColor = 0xFF4E4E4E.toInt()
+GPHCustomTheme.searchQueryColor = 0xffffffff.toInt()
+GPHCustomTheme.suggestionBackgroundColor = 0xFF212121.toInt()
+GPHCustomTheme.moreByYouBackgroundColor = 0xFFF1F1F1.toInt()
+GPHCustomTheme.backButtonColor = 0xFFFFFFFF.toInt()
+
+val settings = GPHSettings(theme = GPHTheme.Custom)
+val dialog = GiphyDialogFragment.newInstance(settings)
+dialog.show(supportFragmentManager, "gifs_dialog")
+```
+##### java
+#
+```java
+GPHCustomTheme.INSTANCE.setBackgroundColor(0xff121212);
+
+final GPHTheme theme = GPHTheme.Custom;
+final GPHSettings settings = new GPHSettings();
+settings.setTheme(theme);
+final GiphyDialogFragment dialog = GiphyDialogFragment.Companion.newInstance(settings);
+dialog.show(getSupportFragmentManager(), "giphy_dialog");
+```
+
 
 - **Media types**: Set the content type(s) you'd like to show by setting the `mediaTypeConfig` property, which is an array of `GPHContentType`s 
 <br> **Note**: Emoji only is not available for the carousel layout option. 

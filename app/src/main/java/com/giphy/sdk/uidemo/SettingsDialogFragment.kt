@@ -79,6 +79,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                     GPHTheme.Light -> R.id.lightTheme
                     GPHTheme.Dark -> R.id.darkTheme
                     GPHTheme.Automatic -> R.id.autoTheme
+                    else -> R.id.autoTheme
                 }, true
             )
             layoutSelector.setToggled(
