@@ -201,7 +201,7 @@ dialog.show(getSupportFragmentManager(), "giphy_dialog");
 
 
 - **Media types**: Set the content type(s) you'd like to show by setting the `mediaTypeConfig` property, which is an array of `GPHContentType`s 
-<br> **Note**: Emoji only is not available for the carousel layout option. 
+<br> 
 ##### kotlin
 #
 ```kotlin
@@ -253,7 +253,6 @@ final GPHContentType[] contentTypes = new GPHContentType[5];
 Users can remove gifs from recents with a long-press on the GIF in the recents grid.
 
 - **Confirmation screen**:  we provide the option to show a secondary confirmation screen when the user taps a GIF, which shows a larger rendition of the asset.
-This confirmation screen is only available for `.waterfall` mode - this property will be ignored if the `layout` is `.carousel`. 
 ##### kotlin
 #
 ```kotlin
