@@ -5,7 +5,7 @@ import com.giphy.sdk.core.models.Media
 open class FeedDataItem(val author: Author)
 class MessageItem(val text: String, author: Author) : FeedDataItem(author)
 class GifItem(val media: Media, author: Author) : FeedDataItem(author)
-class ClipItem(val media: Media, author: Author) : FeedDataItem(author)
+class ClipItem(val media: Media, author: Author, var autoPlay: Boolean) : FeedDataItem(author)
 class InvalidKeyItem(author: Author) : FeedDataItem(author)
 
 enum class Author {

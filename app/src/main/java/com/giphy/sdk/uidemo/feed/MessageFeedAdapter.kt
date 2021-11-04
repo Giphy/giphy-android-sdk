@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.tracking.isVideo
+import com.giphy.sdk.ui.utils.px
 import com.giphy.sdk.ui.utils.videoUrl
+import com.giphy.sdk.ui.views.GPHVideoPlayer
 import com.giphy.sdk.uidemo.R
 import com.giphy.sdk.uidemo.SettingsDialogFragment
 import com.giphy.sdk.uidemo.VideoPlayer.VideoPlayer
@@ -15,7 +17,7 @@ import com.giphy.sdk.uidemo.databinding.GifItemBinding
 import com.giphy.sdk.uidemo.databinding.MessageItemBinding
 
 class ClipsAdapterHelper {
-    lateinit var player: VideoPlayer
+    lateinit var player: GPHVideoPlayer
     lateinit var clipsPlaybackSetting: SettingsDialogFragment.ClipsPlaybackSetting
 }
 
@@ -83,10 +85,9 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
                 gifView.setOnClickListener {
                     itemSelectedListener(message)
                 }
-
+                gifView.cornerRadius = 4.px.toFloat()
                 gifView.setMedia(message.media)
                 gifView.isBackgroundVisible = false
-                soundIcon.visibility = if (message.media.isVideo) View.VISIBLE else View.GONE
             }
         }
     }
@@ -95,32 +96,13 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
         RecyclerView.ViewHolder(itemView) {
 
         lateinit var media: Media
-        lateinit var player: VideoPlayer
+        lateinit var player: GPHVideoPlayer
 
         val viewBinding = GifItemBinding.bind(itemView)
 
         fun bindMessage(message: ClipItem) {
             media = message.media
             player = adapterHelper.player
-
-            player.addListener { playerState ->
-                when (playerState) {
-                    is VideoPlayerState.MuteChanged -> {
-                        updateSoundModeIcon()
-                    }
-                    is VideoPlayerState.MediaChanged -> {
-                        updateSoundModeIcon()
-                        if (media.videoUrl != playerState.mediaUrl) {
-                            viewBinding.gifView.visibility = View.VISIBLE
-                            viewBinding.videoPlayerView.visibility = View.GONE
-                        } else {
-                            viewBinding.videoPlayerView.visibility = View.VISIBLE
-                            viewBinding.gifView.visibility = View.INVISIBLE
-                        }
-                    }
-                    else -> return@addListener
-                }
-            }
 
             val clickListener: View.OnClickListener = View.OnClickListener {
                 if (adapterHelper.clipsPlaybackSetting == SettingsDialogFragment.ClipsPlaybackSetting.popup) {
@@ -130,33 +112,45 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
                     playVideo()
                 }
             }
-
-            viewBinding.gifView.setOnClickListener(clickListener)
-            viewBinding.videoPlayerView.setOnClickListener(clickListener)
-
-            viewBinding.gifView.setMedia(message.media)
-            viewBinding.gifView.isBackgroundVisible = false
-            viewBinding.soundIcon.visibility =
-                if (message.media.isVideo) View.VISIBLE else View.GONE
+            if (adapterHelper.clipsPlaybackSetting == SettingsDialogFragment.ClipsPlaybackSetting.inline) {
+                viewBinding.apply {
+                    soundIcon.visibility = View.GONE
+                    videoPlayerView.desiredWidth = 200.px
+                    videoPlayerView.cornerRadius = 4.px.toFloat()
+                    videoPlayerView.visibility = View.VISIBLE
+                    gifView.visibility = View.GONE
+                    videoPlayerView.setOnClickListener(clickListener)
+                }
+                if (message.autoPlay) {
+                    playVideo()
+                    if (this::player.isInitialized) {
+                        player.setVolume(0f)
+                    }
+                }
+            } else {
+                viewBinding.apply {
+                    gifView.setOnClickListener {
+                        itemSelectedListener(message)
+                    }
+                    gifView.cornerRadius = 4.px.toFloat()
+                    gifView.setMedia(message.media)
+                    gifView.isBackgroundVisible = false
+                    soundIcon.visibility = View.VISIBLE
+                    gifView.visibility = View.VISIBLE
+                    videoPlayerView.visibility = View.GONE
+                }
+            }
         }
 
         private fun playVideo() {
             if (this::player.isInitialized) {
-                media.videoUrl?.let { player.loadMedia(it, view = viewBinding.videoPlayerView) }
+                player.loadMedia(media, view = viewBinding.videoPlayerView)
             }
         }
 
         private fun pauseVideo() {
             if (this::player.isInitialized) {
                 player.onPause()
-            }
-        }
-
-        private fun updateSoundModeIcon() {
-            if (this::player.isInitialized && player.getVolume() > 0 && player.videoUrl == media.videoUrl) {
-                viewBinding.soundIcon.setImageResource(if (player.getVolume() > 0) com.giphy.sdk.ui.R.drawable.gph_ic_sound else com.giphy.sdk.ui.R.drawable.gph_ic_no_sound)
-            } else {
-                viewBinding.soundIcon.setImageResource(com.giphy.sdk.ui.R.drawable.gph_ic_no_sound)
             }
         }
     }
