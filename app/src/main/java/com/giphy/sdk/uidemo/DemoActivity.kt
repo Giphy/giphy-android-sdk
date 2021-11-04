@@ -2,7 +2,6 @@ package com.giphy.sdk.uidemo
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -13,13 +12,10 @@ import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.themes.GridType
-import com.giphy.sdk.ui.utils.videoUrl
 import com.giphy.sdk.ui.views.GPHVideoPlayer
 import com.giphy.sdk.ui.views.GPHVideoPlayerState
 import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.giphy.sdk.uidemo.VideoPlayer.VideoCache
-import com.giphy.sdk.uidemo.VideoPlayer.VideoPlayer
-import com.giphy.sdk.uidemo.VideoPlayer.VideoPlayerState
 import com.giphy.sdk.uidemo.feed.*
 import com.giphy.sdk.uidemo.databinding.ActivityDemoBinding
 import timber.log.Timber
@@ -42,7 +38,7 @@ class DemoActivity : AppCompatActivity() {
     //TODO: Set a valid API KEY
     val YOUR_API_KEY = INVALID_KEY
 
-    val player: VideoPlayer = createVideoPlayer()
+    val player: GPHVideoPlayer = createVideoPlayer()
     private var clipsPlaybackSetting = SettingsDialogFragment.ClipsPlaybackSetting.inline
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +79,10 @@ class DemoActivity : AppCompatActivity() {
         override fun onGifSelected(media: Media, searchTerm: String?, selectedContentType: GPHContentType) {
             Timber.d(TAG, "onGifSelected")
             if (selectedContentType == GPHContentType.clips && media.isVideo) {
-                messageItems.add(ClipItem(media, Author.Me))
+                messageItems.forEach {
+                    (it as? ClipItem)?.autoPlay = false
+                }
+                messageItems.add(ClipItem(media, Author.Me, autoPlay = true))
             } else {
                 messageItems.add(GifItem(media, Author.Me))
             }
@@ -156,18 +155,18 @@ class DemoActivity : AppCompatActivity() {
         binding.messageFeed.adapter = feedAdapter
     }
 
-    private fun createVideoPlayer(): VideoPlayer {
-        val player = VideoPlayer(null, true)
+    private fun createVideoPlayer(): GPHVideoPlayer {
+        val player = GPHVideoPlayer(null, true)
         player.addListener { playerState ->
             when (playerState) {
-                is VideoPlayerState.MediaChanged -> {
+                is GPHVideoPlayerState.MediaChanged -> {
                     val position = messageItems.map {
                         if (it is ClipItem) {
                             return@map it.media
                         }
                         return@map null
                     }.indexOfFirst {
-                        it?.videoUrl == playerState.mediaUrl
+                        it?.id == playerState.media.id
                     }
                     if (position > -1) {
                         binding.messageFeed.smoothScrollToPosition(position)
