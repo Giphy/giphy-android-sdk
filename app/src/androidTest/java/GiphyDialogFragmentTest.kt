@@ -43,15 +43,15 @@ class GiphyDialogFragmentTest {
     fun testGifs() {
         onView(withId(R.id.launchGiphyBtn)).perform(click())
         onView(withId(R.id.searchInput)).perform(
-                typeText(verificationTag + "gif"),
-                closeSoftKeyboard()
+            typeText(verificationTag + "gif"),
+            closeSoftKeyboard()
         )
         Thread.sleep(feedLoadingDelay)
         onView(withId(com.giphy.sdk.ui.R.id.gifRecyclerView)).perform(
-                RecyclerViewActions.actionOnItemAtPosition<SmartGifViewHolder>(
-                        0,
-                        click()
-                )
+            RecyclerViewActions.actionOnItemAtPosition<SmartGifViewHolder>(
+                0,
+                click()
+            )
         )
         Thread.sleep(pingbacksProcessingDelay)
 
@@ -65,8 +65,8 @@ class GiphyDialogFragmentTest {
         onView(withId(R.id.launchGiphyBtn)).perform(click())
         onView(withText("Stickers")).perform(click())
         onView(withId(R.id.searchInput)).perform(
-                typeText(verificationTag + "sticker"),
-                closeSoftKeyboard()
+            typeText(verificationTag + "sticker"),
+            closeSoftKeyboard()
         )
         Thread.sleep(feedLoadingDelay)
         onView(withId(com.giphy.sdk.ui.R.id.gifRecyclerView)).perform(

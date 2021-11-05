@@ -46,8 +46,12 @@ class VideoControls @JvmOverloads constructor(
         VideoControlsViewBinding.bind(ConstraintLayout.inflate(context, R.layout.gph_video_controls_view, this))
 
     private val listener: PlayerStateListener = { playerState ->
-        viewBinding.progressBar.visibility = View.INVISIBLE
         when (playerState) {
+            VideoPlayerState.Idle,
+            VideoPlayerState.Buffering,
+            VideoPlayerState.Ended -> {
+                viewBinding.progressBar.visibility = View.INVISIBLE
+            }
             VideoPlayerState.Playing -> {
                 pause = false
                 viewBinding.progressBar.visibility = View.VISIBLE
@@ -66,20 +70,36 @@ class VideoControls @JvmOverloads constructor(
             is VideoPlayerState.MuteChanged -> {
                 updateSoundModeIcon()
             }
+            is VideoPlayerState.CaptionsVisibilityChanged -> {
+                updateCaptionsIcon(playerState.visible)
+            }
+            is VideoPlayerState.CaptionsTextChanged -> {
+                viewBinding.captionsButton.visibility = View.VISIBLE
+            }
             else -> { }
         }
     }
 
     init {
         setupTouchListeners()
+        viewBinding.soundButton.isClickable = false
+        viewBinding.soundButtonOff.isClickable = false
+        viewBinding.captionsButton.setOnClickListener {
+            if (this::player.isInitialized) {
+                player.showCaptions = !player.showCaptions
+                showControls(progress = true, sound = true)
+            }
+        }
     }
 
     fun prepare(videoUrl: String, player: VideoPlayer) {
+        viewBinding.captionsButton.visibility = View.GONE
         this.videoUrl = videoUrl
         this.player = player
         this.firstStart = true
         updateSoundModeIcon()
         player.addListener(listener)
+        updateCaptionsIcon(player.showCaptions)
     }
 
     private fun resumeVideo() {
@@ -226,6 +246,12 @@ class VideoControls @JvmOverloads constructor(
     private fun updateSoundModeIcon() {
         if (this::player.isInitialized) {
             viewBinding.soundButton.setImageResource(if (player.getVolume() > 0) R.drawable.gph_ic_sound else R.drawable.gph_ic_no_sound)
+            viewBinding.soundButtonOff.visibility =
+                if (player.getVolume() == 0f) View.VISIBLE else View.GONE
         }
+    }
+
+    private fun updateCaptionsIcon(visible: Boolean) {
+        viewBinding.captionsButton.setImageResource(if (visible) R.drawable.gph_ic_caption_on else R.drawable.gph_ic_caption_off)
     }
 }

@@ -61,9 +61,9 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
             override fun didSelectMedia(media: Media) {
                 Timber.d("didSelectMedia ${media.id}")
                 Toast.makeText(
-                        this@GridViewDemoActivity,
-                        "media selected: ${media.id}",
-                        Toast.LENGTH_SHORT
+                    this@GridViewDemoActivity,
+                    "media selected: ${media.id}",
+                    Toast.LENGTH_SHORT
                 ).show()
             }
         }
@@ -114,7 +114,7 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
             setTrendingQuery()
         else
             binding.gifsGridView.content =
-                    GPHContent.searchQuery(binding.searchInput.text.toString(), DemoConfig.mediaType)
+                GPHContent.searchQuery(binding.searchInput.text.toString(), DemoConfig.mediaType)
     }
 
     fun dismissKeyboard() {

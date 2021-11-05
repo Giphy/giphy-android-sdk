@@ -3,6 +3,7 @@ package com.giphy.sdk.uidemo.VideoPlayer
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Outline
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.SystemClock
 import android.util.AttributeSet
@@ -10,6 +11,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
+import com.giphy.sdk.ui.utils.px
 import com.giphy.sdk.uidemo.R
 import com.giphy.sdk.uidemo.databinding.VideoPlayerViewBinding
 import timber.log.Timber
@@ -30,6 +32,10 @@ open class VideoPlayerView @JvmOverloads constructor(
     var showControls: Boolean = true
     private var loopCount = 0
     var maxLoopsBeforeMute = 3
+
+    var cornerRadius = 0.px.toFloat()
+    var desiredWidth: Int = 200.px
+    var desiredHeight: Int = 112.px
 
     private lateinit var player: VideoPlayer
 
@@ -70,8 +76,18 @@ open class VideoPlayerView @JvmOverloads constructor(
                     loopCount = 0
                 }
             }
-
-            else -> { }
+            is VideoPlayerState.CaptionsTextChanged -> {
+                if (it.subtitle.isEmpty()) {
+                    viewBinding.subtitles.setPadding(0.px, 0.px, 0.px, 0.px)
+                } else {
+                    viewBinding.subtitles.setPadding(13.px, 5.px, 13.px, 8.px)
+                }
+                viewBinding.subtitles.text = it.subtitle
+            }
+            is VideoPlayerState.CaptionsVisibilityChanged -> {
+                viewBinding.subtitles.visibility = if (it.visible) View.VISIBLE else View.INVISIBLE
+            }
+            else -> {}
         }
     }
 
@@ -80,6 +96,16 @@ open class VideoPlayerView @JvmOverloads constructor(
 
     init {
         viewBinding.initialImage.setLegacyVisibilityHandlingEnabled(true)
+
+        GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(0xAA000000.toInt())
+            // make it rounded corners
+            this.cornerRadius = 8f
+            viewBinding.subtitles.background = this
+        }
+        viewBinding.subtitles.textSize = 13f
+
         val array = context.obtainStyledAttributes(attrs, R.styleable.VideoPlayerView, 0, 0)
         showControls = array.getBoolean(R.styleable.VideoPlayerView_showControls, true)
         array.recycle()
@@ -99,6 +125,7 @@ open class VideoPlayerView @JvmOverloads constructor(
         prepareTime = SystemClock.elapsedRealtime()
         player.setVideoSurfaceView(viewBinding.surfaceView)
         isFirstLoading = true
+        viewBinding.subtitles.text = ""
         viewBinding.errorView.visibility = View.GONE
         viewBinding.bufferingAnimation.visibility = View.GONE
         viewBinding.videoControls.visibility = View.GONE
@@ -106,6 +133,7 @@ open class VideoPlayerView @JvmOverloads constructor(
         requestLayout()
 
         player.addListener(listener)
+        viewBinding.subtitles.visibility = if (player.showCaptions) View.VISIBLE else View.INVISIBLE
         if (showControls) {
             viewBinding.videoControls.prepare(videoUrl, player)
         }
@@ -124,14 +152,17 @@ open class VideoPlayerView @JvmOverloads constructor(
     }
 
     private val measureAndLayout = Runnable {
-        measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY))
+        measure(
+            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+        )
         layout(left, top, right, bottom)
     }
 
     /**
      * Adjust height so the view match the aspect ratio of the video
      */
+    var params = LayoutParams(0, 0, Gravity.CENTER)
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (aspectRatio == null) {
             super.onMeasure(
@@ -145,12 +176,27 @@ open class VideoPlayerView @JvmOverloads constructor(
 
         var height = MeasureSpec.getSize(heightMeasureSpec)
         var width = (height * aspectRatio).toInt()
-        if (width > MeasureSpec.getSize(widthMeasureSpec)) {
+
+        if (height == 0) {
+            if (width == 0) {
+                width = desiredWidth
+            }
+            height = (width / aspectRatio).toInt()
+        } else if (width == 0) {
+            if (height == 0) {
+                height = desiredHeight
+            }
+            width = (height * aspectRatio).toInt()
+        }
+
+        val widthSpec = MeasureSpec.getSize(widthMeasureSpec)
+        if (widthSpec > 0 && width > widthSpec) {
             width = MeasureSpec.getSize(widthMeasureSpec)
             height = (width / aspectRatio).toInt()
         }
 
-        val params = LayoutParams(width, height, Gravity.CENTER)
+        params.width = width
+        params.height = height
 
         viewBinding.surfaceView.layoutParams = params
 
@@ -158,6 +204,7 @@ open class VideoPlayerView @JvmOverloads constructor(
         viewBinding.bufferingAnimation.layoutParams = params
         viewBinding.videoControls.layoutParams = params
         viewBinding.errorView.layoutParams = params
+        viewBinding.subtitlesView.layoutParams = params
         super.onMeasure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
@@ -166,10 +213,10 @@ open class VideoPlayerView @JvmOverloads constructor(
     }
 
     private fun addOutline() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && cornerRadius > 0) {
             outlineProvider = object : ViewOutlineProvider() {
                 override fun getOutline(view: View, outline: Outline) {
-                    outline.setRoundRect(0, 0, width, height, 4.px.toFloat())
+                    outline.setRoundRect(0, 0, width, height, cornerRadius)
                 }
             }
             clipToOutline = true
@@ -200,6 +247,7 @@ open class VideoPlayerView @JvmOverloads constructor(
     }
 
     fun onPause() {
+        player.removeListener(listener)
         viewBinding.videoControls.visibility = View.GONE
         viewBinding.videoControls.onPause()
     }

@@ -26,6 +26,8 @@
         <activity android:name=".GridViewDemoActivity" />
         <activity android:name=".DemoActivityJava"
                   android:exported="true"/>
+        <activity android:name=".VideoPlayerDemoActivity"
+                android:exported="true"/>
     </application>
 
 </manifest>
