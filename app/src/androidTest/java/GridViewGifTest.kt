@@ -66,10 +66,10 @@ class GridViewGifTest {
         onView(withId(R.id.searchInput)).perform(typeText(verificationTag + "sticker"), closeSoftKeyboard())
         Thread.sleep(PingbacksTestInfo.feedLoadingDelay)
         onView(withId(R.id.gifsRecycler)).perform(
-                RecyclerViewActions.actionOnItemAtPosition<SmartGifViewHolder>(
-                        0,
-                        ViewActions.click()
-                )
+            RecyclerViewActions.actionOnItemAtPosition<SmartGifViewHolder>(
+                0,
+                ViewActions.click()
+            )
         )
         GiphyPingbacks.flush()
         Thread.sleep(PingbacksTestInfo.pingbacksProcessingDelay)

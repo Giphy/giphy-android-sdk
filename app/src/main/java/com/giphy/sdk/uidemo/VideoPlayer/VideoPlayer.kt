@@ -19,6 +19,8 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.text.Cue
+import com.google.android.exoplayer2.text.TextOutput
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import timber.log.Timber
 import java.util.Timer
@@ -36,14 +38,32 @@ sealed class VideoPlayerState {
     data class TimelineChanged(val duration: Long) : VideoPlayerState()
     data class MuteChanged(val muted: Boolean) : VideoPlayerState()
     data class MediaChanged(val mediaUrl: String) : VideoPlayerState()
+    data class CaptionsTextChanged(val subtitle: String) : VideoPlayerState()
+    data class CaptionsVisibilityChanged(val visible: Boolean) : VideoPlayerState()
 }
 
 typealias PlayerStateListener = (VideoPlayerState) -> Unit
 
-class VideoPlayer(
-    private var playerView: VideoPlayerView?,
-    private var repeatable: Boolean = false
-) : Player.EventListener {
+class VideoPlayer : Player.EventListener, TextOutput {
+    var playerView: VideoPlayerView?
+    var repeatable: Boolean
+    var showCaptions: Boolean
+        set(value) {
+            listeners.forEach {
+                it(VideoPlayerState.CaptionsVisibilityChanged(value))
+            }
+            field = value
+        }
+
+    constructor(
+        playerView: VideoPlayerView?,
+        repeatable: Boolean = false,
+        showCaptions: Boolean = true
+    ) {
+        this.playerView = playerView
+        this.repeatable = repeatable
+        this.showCaptions = showCaptions
+    }
 
     var player: SimpleExoPlayer? = null
     private val listeners = mutableSetOf<(PlayerStateListener)>()
@@ -191,9 +211,12 @@ class VideoPlayer(
         }
         val t0 = SystemClock.elapsedRealtime()
         if (view != null) {
-            playerView?.visibility = View.GONE
+            if (view != playerView) {
+                playerView?.onPause()
+            }
             playerView = view
         }
+        currentAspectRatio = videoAspectRatio
         playerView?.aspectRatio = videoAspectRatio
         this.videoUrl = videoUrl
         listeners.forEach {
@@ -216,13 +239,18 @@ class VideoPlayer(
             ).build()
         lastVideoUrl = videoUrl
         lastProgress = 0L
+
+        val trackSelector = DefaultTrackSelector(playerView!!.context)
+        trackSelector.setParameters(trackSelector.buildUponParameters().setPreferredTextLanguage("en"))
+
         player = SimpleExoPlayer
             .Builder(playerView!!.context)
-            .setTrackSelector(DefaultTrackSelector(playerView!!.context))
+            .setTrackSelector(trackSelector)
             .setLoadControl(loadControl)
             .build()
             .apply {
                 addListener(this@VideoPlayer)
+                addTextOutput(this@VideoPlayer)
                 playWhenReady = autoPlay
             }
         playerView!!.prepare(videoUrl, this@VideoPlayer)
@@ -360,6 +388,7 @@ class VideoPlayer(
     private var lastProgress = 0L
 
     private var lastVideoUrl: String? = null
+    private var currentAspectRatio: Float? = null
     var paused = false
 
     fun onPause() {
@@ -377,7 +406,7 @@ class VideoPlayer(
         paused = false
         playerView?.onResume()
         lastVideoUrl?.let {
-            loadMedia(it)
+            loadMedia(it, videoAspectRatio = currentAspectRatio)
         }
     }
 
@@ -394,5 +423,11 @@ class VideoPlayer(
     private fun updateRepeatMode() {
         player?.repeatMode =
             if (repeatable) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
+    }
+
+    override fun onCues(cues: MutableList<Cue>) {
+        listeners.forEach {
+            it(VideoPlayerState.CaptionsTextChanged(if (cues.size > 0) cues[0].text.toString() else ""))
+        }
     }
 }

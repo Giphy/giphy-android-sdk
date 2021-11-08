@@ -5,6 +5,12 @@
       <map>
         <entry key="app/src/main/res/layout/activity_demo.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_demo_java.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_video_player_demo.xml" value="0.19739583333333333" />
+        <entry key="app/src/main/res/layout/fragment_video_player_settings.xml" value="0.19739583333333333" />
+        <entry key="app/src/main/res/layout/gif_video_item.xml" value="0.19739583333333333" />
+        <entry key="app/src/main/res/layout/video_controls_view.xml" value="0.19739583333333333" />
+        <entry key="app/src/main/res/layout/video_player_view.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/demo_menu.xml" value="0.29791666666666666" />
       </map>
     </option>
   </component>
