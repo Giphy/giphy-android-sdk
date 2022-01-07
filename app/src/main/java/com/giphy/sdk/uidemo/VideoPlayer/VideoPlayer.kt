@@ -9,14 +9,8 @@ import android.os.Looper
 import android.os.SystemClock
 import android.view.SurfaceView
 import android.view.View
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.text.Cue
@@ -44,7 +38,7 @@ sealed class VideoPlayerState {
 
 typealias PlayerStateListener = (VideoPlayerState) -> Unit
 
-class VideoPlayer : Player.EventListener, TextOutput {
+class VideoPlayer : Player.Listener, TextOutput {
     var playerView: VideoPlayerView?
     var repeatable: Boolean
     var showCaptions: Boolean
@@ -65,7 +59,7 @@ class VideoPlayer : Player.EventListener, TextOutput {
         this.showCaptions = showCaptions
     }
 
-    var player: SimpleExoPlayer? = null
+    var player: ExoPlayer? = null
     private val listeners = mutableSetOf<(PlayerStateListener)>()
 
     private var progressTimer: Timer? = null
@@ -243,14 +237,13 @@ class VideoPlayer : Player.EventListener, TextOutput {
         val trackSelector = DefaultTrackSelector(playerView!!.context)
         trackSelector.setParameters(trackSelector.buildUponParameters().setPreferredTextLanguage("en"))
 
-        player = SimpleExoPlayer
+        player = ExoPlayer
             .Builder(playerView!!.context)
             .setTrackSelector(trackSelector)
             .setLoadControl(loadControl)
             .build()
             .apply {
                 addListener(this@VideoPlayer)
-                addTextOutput(this@VideoPlayer)
                 playWhenReady = autoPlay
             }
         playerView!!.prepare(videoUrl, this@VideoPlayer)
@@ -364,7 +357,7 @@ class VideoPlayer : Player.EventListener, TextOutput {
         }
     }
 
-    override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
+    override fun onTimelineChanged(timeline: Timeline, reason: Int) {
         player?.duration?.let { duration ->
             listeners.forEach {
                 it(VideoPlayerState.TimelineChanged(duration))
@@ -378,7 +371,7 @@ class VideoPlayer : Player.EventListener, TextOutput {
         playerView = null
     }
 
-    override fun onPlayerError(error: ExoPlaybackException) {
+    override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
         listeners.forEach {
             it(VideoPlayerState.Error(error.localizedMessage ?: "Error occurred"))
