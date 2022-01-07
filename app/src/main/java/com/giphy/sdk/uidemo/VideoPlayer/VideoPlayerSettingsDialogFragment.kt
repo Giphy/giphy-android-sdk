@@ -43,7 +43,7 @@ class VideoPlayerSettingsDialogFragment : androidx.fragment.app.DialogFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings = arguments!!.getParcelable(KEY_SETTINGS)
+        settings = arguments!!.getParcelable(KEY_SETTINGS)!!
         clipsPlaybackSetting = arguments!!.getSerializable(KEY_SETTINGS_CLIPS) as VideoPlaybackSetting
     }
 

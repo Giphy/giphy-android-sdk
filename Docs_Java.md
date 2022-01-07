@@ -1,4 +1,4 @@
-## GIPHY SDK for Android
+## GIPHY SDK for Android (JAVA version)
 
 ## _Table of contents_
 **Setup**
@@ -11,8 +11,8 @@
 - [GiphyDialogFragment](#giphydialogfragment)
 - [Fresco initialization](#fresco-initialization)
 - [Settings](#gphsettings-properties)
-    - [Theme](#theme)
-    - [Media Types](#media-types)
+  - [Theme](#theme)
+  - [Media Types](#media-types)
 - [GifSelectionListener](#events)
 
 **GPHMedia**
@@ -50,24 +50,28 @@ implementation 'com.giphy.sdk:ui:2.1.13'
 ### Configure your API key
 Configure your API key. Apply for a new __Android SDK__ key [here](https://developers.giphy.com/dashboard/). Please remember, you should use a separate key for every platform (Android, iOS, Web) you add our SDKs to.
 Here's a basic setup to make sure everything's working.
-```kotlin
+```java
 
-class GiphyActivity : AppCompatActivity() {
+class GiphyActivity extends AppCompatActivity {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-    Giphy.configure(this, YOUR_ANDROID_SDK_KEY)
+    Giphy.INSTANCE.configure(DemoActivityJava.this, YOUR_ANDROID_SDK_KEY, false);
 
-    GiphyDialogFragment.newInstance().show(supportFragmentManager, "giphy_dialog")
+    final GPHSettings settings = new GPHSettings();
+    final GiphyDialogFragment dialog = GiphyDialogFragment.Companion.newInstance(settings);
+    dialog.setGifSelectionListener(listener);
+    dialog.show(getSupportFragmentManager(), "giphy_dialog");
   }
 }
 ```
 
 or pass your API key as a fragment argument to configure the GIPHY SDK right before opening `GiphyDialogFragment` :
 
-```kotlin
-val dialog = GiphyDialogFragment.newInstance(settings.copy(selectedContentType = contentType), YOUR_ANDROID_SDK_KEY)
+```java
+final GiphyDialogFragment dialog = GiphyDialogFragment.Companion.newInstance(settings, YOUR_ANDROID_SDK_KEY);
 ```
 
 ## Custom UI
@@ -84,46 +88,53 @@ _Skip ahead to [Grid-Only section](#grid-only-and-giphygridview)_
 
 Configure the SDK with your API key. Apply for a new __Android SDK__ key. Please remember, you should use a separate key for every platform (Android, iOS, Web) you add our SDKs to.
 
-```kotlin
-Giphy.configure(this, YOUR_ANDROID_SDK_KEY)
+```java
+Giphy.INSTANCE.configure(DemoActivityJava.this, YOUR_ANDROID_SDK_KEY, false);
 ```
 
 Create a new instance of `GiphyDialogFragment`, which takes care of all the magic. Adjust the layout and theme by passing a `GPHSettings` object when creating the dialog.
 
-```kotlin 
-val settings = GPHSettings(GridType.waterfall, GPHTheme.Dark)
-``` 
+```java
+final GPHSettings settings = new GPHSettings();
+settings.setTheme(GPHTheme.Dark);
+```
 
 Instantiate a `GiphyDialogFragment` with the settings object.
 
-```kotlin
-val gifsDialog = GiphyDialogFragment.newInstance(settings)
+```java
+final GiphyDialogFragment gifsDialog = GiphyDialogFragment.Companion.newInstance(settings);
 ```
 
 ### Fresco initialization
 The SDK has special `Fresco` setup to support our use case, though this should not pose any conflicts with your use of `Fresco` outside of the GIPHY SDK.
 You can use our `GiphyFrescoHandler`:
 
-```kotlin
-Giphy.configure(
-  context,
-  YOUR_API_KEY,
-  verificationMode,
-  frescoHandler = object : GiphyFrescoHandler {
-    override fun handle(imagePipelineConfigBuilder: ImagePipelineConfig.Builder) {
-    }
-    override fun handle(okHttpClientBuilder: OkHttpClient.Builder) {
-    }
-  })
-``` 
+```java
+Giphy.INSTANCE.configure(DemoActivityJava.this,
+        YOUR_API_KEY,
+        verificationMode,
+        100*1024*1024,
+        new HashMap<String, String>(),
+        new GiphyFrescoHandler(){
+            @Override
+            public void handle(@NonNull OkHttpClient.Builder builder){
+            
+                    }
+            
+            @Override
+            public void handle(@NonNull ImagePipelineConfig.Builder builder){
+
+            }
+});
+```
 
 ## GPHSettings properties
 
 ### _Theme_
 Set the theme type (`GPHTheme`) to be `Dark`, `Light` or `Automatic` which will match the application's `Night Mode` specifications for android P and newer. If you don't specify a theme, `Automatic` mode will be applied by default.
 
-```kotlin
-settings.theme = GPHTheme.Dark
+```java
+settings.setTheme(GPHTheme.Dark);
 ```
 
 ### _Customise the GiphyDialogFragment_
@@ -147,48 +158,56 @@ You can easily customise the color scheme for the `GiphyDialogFragment` for a be
 
 ### _Custom Theme_
 As of version `2.1.9` you can set a custom theme
-```kotlin
-GPHCustomTheme.channelColor = 0xffD8D8D8.toInt()
-GPHCustomTheme.handleBarColor = 0xff888888.toInt()
-GPHCustomTheme.backgroundColor = 0xff121212.toInt()
-GPHCustomTheme.dialogOverlayBackgroundColor = 0xFF4E4E4E.toInt()
-GPHCustomTheme.textColor = 0xffA6A6A6.toInt()
-GPHCustomTheme.activeTextColor = 0xff00FF99.toInt()
-GPHCustomTheme.imageColor = 0xC09A9A9A.toInt()
-GPHCustomTheme.activeImageColor = 0xFF00FF99.toInt()
-GPHCustomTheme.searchBackgroundColor = 0xFF4E4E4E.toInt()
-GPHCustomTheme.searchQueryColor = 0xffffffff.toInt()
-GPHCustomTheme.suggestionBackgroundColor = 0xFF212121.toInt()
-GPHCustomTheme.moreByYouBackgroundColor = 0xFFF1F1F1.toInt()
-GPHCustomTheme.backButtonColor = 0xFFFFFFFF.toInt()
+```java
+GPHCustomTheme.INSTANCE.setChannelColor(0xffD8D8D8);
+GPHCustomTheme.INSTANCE.setHandleBarColor(0xff888888);
+GPHCustomTheme.INSTANCE.setBackgroundColor(0xff121212);
+GPHCustomTheme.INSTANCE.setDialogOverlayBackgroundColor(0xFF4E4E4E);
+GPHCustomTheme.INSTANCE.setTextColor(0xffA6A6A6);
+GPHCustomTheme.INSTANCE.setActiveTextColor(0xff00FF99);
+GPHCustomTheme.INSTANCE.setImageColor(0xC09A9A9A);
+GPHCustomTheme.INSTANCE.setActiveImageColor(0xFF00FF99);
+GPHCustomTheme.INSTANCE.setSearchBackgroundColor(0xFF4E4E4E);
+GPHCustomTheme.INSTANCE.setSearchQueryColor(0xffffffff);
+GPHCustomTheme.INSTANCE.setSuggestionBackgroundColor(0xFF212121);
+GPHCustomTheme.INSTANCE.setMoreByYouBackgroundColor(0xFFF1F1F1);
+GPHCustomTheme.INSTANCE.setBackButtonColor(0xFFFFFFFF);
 
-val settings = GPHSettings(theme = GPHTheme.Custom)
-val dialog = GiphyDialogFragment.newInstance(settings)
-dialog.show(supportFragmentManager, "gifs_dialog")
+final GPHTheme theme = GPHTheme.Custom;
+final GPHSettings settings = new GPHSettings();
+settings.setTheme(theme);
+final GiphyDialogFragment dialog = GiphyDialogFragment.Companion.newInstance(settings);
+dialog.show(getSupportFragmentManager(), "giphy_dialog");
 ```
 
 ### _Media Types_
 
 Set the content type(s) you'd like to show by setting the `mediaTypeConfig` property, which is an array of `GPHContentType`s
 
-```kotlin
-settings.mediaTypeConfig = arrayOf(GPHContentType.gif, GPHContentType.sticker, GPHContentType.text, GPHContentType.emoji)
+```java
+final GPHContentType[] contentTypes = new GPHContentType[5];
+contentTypes[1] = GPHContentType.sticker;
+contentTypes[2] = GPHContentType.gif;
+contentTypes[3] = GPHContentType.text;
+contentTypes[4] = GPHContentType.emoji;
+settings.setMediaTypeConfig(contentTypes);
 ```
 
 Set default `GPHContentType`:
-``` kotlin
-settings.selectedContentType = GPHContentType.emoji
+```java
+settings.setSelectedContentType(GPHContentType.emoji);
 ```
 
 ### _Recently Picked_
 
 As of version `1.2.6` you can add an additional `GPHContentType` to you `mediaConfigs` array, called `GPHContentType.recents` which will automatically add a new tab with the recently picked GIFs and Stickers by the user. The tab will appear automatically if the user has picked any GIFs or Stickers.
-```kotlin
-val mediaTypeConfig = arrayOf(
-    GPHContentType.gif,
-    GPHContentType.sticker,
-    GPHContentType.recents
-)
+```java
+final GPHContentType[] contentTypes = new GPHContentType[5];
+contentTypes[1] = GPHContentType.sticker;
+contentTypes[2] = GPHContentType.gif;
+contentTypes[3] = GPHContentType.text;
+contentTypes[4] = GPHContentType.recents;
+settings.setMediaTypeConfig(contentTypes);
 ```
 
 Users can remove gifs from recents with a long-press on the GIF in the recents grid.
@@ -196,46 +215,46 @@ Users can remove gifs from recents with a long-press on the GIF in the recents g
 ### _Additional Settings_
 
 - **Confirmation screen**:  we provide the option to show a secondary confirmation screen when the user taps a GIF, which shows a larger rendition of the asset.
-```kotlin
-setting.showConfirmationScreen = true 
+```java
+settings.setShowConfirmationScreen(true); 
 ```
 
 - **Rating**: set a specific content rating for the search results. Default `pg13`.
-```kotlin
-settings.rating = RatingType.pg13
+```java
+settings.setRating(RatingType.pg13); 
 ```
 
 - **Rendition**:  You can change the rendition type for the grid and also for the confirmation screen, if you are using it.  Default rendition is  `fixedWidth` for the grid and `original` for the confirmation screen.
-```kotlin
-settings.renditionType = RenditionType.fixedWidth
-settings.confirmationRenditionType = RenditionType.original 
+```java
+settings.setRenditionType(RenditionType.fixedWidth);
+settings.setConfirmationRenditionType(RenditionType.original);
 ```
 
 - **Checkered Background**: You can enable/disabled the checkered background for stickers and text media type.
-```kotlin
-settings.showCheckeredBackground = true
+```java
+settings.setShowCheckeredBackground(true);
 ```
 
 - **Stickers Column Count**: Customise the number of columns for stickers (Accepted values between 2 and 4).
-```kotlin
-settings.stickerColumnCount = 3
+```java
+settings.setStickerColumnCount(3); 
 ```
 
 - **Suggestions bar**: As of version `2.0.4` you can hide suggestions bar
-```kotlin
-settings.showSuggestionsBar = false
+```java
+settings.setShowSuggestionsBar(false);
 ```
 
 - **Image Format**: You can choose a file type for the grid.
-```kotlin
-settings.imageFormat = ImageFormat.WEBP
+```java
+settings.setImageFormat(ImageFormat.WEBP); 
 ```
 
 ### _Presentation_
 Show your `GiphyDialogFragment` using the `SupportFragmentManager` and watch as the GIFs start flowin'.
 
-```kotlin
-gifsDialog.show(supportFragmentManager, "gifs_dialog")
+```java
+gifsDialog.show(getSupportFragmentManager(), "gifs_dialog");
 ```
 
 ### _Events_
@@ -243,36 +262,42 @@ gifsDialog.show(supportFragmentManager, "gifs_dialog")
 **Activity**
 
 To handle GIF selection you need to implement the `GifSelectionListener` interface. If you are calling the GiphyDialogFragment from an activity instance, it is recommended that your activity implements the interface `GifSelectionListener`. When using this approach, the Giphy dialog will check at creation time, if the activity is implementing the `GifSelectionListener` protocol and set the activity as a callback, if no other listeners are set programatically.
-```kotlin
- class DemoActivity : AppCompatActivity(), GiphyDialogFragment.GifSelectionListener {
-    override fun onGifSelected(media: Media, searchTerm: String?, selectedContentType: GPHContentType)
+```java
+public class DemoActivity extends AppCompatActivity implements GiphyDialogFragment.GifSelectionListener {
+    @Override
+    public void onGifSelected(@NonNull Media media, @androidx.annotation.Nullable String s, @NonNull GPHContentType gphContentType) {
         //Your user tapped a GIF
     }
-
-    override fun onDismissed(selectedContentType: GPHContentType) {
+    @Override
+    public void onDismissed(@NonNull GPHContentType gphContentType) {
         //Your user dismissed the dialog without selecting a GIF
     }
-    override fun didSearchTerm(term: String) {
+    @Override
+    public void didSearchTerm(@NonNull String s) {
         //Callback for search terms
     }
- }
+}
 ```
 
 **Fragment**
 - Option A: If you are calling the `GiphyDialogFragment` from a fragment context, you can also create a listener object to handle events.
-```kotlin
- giphyDialog.gifSelectionListener = object: GiphyDialogFragment.GifSelectionListener {
-    fun onGifSelected(media: Media, searchTerm: String?)
+```java
+giphyDialog.setGifSelectionListener(new GiphyDialogFragment.GifSelectionListener() {
+    @Override
+    public void onGifSelected(@NonNull Media media, @androidx.annotation.Nullable String s, @NonNull GPHContentType gphContentType) {
         //Your user tapped a GIF
     }
 
-    override fun onDismissed() {
+    @Override
+    public void onDismissed(@NonNull GPHContentType gphContentType) {
         //Your user dismissed the dialog without selecting a GIF
     }
-    override fun didSearchTerm(term: String) {
+
+    @Override
+    public void didSearchTerm(@NonNull String s) {
         //Callback for search terms
     }
-}
+});
 ```
 
 ##### GifSelectionListener technical note
@@ -280,16 +305,16 @@ As the `GiphyDialogFragment` is based on `DialogFragment`, this means that if th
 To prevent such problems, we also implemented the android `setTargetFragment` API, to allow callbacks to be made reliably to the caller fragment in the event of process death.
 
 - Option B: `GiphyDialogFragment` also implements support for the `setTargetFragment` API. If it detects a target fragment attached, **it will deliver the content to the target fragment and ignore the `GifSelectionListener`**. Response data will contain the `Media` object selected and the search term used to discover that `Media`.
-```kotlin
-
-override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-  if (requestCode == REQUEST_GIFS) {
-    val media = data?.getParcelableExtra<Media>(GiphyDialogFragment.MEDIA_DELIVERY_KEY)
-    val keyword = data?.getStringExtra(GiphyDialogFragment.SEARCH_TERM_KEY)
-    //TODO: handle received data
-  }
-  super.onActivityResult(requestCode, resultCode, data)
-}
+```java
+@Override
+protected void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
+        if (requestCode == REQUEST_GIFS && data != null) {
+        Media media = data.getParcelableExtra(GiphyDialogFragment.MEDIA_DELIVERY_KEY);
+        String[] keyword = data.getStringArrayExtra(GiphyDialogFragment.SEARCH_TERM_KEY);
+        //TODO: handle received data
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+        }
 ```
 
 From there, it's up to you to decide what to do with the GIF.
@@ -298,23 +323,24 @@ From there, it's up to you to decide what to do with the GIF.
 
 Create a `GPHMediaView` to display the media. Optionaly, you can pass a rendition type to be loaded.
 
-```kotlin
-val mediaView = GPHMediaView(context)
-mediaView.setMedia(media, RenditionType.original)
+```java
+GPHMediaView mediaView = new GPHMediaView(context);
+mediaView.setMedia(media, RenditionType.original, null);
 ```
 
 Use the media's aspectRatio property to size the view:
-```kotlin
-val aspectRatio = media.aspectRatio 
+```java
+float aspectRatio = MediaExtensionKt.getAspectRatio(media); 
 ```
 
 You can populate a `GPHMediaView` with a media `id` like so:
-```kotlin
-mediaView.setMediaWithId(media.id) { result, e ->
-  e?.let {
-    //your code here
-  }
-}  
+```java
+mediaView.setMediaWithId(media.getId(), RenditionType.downsized, null, (result, e) -> {
+    if (e != null) {
+        //your code here
+    }
+    return null;
+});
 ```
 
 ### _Media IDs_
@@ -325,34 +351,32 @@ Obtain a `Media`'s `id` property via `media.id`
 
 On the receiving end, obtain a `Media` from the `id` like so:
 
-```kotlin
-GPHCore.gifById(id) { result, e ->
-  gifView.setMedia(result?.data, RenditionType.original)
-  e?.let {
-    //your code here
-  }
-}
+```java
+GPHCore.INSTANCE.gifById(id, (result, e) -> {
+    if (result != null){
+        gifView.setMedia(result.getData(),RenditionType.original, null);
+    }
+    if (e != null) {
+        //your code here
+    }
+    return null;
+});
 ```
 
 ### _Caching_
 We use `Fresco` for GIF/WebP playback, which caches media assets itself.
 You can provide your own cache config using `GiphyFrescoHandler`. See the [Fresco initialization](#fresco-initialization) section.
-```kotlin
-override fun handle(imagePipelineConfigBuilder: ImagePipelineConfig.Builder) {
+```java
+@Override
+public void handle(@NonNull ImagePipelineConfig.Builder imagePipelineConfigBuilder) {
   imagePipelineConfigBuilder
     .setMainDiskCacheConfig(
-      DiskCacheConfig.newBuilder(context)
+      DiskCacheConfig.newBuilder(DemoActivityJava.this)
         .setMaxCacheSize(150)
         .setMaxCacheSizeOnLowDiskSpace(50)
         .setMaxCacheSizeOnVeryLowDiskSpace(10)
         .build()
-    )
-    .setCacheKeyFactory(ContentCacheKeyFactory)
-    .apply {
-      if (BuildConfig.DEBUG) setImageCacheStatsTracker(
-        FrescoCacheLogging()
-      )
-    }
+    );
 }
 ```
 
@@ -393,42 +417,42 @@ If you require a more flexible experience, use the `GiphyGridView` instead of th
 Use one of the convenience methods avaiable in the `GPHContent` in order to create a query.
 
 #### Trending
-- `GPHContent.trending(mediaType: MediaType, ratingType: RatingType = RatingType.pg13)`
-- `GPHContent.trendingGifs`, `GPHContent.trendingStickers`, etc.
+- `GPHContent.Companion.trending(MediaType.gif, RatingType.pg13);`
+- `GPHContent.Companion.getTrendingGifs();`, `GPHContent.Companion.getTrendingStickers();`, etc.
 
 #### Search
-```kotlin
-GPHContent.searchQuery(search: String, mediaType: MediaType = MediaType.gif, ratingType: RatingType = RatingType.pg13)
+```java
+GPHContent.Companion.searchQuery(search: String, MediaType.gif, RatingType.pg13);
 ```
 
 #### Emoji
-```kotlin
-GPHContent.emoji
+```java
+GPHContent.Companion.getEmoji();
 ```
 
 #### Recents
 
 Show GIFs that the user has previously picked.
-```kotlin
-GPHContent.recents 
+```java
+GPHContent.Companion.getRecents();
 ```
 
 Only show a "recents" tab if there are any recents. Get the number of recents via:
-```kotlin 
-Giphy.recents.count
+```java 
+Giphy.INSTANCE.getRecents().getCount();
 ```
 
 Optionally, we also provide the option to clear the set of recents:
-```kotlin
-Giphy.recents.clear()
+```java
+Giphy.INSTANCE.getRecents().clear();
 ```
 Users can remove gifs from recents with a long-press on the GIF in the recents grid.
 
 ### Updating the content
 After you have defined your query using a `GPHContent` object, to load the media content pass this object to `GiphyGridView`
-```kotlin
-val gifsContent = GPHContent.searchQuery("cats")
-gifsGridView.content = gifsContent
+```java
+GPHContent gifsContent = GPHContent.Companion.searchQuery("cats", MediaType.gif, RatingType.pg13);
+gifsGridView.setContent(gifsContent);
 ```
 
 ### Integrating the `GiphyGridView`
@@ -448,41 +472,42 @@ It can be done by embedding in your layout XML. UI properties can also be applie
 ```
 
 Perform a query
-```kotlin
-gifsGridView.content = GPHContent.searchQuery("dogs")
+```java
+gifsGridView.setContent(GPHContent.Companion.searchQuery("dogs", MediaType.gif, RatingType.pg13));
 ```
 
 #### Method B
 Create a `GiphyGridView` and set it's UI properties
-```kotlin
-val gridView = GiphyGridView(context)
-
-gridView.direction = GiphyGridView.HORIZONTAL
-gridView.spanCount = 3
-gridView.cellPadding = 20
+```java
+GiphyGridView gridView = null;
+gridView.setDirection(GiphyGridView.HORIZONTAL);
+gridView.setSpanCount(3);
+gridView.setCellPadding(20);
 ```
 
 Add the `GiphyGridView` to your layout and start making queries.
-```kotlin
-parentView.addView(gridView)
+```java
+parentView.addView(gridView);
 ```
 
 ### Customise the GIF Loading
 You can customise the loading experience of GIFs in the `GridView` by using the `GiphyLoadingProvider` class.
-```kotlin
+```java
+    // Implement the GiphyLoadingProvider interface
+    private GiphyLoadingProvider loadingProviderClient = new GiphyLoadingProvider() {
+        @NonNull
+        @Override
+        public Drawable getLoadingDrawable(int position) {
+            LoadingDrawable.Shape shape = LoadingDrawable.Shape.Circle;
+            if (position % 2 == 0) {
+                shape = LoadingDrawable.Shape.Rect;
+            }
+            return new LoadingDrawable(shape);
+        }
+    };
 
-// Implement the GiphyLoadingProvider interface
-private val loadingProviderClient = object : GiphyLoadingProvider {
-  override fun getLoadingDrawable(position: Int): Drawable {
-    val shape = LoadingDrawable(if (position % 2 == 0) LoadingDrawable.Shape.Rect else LoadingDrawable.Shape.Circle)
-    shape.setColorFilter(getPlaceholderColor(), PorterDuff.Mode.SRC_ATOP)
-    return shape
-  }
-}
-
-// Attach the loading provider to the GridView
-gifsGridView.setGiphyLoadingProvider(loadingProviderClient)
-
+    // Attach the loading provider to the GridView
+    gifsGridView.setGiphyLoadingProvider(loadingProviderClient);
 ```
 
 ### Callbacks
@@ -505,30 +530,35 @@ interface GPHSearchGridCallback {
 ```
 
 Example
-```kotlin
-gridView.callback = object: GPHGridCallback {
-  override fun contentDidUpdate(resultCount: Int) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
+```java
+gridView.setCallback(new GPHGridCallback() {
+    @Override
+    public void contentDidUpdate(int resultCount) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
-  override fun didSelectMedia(media: Media) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-}
+    @Override
+    public void didSelectMedia(@NonNull Media media) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+});
 
-gridView.searchCallback = object: GPHSearchGridCallback {
-  override fun didTapUsername(username: String) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
+gridView.setSearchCallback(new GPHSearchGridCallback() {
+    @Override
+    public void didTapUsername(@NonNull String username) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
-  override fun didLongPressCell(cell: GifView) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
+    @Override
+    public void didLongPressCell(@NonNull GifView cell) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
-  override fun didScroll(dx: Int, dy: Int) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-}
+    @Override
+    public void didScroll(int dx, int dy) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+});
 ```
 
 ### Data Collected by our SDK
