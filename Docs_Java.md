@@ -10,6 +10,7 @@
 **Templates**
 - [GiphyDialogFragment](#giphydialogfragment)
 - [Fresco initialization](#fresco-initialization)
+- [Exoplayer cache initialization](#exoplayer-cache-initialization)
 - [Settings](#gphsettings-properties)
   - [Theme](#theme)
   - [Media Types](#media-types)
@@ -44,7 +45,7 @@ The latest release is available on [Maven Central](https://search.maven.org/arti
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.1.13'
+implementation 'com.giphy.sdk:ui:2.1.14'
 ``` 
 
 ### Configure your API key
@@ -127,6 +128,16 @@ Giphy.INSTANCE.configure(DemoActivityJava.this,
             }
 });
 ```
+
+### Exoplayer cache initialization
+The SDK has `Exoplayer` video cache setup.
+It's enabled by default: the `videoCacheMaxBytes` value must be greater than 0, otherwise, the SDK will skip cache initialization and [Clips](https://github.com/Giphy/giphy-android-sdk/blob/main/clips.md) won't work.
+```kotlin
+Giphy.INSTANCE.configure(DemoActivityJava.this,
+  ...
+  100*1024*1024,
+```
+You may want to skip this setup in case you use a different `Exoplayer` version that is incompatible with Giphy SDK but still want to get gifs from Giphy.
 
 ## GPHSettings properties
 
