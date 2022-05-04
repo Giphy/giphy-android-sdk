@@ -13,8 +13,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".DemoActivity"
-            android:label="@string/app_name">
+                android:name=".DemoActivity"
+                android:exported="true"
+                android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
