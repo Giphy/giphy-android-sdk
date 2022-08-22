@@ -9,11 +9,13 @@ import android.os.Looper
 import android.os.SystemClock
 import android.view.SurfaceView
 import android.view.View
+import com.giphy.sdk.ui.utils.GPHVideoPlayerState
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.text.Cue
+import com.google.android.exoplayer2.text.CueGroup
 import com.google.android.exoplayer2.text.TextOutput
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import timber.log.Timber
@@ -38,7 +40,7 @@ sealed class VideoPlayerState {
 
 typealias PlayerStateListener = (VideoPlayerState) -> Unit
 
-class VideoPlayer : Player.Listener, TextOutput {
+class VideoPlayer : Player.Listener {
     var playerView: VideoPlayerView?
     var repeatable: Boolean
     var showCaptions: Boolean
@@ -418,9 +420,9 @@ class VideoPlayer : Player.Listener, TextOutput {
             if (repeatable) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
     }
 
-    override fun onCues(cues: MutableList<Cue>) {
+    override fun onCues(cueGroup: CueGroup) {
         listeners.forEach {
-            it(VideoPlayerState.CaptionsTextChanged(if (cues.size > 0) cues[0].text.toString() else ""))
+            it(VideoPlayerState.CaptionsTextChanged(if (cueGroup.cues.size > 0) cueGroup.cues[0].text.toString() else ""))
         }
     }
 }

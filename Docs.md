@@ -10,7 +10,6 @@
 **Templates**
 - [GiphyDialogFragment](#giphydialogfragment)
 - [Fresco initialization](#fresco-initialization)
-- [Exoplayer cache initialization](#exoplayer-cache-initialization)
 - [Settings](#gphsettings-properties)
     - [Theme](#theme)
     - [Media Types](#media-types)
@@ -35,7 +34,7 @@
 - [Animated Text Creation](https://github.com/Giphy/giphy-android-sdk/blob/main/animate.md)
 
 ### Requirements
-- Giphy UI SDK only supports projects that have been upgraded to [androidx](https://developer.android.com/jetpack/androidx/).
+- The GIPHY UI SDK only supports projects that have been upgraded to [androidx](https://developer.android.com/jetpack/androidx/).
 - Requires minSdkVersion 19
 - A Giphy Android SDK key from the [Giphy Developer Portal](https://developers.giphy.com/dashboard/?create=true).
 
@@ -117,16 +116,6 @@ Giphy.configure(
     }
   })
 ``` 
-
-### Exoplayer cache initialization
-The SDK has `Exoplayer` video cache setup.
-It's enabled by default: the `videoCacheMaxBytes` value must be greater than 0, otherwise, the SDK will skip cache initialization and [Clips](https://github.com/Giphy/giphy-android-sdk/blob/main/clips.md) won't work.
-```kotlin
-Giphy.configure(
-  videoCacheMaxBytes: 100 * 1024 * 1024
-  )
-```
-You may want to skip this setup in case you use a different `Exoplayer` version that is incompatible with Giphy SDK but still want to get gifs from Giphy.
 
 ## GPHSettings properties
 
@@ -368,10 +357,10 @@ override fun handle(imagePipelineConfigBuilder: ImagePipelineConfig.Builder) {
 ```
 
 #### *Dependencies*
-[Fresco](https://github.com/facebook/fresco): GIF/WebP playback <br>
-[ExoPlayer](https://github.com/google/ExoPlayer): Clip playback <br>
-[Timber](https://github.com/JakeWharton/timber): Logger <br>
-[Lottie](https://github.com/JakeWharton/timber): Animations <br>
+- [Fresco](https://github.com/facebook/fresco): GIF/WebP playback <br>
+- *Removed starting from SDK v2.2.0* [ExoPlayer](https://github.com/google/ExoPlayer): Clip playback <br>
+- [Timber](https://github.com/JakeWharton/timber): Logger <br>
+- [Lottie](https://github.com/JakeWharton/timber): Animations <br>
 
 #### *Buttons*
 

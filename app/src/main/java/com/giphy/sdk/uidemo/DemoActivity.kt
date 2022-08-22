@@ -12,8 +12,8 @@ import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.themes.GridType
-import com.giphy.sdk.ui.views.GPHVideoPlayer
-import com.giphy.sdk.ui.views.GPHVideoPlayerState
+import com.giphy.sdk.ui.utils.GPHAbstractVideoPlayer
+import com.giphy.sdk.ui.utils.GPHVideoPlayerState
 import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.giphy.sdk.uidemo.VideoPlayer.VideoCache
 import com.giphy.sdk.uidemo.feed.*
@@ -38,7 +38,7 @@ class DemoActivity : AppCompatActivity() {
     //TODO: Set a valid API KEY
     val YOUR_API_KEY = INVALID_KEY
 
-    val player: GPHVideoPlayer = createVideoPlayer()
+    val player: GPHAbstractVideoPlayer = createVideoPlayer()
     private var clipsPlaybackSetting = SettingsDialogFragment.ClipsPlaybackSetting.inline
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +54,9 @@ class DemoActivity : AppCompatActivity() {
 
         binding.launchGiphyBtn.setOnClickListener {
             player.onPause()
-            val dialog = GiphyDialogFragment.newInstance(settings.copy(selectedContentType = contentType))
+            val dialog = GiphyDialogFragment.newInstance(
+                settings.copy(selectedContentType = contentType)
+            )
             dialog.gifSelectionListener = getGifSelectionListener()
             dialog.show(supportFragmentManager, "gifs_dialog")
         }
@@ -155,8 +157,8 @@ class DemoActivity : AppCompatActivity() {
         binding.messageFeed.adapter = feedAdapter
     }
 
-    private fun createVideoPlayer(): GPHVideoPlayer {
-        val player = GPHVideoPlayer(null, true)
+    private fun createVideoPlayer(): GPHAbstractVideoPlayer {
+        val player = VideoPlayerExoPlayer2181Impl(null, true)
         player.addListener { playerState ->
             when (playerState) {
                 is GPHVideoPlayerState.MediaChanged -> {
