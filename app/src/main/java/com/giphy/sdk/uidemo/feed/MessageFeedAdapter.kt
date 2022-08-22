@@ -5,15 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.giphy.sdk.core.models.Media
+import com.giphy.sdk.ui.utils.GPHAbstractVideoPlayer
 import com.giphy.sdk.ui.utils.px
-import com.giphy.sdk.ui.views.GPHVideoPlayer
 import com.giphy.sdk.uidemo.R
 import com.giphy.sdk.uidemo.SettingsDialogFragment
 import com.giphy.sdk.uidemo.databinding.GifItemBinding
 import com.giphy.sdk.uidemo.databinding.MessageItemBinding
 
 class ClipsAdapterHelper {
-    lateinit var player: GPHVideoPlayer
+    lateinit var player: GPHAbstractVideoPlayer
     lateinit var clipsPlaybackSetting: SettingsDialogFragment.ClipsPlaybackSetting
 }
 
@@ -92,7 +92,7 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
         RecyclerView.ViewHolder(itemView) {
 
         lateinit var media: Media
-        lateinit var player: GPHVideoPlayer
+        lateinit var player: GPHAbstractVideoPlayer
 
         val viewBinding = GifItemBinding.bind(itemView)
 

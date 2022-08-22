@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.giphy.sdk.core.models.Media
-import com.giphy.sdk.ui.views.GPHVideoPlayer
+import com.giphy.sdk.ui.utils.GPHAbstractVideoPlayer
 import com.giphy.sdk.uidemo.databinding.FragmentVideoPlayerBinding
 
 class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
@@ -13,7 +13,7 @@ class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
     lateinit var binding: FragmentVideoPlayerBinding
 
     private var media: Media? = null
-    private var videoPlayer: GPHVideoPlayer? = null
+    private var videoPlayer: GPHAbstractVideoPlayer? = null
 
     companion object {
         private val KEY_VIDEO_PLAYER = "key_video_player"
@@ -32,7 +32,7 @@ class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        media = arguments!!.getParcelable(KEY_VIDEO_PLAYER)
+        media = requireArguments().getParcelable(KEY_VIDEO_PLAYER)
     }
 
     override fun onCreateView(
@@ -65,7 +65,7 @@ class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
             media?.let { media ->
                 videoPlayerView.preloadFirstFrame(media)
                 videoPlayer?.onDestroy()
-                videoPlayer = GPHVideoPlayer(videoPlayerView, true)
+                videoPlayer = VideoPlayerExoPlayer2181Impl(videoPlayerView, true)
                 videoPlayer?.loadMedia(media)
             }
         }
