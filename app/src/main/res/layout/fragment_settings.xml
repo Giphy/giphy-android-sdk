@@ -56,31 +56,6 @@
                     app:toggleMode="even" />
 
             <TextView
-                    android:id="@+id/layoutTitle"
-                    style="@style/SettingHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Layout"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/themeSelector" />
-
-            <com.savvyapps.togglebuttonlayout.ToggleButtonLayout
-                    android:id="@+id/layoutSelector"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    app:allowDeselection="false"
-                    app:cardElevation="2dp"
-                    app:customLayout="@layout/toggle_item"
-                    app:dividerColor="@color/colorPrimary"
-                    app:menu="@menu/layout_types"
-                    app:toggleMode="even" />
-
-            <TextView
                     android:id="@+id/clipsPlaybackSettingsTitle"
                     style="@style/SettingHeader"
                     android:layout_width="wrap_content"
@@ -114,7 +89,7 @@
                     android:layout_marginTop="16dp"
                     android:text="Media Types"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/layoutSelector" />
+                    app:layout_constraintTop_toBottomOf="@+id/themeSelector" />
 
             <com.savvyapps.togglebuttonlayout.ToggleButtonLayout
                     android:id="@+id/mediaTypeSelector"
