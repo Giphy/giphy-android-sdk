@@ -5,13 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import com.giphy.sdk.core.models.enums.RenditionType
 import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.themes.GPHTheme
-import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.uidemo.databinding.FragmentSettingsBinding
 
 /**
@@ -53,8 +51,8 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings = arguments!!.getParcelable(KEY_SETTINGS)!!
-        clipsPlaybackSetting = arguments!!.getSerializable(KEY_SETTINGS_CLIPS) as ClipsPlaybackSetting
+        settings = requireArguments().getParcelable(KEY_SETTINGS)!!
+        clipsPlaybackSetting = requireArguments().getSerializable(KEY_SETTINGS_CLIPS) as ClipsPlaybackSetting
     }
 
     override fun onCreateView(
@@ -82,15 +80,11 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                     else -> R.id.autoTheme
                 }, true
             )
-            layoutSelector.setToggled(
-                if (settings.gridType == GridType.waterfall) R.id.waterfall else R.id.carousel,
-                true
-            )
             clipsPlaybackSettingsSelector.setToggled(
                 if (clipsPlaybackSetting == ClipsPlaybackSetting.inline) R.id.inline else R.id.popup,
                 true
             )
-            mediaTypeSelector.inflateMenu(if (settings.gridType == GridType.waterfall) R.menu.waterfal_media_types else R.menu.carousel_media_types)
+            mediaTypeSelector.inflateMenu(R.menu.waterfal_media_types)
             settings.mediaTypeConfig.forEach {
                 val id = when (it) {
                     GPHContentType.gif -> R.id.typeGif
@@ -101,22 +95,6 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                     GPHContentType.recents -> R.id.typeRecents
                 }
                 mediaTypeSelector.setToggled(id, true)
-            }
-
-            layoutSelector.onToggledListener = { toggle, selected ->
-                (mediaTypeSelector.getChildAt(0) as LinearLayout).removeAllViews()
-                mediaTypeSelector.toggles.clear()
-                if (toggle.id == R.id.carousel) {
-                    mediaTypeSelector.multipleSelection = false
-                    mediaTypeSelector.inflateMenu(R.menu.carousel_media_types)
-                    mediaTypeSelector.setToggled(R.id.typeGif, true)
-                } else {
-                    mediaTypeSelector.multipleSelection = true
-                    mediaTypeSelector.inflateMenu(R.menu.waterfal_media_types)
-                    mediaTypeSelector.toggles.forEach {
-                        mediaTypeSelector.setToggled(it.id, true)
-                    }
-                }
             }
 
             clipsPlaybackSettingsSelector.onToggledListener = { toggle, selected ->
@@ -151,11 +129,6 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        settings.gridType = when (binding.layoutSelector.selectedToggles().firstOrNull()?.id) {
-            R.id.waterfall -> GridType.waterfall
-            R.id.carousel -> GridType.carousel
-            else -> GridType.waterfall
-        }
         val contentTypes = ArrayList<GPHContentType>()
         binding.mediaTypeSelector.selectedToggles().forEach {
             when (it.id) {
@@ -178,7 +151,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
     }
 
     private fun openRenditionPicker(renditionPlace: Int) {
-        val builder = AlertDialog.Builder(context!!)
+        val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(if (renditionPlace == PICK_GRID_RENDITION) "Pick Grid Rendition" else "Pick Attribution Rendition")
         val renditions = RenditionType.values().map { it.name }.toTypedArray()
         builder.setItems(renditions) { dialog, which ->

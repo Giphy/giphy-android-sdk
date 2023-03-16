@@ -6,7 +6,6 @@
     </array>
     <array name="layout">
         <item>Waterfall</item>
-        <item>Carousel</item>
     </array>
     <array name="mediaType">
         <item>GIFs</item>

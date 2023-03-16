@@ -12,7 +12,6 @@ import com.giphy.sdk.ui.GPHContentType;
 import com.giphy.sdk.ui.GPHSettings;
 import com.giphy.sdk.ui.Giphy;
 import com.giphy.sdk.ui.themes.GPHTheme;
-import com.giphy.sdk.ui.themes.GridType;
 import com.giphy.sdk.ui.views.GPHMediaView;
 import com.giphy.sdk.ui.views.GiphyDialogFragment;
 import androidx.appcompat.app.AppCompatActivity;
@@ -96,7 +95,6 @@ public class DemoActivityJava extends AppCompatActivity {
         settings.setTheme(theme);
         settings.setRating(RatingType.pg13);
         settings.setRenditionType(RenditionType.fixedWidth);
-        settings.setGridType(GridType.waterfall);
         settings.setShowCheckeredBackground(false);
 
         final GPHContentType[] contentTypes = new GPHContentType[5];
@@ -108,7 +106,6 @@ public class DemoActivityJava extends AppCompatActivity {
         settings.setMediaTypeConfig(contentTypes);
         settings.setSelectedContentType(GPHContentType.emoji);
 
-        settings.setGridType(GridType.waterfall);
         settings.setStickerColumnCount(3);
         final GiphyDialogFragment dialog = GiphyDialogFragment.Companion.newInstance(settings);
         dialog.setGifSelectionListener(listener);

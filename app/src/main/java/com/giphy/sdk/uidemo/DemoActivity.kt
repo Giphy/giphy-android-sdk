@@ -11,7 +11,6 @@ import com.giphy.sdk.ui.GPHContentType
 import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.themes.GPHTheme
-import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.ui.utils.GPHAbstractVideoPlayer
 import com.giphy.sdk.ui.utils.GPHVideoPlayerState
 import com.giphy.sdk.ui.views.GiphyDialogFragment
@@ -30,7 +29,7 @@ class DemoActivity : AppCompatActivity() {
         val INVALID_KEY = "NOT_A_VALID_KEY"
     }
     private lateinit var binding: ActivityDemoBinding
-    var settings = GPHSettings(gridType = GridType.waterfall, theme = GPHTheme.Light, stickerColumnCount = 3)
+    var settings = GPHSettings(theme = GPHTheme.Light, stickerColumnCount = 3)
     var feedAdapter: MessageFeedAdapter? = null
     var messageItems = ArrayList<FeedDataItem>()
     var contentType = GPHContentType.gif
