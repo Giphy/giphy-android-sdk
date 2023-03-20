@@ -14,6 +14,7 @@
     - [Theme](#theme)
     - [Media Types](#media-types)
 - [GifSelectionListener](#events)
+- [Jetpack Compose Support](#jetpack-compose-support-giphydialogview-prototype)
 
 **GPHMedia**
 - [GPHMediaView](#gphmediaview)
@@ -44,7 +45,7 @@ The latest release is available on [Maven Central](https://search.maven.org/arti
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.3.1'
+implementation 'com.giphy.sdk:ui:2.3.2'
 ``` 
 
 ### Configure your API key
@@ -293,6 +294,13 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 ```
 
 From there, it's up to you to decide what to do with the GIF.
+
+### Jetpack Compose Support: _GiphyDialogView_ prototype
+
+We provide a new `GiphyDialogView` which is compatible with Jetpack Compose applications.
+
+For further information, please refer to [ComposeActivity](https://github.com/Giphy/giphy-android-sdk/blob/main/app/src/main/java/com/giphy/sdk/uidemo/ComposeActivity.kt) example.
+
 
 ### _GPHMediaView_
 
