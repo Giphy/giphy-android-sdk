@@ -14,6 +14,7 @@
     - [Theme](#theme)
     - [Media Types](#media-types)
 - [GifSelectionListener](#events)
+- [Jetpack Compose Support](#jetpack-compose-support-giphydialogview-prototype)
 
 **GPHMedia**
 - [GPHMediaView](#gphmediaview)
@@ -294,9 +295,9 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
 From there, it's up to you to decide what to do with the GIF.
 
-### Compose prototype: _GiphyDialogView_
+### Jetpack Compose Support: _GiphyDialogView_ prototype
 
-You can use a `GiphyDialogView`, which has been specifically designed for use in Jetpack Compose application using interoperability.
+We provide a new `GiphyDialogView` which is compatible with Jetpack Compose applications.
 
 For further information, please refer to [ComposeActivity](https://github.com/Giphy/giphy-android-sdk/blob/main/app/src/main/java/com/giphy/sdk/uidemo/ComposeActivity.kt) example.
 
