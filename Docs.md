@@ -44,7 +44,7 @@ The latest release is available on [Maven Central](https://search.maven.org/arti
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.3.1'
+implementation 'com.giphy.sdk:ui:2.3.2'
 ``` 
 
 ### Configure your API key
@@ -293,6 +293,13 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 ```
 
 From there, it's up to you to decide what to do with the GIF.
+
+### Compose prototype: _GiphyDialogView_
+
+You can use a `GiphyDialogView`, which has been specifically designed for use in Jetpack Compose application using interoperability.
+
+For further information, please refer to [ComposeActivity](https://github.com/Giphy/giphy-android-sdk/blob/main/app/src/main/java/com/giphy/sdk/uidemo/ComposeActivity.kt) example.
+
 
 ### _GPHMediaView_
 

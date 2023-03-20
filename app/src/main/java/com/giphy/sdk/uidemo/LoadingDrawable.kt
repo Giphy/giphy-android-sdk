@@ -51,7 +51,7 @@ class LoadingDrawable(val shape: Shape) : Drawable(), ValueAnimator.AnimatorUpda
         Circle
     }
 
-    override fun onAnimationUpdate(p0: ValueAnimator?) {
+    override fun onAnimationUpdate(p0: ValueAnimator) {
         currentSize = p0?.animatedValue as Float
         invalidateSelf()
     }
