@@ -42,6 +42,7 @@ import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.views.dialogview.GiphyDialogView
 import com.giphy.sdk.ui.views.dialogview.setup
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.IntOffset
@@ -119,10 +120,11 @@ fun FeedItem(media: Media, index: Int) {
 
 @Composable
 fun EmbeddedViewDemo(onMediaSelected: (Media) -> Unit) {
-    val YOUR_API_KEY = ""
-    var showView by remember { mutableStateOf(false) }
-    var offset by remember { mutableStateOf(0f) }
+    val YOUR_API_KEY = "NOT_A_VALID_KEY"
+    var showView by rememberSaveable { mutableStateOf(false) }
+    var offset by rememberSaveable { mutableStateOf(0f) }
     val configuration = LocalConfiguration.current
+    var contentType by rememberSaveable { mutableStateOf(GPHContentType.gif) }
 
     Box {
         Button(
@@ -163,7 +165,6 @@ fun EmbeddedViewDemo(onMediaSelected: (Media) -> Unit) {
                         Giphy.configure(ctx, YOUR_API_KEY, true)
                         val settings =
                             GPHSettings(theme = GPHTheme.Light, stickerColumnCount = 3)
-                        val contentType = GPHContentType.gif
                         GiphyDialogView(ctx).apply {
                             setup(
                                 settings.copy(selectedContentType = contentType),
@@ -185,8 +186,8 @@ fun EmbeddedViewDemo(onMediaSelected: (Media) -> Unit) {
                                     showView = false
                                 }
 
-                                override fun onDismissed(selectedContentType: GPHContentType) {
-                                    Log.d("Giphy", "view dismissed")
+                                override fun onClosed(selectedContentType: GPHContentType) {
+                                    contentType = selectedContentType
                                 }
 
                                 override fun didSearchTerm(term: String) {
