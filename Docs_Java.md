@@ -44,7 +44,7 @@ The latest release is available on [Maven Central](https://search.maven.org/arti
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.3.4'
+implementation 'com.giphy.sdk:ui:2.3.5'
 ``` 
 
 ### Configure your API key
@@ -179,6 +179,8 @@ settings.setTheme(theme);
 final GiphyDialogFragment dialog = GiphyDialogFragment.Companion.newInstance(settings);
 dialog.show(getSupportFragmentManager(), "giphy_dialog");
 ```
+
+Version 2.3.5 offers a wider range of colors for customization. We have made modifications to the color names, but we have prepared a [visual scheme](https://github.com/Giphy/giphy-android-sdk/blob/main/assets/Android_theme_scheme.pdf) to assist you with this update.
 
 ### _Media Types_
 
