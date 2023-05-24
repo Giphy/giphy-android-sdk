@@ -45,7 +45,7 @@ The latest release is available on [Maven Central](https://search.maven.org/arti
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.3.4'
+implementation 'com.giphy.sdk:ui:2.3.5'
 ``` 
 
 ### Configure your API key
@@ -166,6 +166,31 @@ GPHCustomTheme.backButtonColor = 0xFFFFFFFF.toInt()
 val settings = GPHSettings(theme = GPHTheme.Custom)
 val dialog = GiphyDialogFragment.newInstance(settings)
 dialog.show(supportFragmentManager, "gifs_dialog")
+```
+
+Version 2.3.5 offers a wider range of colors for customization. We have made modifications to the color names, but we have prepared a [visual scheme](https://github.com/Giphy/giphy-android-sdk/blob/main/assets/Android_theme_scheme.pdf) to assist you with this update.
+
+Two new convenient functions are now available in the GPHCustomTheme.
+```kotlin
+applyLightThemeProps() / applyDarkThemeProps()
+```
+
+If you want to modify only certain color properties, you should use these functions:
+```kotlin
+GPHCustomTheme.apply {
+    val currentNightMode = this@DemoActivity?.let {
+        this@DemoActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    }
+    val lightMode = (listOf(Configuration.UI_MODE_NIGHT_NO, Configuration.UI_MODE_NIGHT_UNDEFINED).contains(currentNightMode))
+    defaultTextColor = Color.Black.hashCode()
+    if (lightMode) {
+        applyLightThemeProps()
+        searchButtonIcon = ContextCompat.getDrawable(this@DemoActivity, com.giphy.sdk.ui.R.drawable.gph_ic_search_black)
+    } else {
+        applyDarkThemeProps()
+        searchButtonIcon = ContextCompat.getDrawable(this@DemoActivity, com.giphy.sdk.ui.R.drawable.gph_ic_search_white)
+    }
+}
 ```
 
 ### _Media Types_
