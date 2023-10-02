@@ -43,7 +43,7 @@ class VideoControls @JvmOverloads constructor(
     private var pause = true
 
     private val viewBinding: VideoControlsViewBinding =
-        VideoControlsViewBinding.bind(ConstraintLayout.inflate(context, R.layout.gph_video_controls_view, this))
+        VideoControlsViewBinding.bind(ConstraintLayout.inflate(context, com.giphy.sdk.ui.R.layout.gph_video_controls_view, this))
 
     private val listener: PlayerStateListener = { playerState ->
         when (playerState) {
@@ -245,13 +245,13 @@ class VideoControls @JvmOverloads constructor(
 
     private fun updateSoundModeIcon() {
         if (this::player.isInitialized) {
-            viewBinding.soundButton.setImageResource(if (player.getVolume() > 0) R.drawable.gph_ic_sound else R.drawable.gph_ic_no_sound)
+            viewBinding.soundButton.setImageResource(if (player.getVolume() > 0) com.giphy.sdk.ui.R.drawable.gph_ic_sound else com.giphy.sdk.ui.R.drawable.gph_ic_no_sound)
             viewBinding.soundButtonOff.visibility =
                 if (player.getVolume() == 0f) View.VISIBLE else View.GONE
         }
     }
 
     private fun updateCaptionsIcon(visible: Boolean) {
-        viewBinding.captionsButton.setImageResource(if (visible) R.drawable.gph_ic_caption_on else R.drawable.gph_ic_caption_off)
+        viewBinding.captionsButton.setImageResource(if (visible) com.giphy.sdk.ui.R.drawable.gph_ic_caption_on else com.giphy.sdk.ui.R.drawable.gph_ic_caption_off)
     }
 }

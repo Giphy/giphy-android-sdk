@@ -213,9 +213,4 @@ class DemoActivity : AppCompatActivity() {
         this.clipsPlaybackSetting = clipsPlaybackSetting
         feedAdapter?.adapterHelper?.clipsPlaybackSetting = clipsPlaybackSetting
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Timber.d("onActivityResult")
-        super.onActivityResult(requestCode, resultCode, data)
-    }
 }

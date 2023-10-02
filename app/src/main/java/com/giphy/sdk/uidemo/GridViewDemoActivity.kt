@@ -110,11 +110,12 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
     }
 
     private fun performCustomSearch() {
-        if (binding.searchInput.text.isNullOrEmpty())
+        if (binding.searchInput.text.isNullOrEmpty()) {
             setTrendingQuery()
-        else
+        } else {
             binding.gifsGridView.content =
                 GPHContent.searchQuery(binding.searchInput.text.toString(), DemoConfig.mediaType)
+        }
     }
 
     fun dismissKeyboard() {
