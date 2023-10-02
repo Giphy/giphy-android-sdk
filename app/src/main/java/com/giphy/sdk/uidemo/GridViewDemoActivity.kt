@@ -118,7 +118,7 @@ class GridViewDemoActivity : AppCompatActivity(R.layout.grid_view_demo_activity)
         }
     }
 
-    fun dismissKeyboard() {
+    private fun dismissKeyboard() {
         val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.searchInput.windowToken, 0)
     }

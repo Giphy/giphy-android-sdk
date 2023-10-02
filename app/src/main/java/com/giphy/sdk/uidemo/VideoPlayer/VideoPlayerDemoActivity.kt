@@ -77,7 +77,7 @@ class VideoPlayerDemoActivity : AppCompatActivity() {
                 messageItems.forEach {
                     (it as? ClipItem)?.autoPlay = false
                 }
-                messageItems.add(ClipItem(media, Author.Me, autoPlay = true))
+                messageItems.add(ClipItem(media, autoPlay = true))
             }
             feedAdapter?.notifyItemInserted(messageItems.size - 1)
         }
@@ -122,7 +122,7 @@ class VideoPlayerDemoActivity : AppCompatActivity() {
 
     private fun setupFeed() {
         if (YOUR_API_KEY == INVALID_KEY) {
-            messageItems.add(InvalidKeyItem(Author.GifBot))
+            messageItems.add(InvalidKeyItem())
         }
         feedAdapter = VideoPlayerMessageFeedAdapter(messageItems)
         feedAdapter?.itemSelectedListener = ::onGifSelected

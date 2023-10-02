@@ -10,13 +10,13 @@ import com.giphy.sdk.uidemo.databinding.FragmentVideoPlayerBinding
 
 class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
 
-    lateinit var binding: FragmentVideoPlayerBinding
+    private lateinit var binding: FragmentVideoPlayerBinding
 
     private var media: Media? = null
     private var videoPlayer: GPHAbstractVideoPlayer? = null
 
     companion object {
-        private val KEY_VIDEO_PLAYER = "key_video_player"
+        private const val KEY_VIDEO_PLAYER = "key_video_player"
         fun newInstance(media: Media): ClipDialogFragment {
             val fragment = ClipDialogFragment()
             val bundle = Bundle()
@@ -32,7 +32,7 @@ class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        media = requireArguments().getParcelable(KEY_VIDEO_PLAYER)
+        media = requireArguments().parcelable(KEY_VIDEO_PLAYER)
     }
 
     override fun onCreateView(
