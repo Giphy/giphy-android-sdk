@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <com.giphy.sdk.uidemo.VideoPlayer.VideoPlayerView
+    <com.giphy.sdk.uidemo.videoPlayer.VideoPlayerView
             android:id="@+id/videoPlayerView"
             android:visibility="gone"
             android:layout_width="wrap_content"

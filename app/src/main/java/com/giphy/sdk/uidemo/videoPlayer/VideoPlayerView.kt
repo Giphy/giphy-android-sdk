@@ -1,4 +1,4 @@
-package com.giphy.sdk.uidemo.VideoPlayer
+package com.giphy.sdk.uidemo.videoPlayer
 
 import android.content.Context
 import android.content.res.Resources

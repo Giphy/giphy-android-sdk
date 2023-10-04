@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.ui.utils.GPHAbstractVideoPlayer
 import com.giphy.sdk.uidemo.databinding.FragmentVideoPlayerBinding
+import com.giphy.sdk.uidemo.videoPlayer.VideoPlayerExoPlayerImpl
 
 class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
 
@@ -65,7 +66,7 @@ class ClipDialogFragment : androidx.fragment.app.DialogFragment() {
             media?.let { media ->
                 videoPlayerView.preloadFirstFrame(media)
                 videoPlayer?.onDestroy()
-                videoPlayer = VideoPlayerExoPlayer2181Impl(videoPlayerView, true)
+                videoPlayer = VideoPlayerExoPlayerImpl(videoPlayerView, true)
                 videoPlayer?.loadMedia(media)
             }
         }

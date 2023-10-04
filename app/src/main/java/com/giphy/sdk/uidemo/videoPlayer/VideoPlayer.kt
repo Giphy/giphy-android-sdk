@@ -1,4 +1,4 @@
-package com.giphy.sdk.uidemo.VideoPlayer
+package com.giphy.sdk.uidemo.videoPlayer
 
 import android.content.Context
 import android.database.ContentObserver
@@ -9,15 +9,18 @@ import android.os.Looper
 import android.os.SystemClock
 import android.view.SurfaceView
 import android.view.View
-import com.giphy.sdk.ui.utils.GPHVideoPlayerState
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.text.Cue
-import com.google.android.exoplayer2.text.CueGroup
-import com.google.android.exoplayer2.text.TextOutput
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT
+import androidx.media3.common.Timeline
+import androidx.media3.common.text.CueGroup
+import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.extractor.DefaultExtractorsFactory
 import timber.log.Timber
 import java.util.Timer
 import java.util.TimerTask
@@ -41,8 +44,8 @@ sealed class VideoPlayerState {
 typealias PlayerStateListener = (VideoPlayerState) -> Unit
 
 class VideoPlayer : Player.Listener {
-    var playerView: VideoPlayerView?
-    var repeatable: Boolean
+    private var playerView: VideoPlayerView?
+    private var repeatable: Boolean
     var showCaptions: Boolean
         set(value) {
             listeners.forEach {
@@ -72,7 +75,7 @@ class VideoPlayer : Player.Listener {
 
     var isDestroyed = false
 
-    var audioManager: AudioManager? = null
+    private var audioManager: AudioManager? = null
 
     val duration: Long
         get() {
@@ -154,7 +157,7 @@ class VideoPlayer : Player.Listener {
      * @return audioVolume The audio volume.
      */
     fun getVolume(): Float {
-        return player?.audioComponent?.volume ?: 0f
+        return player?.volume ?: 0f
     }
 
     /**
@@ -164,7 +167,7 @@ class VideoPlayer : Player.Listener {
      */
     fun setVolume(audioVolume: Float) {
         val volume = if (isDeviceMuted) 0f else audioVolume
-        player?.audioComponent?.volume = volume
+        player?.volume = volume
         listeners.forEach {
             it(VideoPlayerState.MuteChanged(volume > 0))
         }
@@ -190,6 +193,7 @@ class VideoPlayer : Player.Listener {
         player?.play()
     }
 
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     @Throws(Exception::class)
     fun loadMedia(
         videoUrl: String,
@@ -254,7 +258,7 @@ class VideoPlayer : Player.Listener {
         updateRepeatMode()
         startProgressTimer()
         // This is the MediaSource representing the media to be played.
-        val extractoryFactory =
+        val extractorFactory =
             DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true)
         val uri = Uri.parse(videoUrl)
         val mediaItem = MediaItem.Builder()
@@ -262,7 +266,7 @@ class VideoPlayer : Player.Listener {
             .setCustomCacheKey(uri.buildUpon().clearQuery().build().toString())
             .build()
         val videoSource =
-            ProgressiveMediaSource.Factory(VideoCache.cacheDataSourceFactory, extractoryFactory)
+            ProgressiveMediaSource.Factory(VideoCache.cacheDataSourceFactory, extractorFactory)
                 .createMediaSource(mediaItem)
         // Prepare the player with the source.
         player?.setMediaSource(videoSource)

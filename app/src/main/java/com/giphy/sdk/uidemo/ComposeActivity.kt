@@ -47,7 +47,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.IntOffset
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.ui.views.GPHMediaView
-import com.giphy.sdk.uidemo.VideoPlayer.VideoCache
+import com.giphy.sdk.uidemo.videoPlayer.VideoCache
+import com.giphy.sdk.uidemo.videoPlayer.VideoPlayerExoPlayerImpl
 import timber.log.Timber
 import kotlin.math.roundToInt
 
@@ -168,7 +169,7 @@ fun EmbeddedViewDemo(onMediaSelected: (Media) -> Unit) {
                             setup(
                                 settings.copy(selectedContentType = contentType),
                                 videoPlayer = { playerView, repeatable, showCaptions ->
-                                    VideoPlayerExoPlayer2181Impl(
+                                    VideoPlayerExoPlayerImpl(
                                         playerView,
                                         repeatable,
                                         showCaptions

@@ -12,9 +12,10 @@ import com.giphy.sdk.ui.GPHSettings
 import com.giphy.sdk.ui.Giphy
 import com.giphy.sdk.ui.utils.videoUrl
 import com.giphy.sdk.ui.views.GiphyDialogFragment
-import com.giphy.sdk.uidemo.VideoPlayer.VideoCache
-import com.giphy.sdk.uidemo.VideoPlayer.VideoPlayer
-import com.giphy.sdk.uidemo.VideoPlayer.VideoPlayerState
+import com.giphy.sdk.uidemo.videoPlayer.VideoCache
+import com.giphy.sdk.uidemo.videoPlayer.VideoPlayer
+import com.giphy.sdk.uidemo.videoPlayer.VideoPlayerState
+import com.giphy.sdk.uidemo.videoPlayer.feed.VideoPlayerMessageFeedAdapter
 import com.giphy.sdk.uidemo.feed.*
 import com.giphy.sdk.uidemo.databinding.ActivityVideoPlayerDemoBinding
 import timber.log.Timber

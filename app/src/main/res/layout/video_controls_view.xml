@@ -51,7 +51,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
-            <com.google.android.exoplayer2.ui.DefaultTimeBar
+            <androidx.media3.ui.DefaultTimeBar
                     android:id="@+id/progressBar"
                     android:layout_width="match_parent"
                     android:layout_height="4dp"

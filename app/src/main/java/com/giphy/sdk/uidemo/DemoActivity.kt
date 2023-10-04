@@ -14,9 +14,10 @@ import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.utils.GPHAbstractVideoPlayer
 import com.giphy.sdk.ui.utils.GPHVideoPlayerState
 import com.giphy.sdk.ui.views.GiphyDialogFragment
-import com.giphy.sdk.uidemo.VideoPlayer.VideoCache
+import com.giphy.sdk.uidemo.videoPlayer.VideoCache
 import com.giphy.sdk.uidemo.feed.*
 import com.giphy.sdk.uidemo.databinding.ActivityDemoBinding
+import com.giphy.sdk.uidemo.videoPlayer.VideoPlayerExoPlayerImpl
 import timber.log.Timber
 
 /**
@@ -56,7 +57,7 @@ class DemoActivity : AppCompatActivity() {
             val dialog = GiphyDialogFragment.newInstance(
                 settings.copy(selectedContentType = contentType),
                 videoPlayer = { playerView, repeatable, showCaptions ->
-                    VideoPlayerExoPlayer2181Impl(playerView, repeatable, showCaptions)
+                    VideoPlayerExoPlayerImpl(playerView, repeatable, showCaptions)
                 }
             )
             dialog.gifSelectionListener = getGifSelectionListener()
@@ -158,7 +159,7 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun createVideoPlayer(): GPHAbstractVideoPlayer {
-        val player = VideoPlayerExoPlayer2181Impl(null, true)
+        val player = VideoPlayerExoPlayerImpl(null, true)
         player.addListener { playerState ->
             when (playerState) {
                 is GPHVideoPlayerState.MediaChanged -> {

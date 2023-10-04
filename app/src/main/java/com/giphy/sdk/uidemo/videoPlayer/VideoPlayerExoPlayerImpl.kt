@@ -1,4 +1,4 @@
-package com.giphy.sdk.uidemo
+package com.giphy.sdk.uidemo.videoPlayer
 
 import android.net.Uri
 import android.view.SurfaceView
@@ -7,23 +7,22 @@ import com.giphy.sdk.ui.utils.GPHAbstractVideoPlayer
 import com.giphy.sdk.ui.utils.GPHVideoPlayerState
 import com.giphy.sdk.ui.utils.videoUrl
 import com.giphy.sdk.ui.views.GPHVideoPlayerView
-import com.giphy.sdk.uidemo.VideoPlayer.VideoCache
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Timeline
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
-import com.google.android.exoplayer2.text.CueGroup
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.Timeline
+import androidx.media3.common.text.CueGroup
+import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.ExoPlaybackException
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.extractor.DefaultExtractorsFactory
 import timber.log.Timber
 import java.io.IOException
 
-class VideoPlayerExoPlayer2181Impl(
+class VideoPlayerExoPlayerImpl(
     playerView: GPHVideoPlayerView?,
     repeatable: Boolean = false,
     showCaptions: Boolean = true
@@ -46,12 +45,12 @@ class VideoPlayerExoPlayer2181Impl(
         }
 
     override fun getVolume(): Float {
-        return player?.audioComponent?.volume ?: 0f
+        return player?.volume ?: 0f
     }
 
     override fun setVolume(audioVolume: Float) {
         val volume = if (isDeviceMuted) 0f else audioVolume
-        player?.audioComponent?.volume = volume
+        player?.volume = volume
         listeners.forEach {
             it(GPHVideoPlayerState.MuteChanged(volume > 0))
         }
@@ -69,6 +68,7 @@ class VideoPlayerExoPlayer2181Impl(
         player?.play()
     }
 
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     override fun setupExoPlayer(playerView: GPHVideoPlayerView, autoPlay: Boolean) {
 
         val videoUrl = media.videoUrl
@@ -95,19 +95,19 @@ class VideoPlayerExoPlayer2181Impl(
             .setLoadControl(loadControl)
             .build()
             .apply {
-                addListener(this@VideoPlayerExoPlayer2181Impl)
+                addListener(this@VideoPlayerExoPlayerImpl)
                 playWhenReady = autoPlay
             }
 
         playerView.preloadFirstFrame(media)
-        playerView.prepare(media, this@VideoPlayerExoPlayer2181Impl)
+        playerView.prepare(media, this@VideoPlayerExoPlayerImpl)
 
         player?.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
 
         updateRepeatMode()
         startProgressTimer()
-        // This is the MediaSource representing the media to be played.
-        val extractoryFactory =
+        // extractorFactory
+        val extractorFactory =
             DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true)
         val uri = Uri.parse(videoUrl)
 
@@ -129,7 +129,7 @@ class VideoPlayerExoPlayer2181Impl(
 
         val mediaItem = mediaItemBuilder
             .build()
-        val mediaSource = DefaultMediaSourceFactory(VideoCache.cacheDataSourceFactory, extractoryFactory).createMediaSource(mediaItem)
+        val mediaSource = DefaultMediaSourceFactory(VideoCache.cacheDataSourceFactory, extractorFactory).createMediaSource(mediaItem)
 
         // Prepare the player with the source.
         player?.setMediaSource(mediaSource)
