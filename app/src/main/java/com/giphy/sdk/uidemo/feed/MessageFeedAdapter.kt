@@ -101,14 +101,14 @@ class MessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Ad
             player = adapterHelper.player
 
             val clickListener: View.OnClickListener = View.OnClickListener {
-                if (adapterHelper.clipsPlaybackSetting == SettingsDialogFragment.ClipsPlaybackSetting.popup) {
+                if (adapterHelper.clipsPlaybackSetting == SettingsDialogFragment.ClipsPlaybackSetting.POPUP) {
                     itemSelectedListener(message)
                     pauseVideo()
                 } else {
                     playVideo()
                 }
             }
-            if (adapterHelper.clipsPlaybackSetting == SettingsDialogFragment.ClipsPlaybackSetting.inline) {
+            if (adapterHelper.clipsPlaybackSetting == SettingsDialogFragment.ClipsPlaybackSetting.INLINE) {
                 viewBinding.apply {
                     soundIcon.visibility = View.GONE
                     videoPlayerView.desiredWidth = 200.px

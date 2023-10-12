@@ -68,7 +68,7 @@ class GridViewExtensionsActivity : AppCompatActivity() {
         binding.gifsGridView.content = GPHContent.searchQuery(binding.searchInput.text.toString(), MediaType.gif)
     }
 
-    fun dismissKeyboard() {
+    private fun dismissKeyboard() {
         val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.searchInput.windowToken, 0)
     }

@@ -9,13 +9,13 @@ import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 
 class LoadingDrawable(val shape: Shape) : Drawable(), ValueAnimator.AnimatorUpdateListener {
-    val paint = Paint().apply {
+    private val paint = Paint().apply {
         color = Color.RED
         isAntiAlias = true
         style = Paint.Style.FILL
     }
-    val animator = ValueAnimator.ofFloat(20.0f, 60f)
-    var currentSize = 50f
+    private val animator = ValueAnimator.ofFloat(20.0f, 60f)
+    private var currentSize = 50f
 
     init {
         animator.addUpdateListener(this)
@@ -25,8 +25,6 @@ class LoadingDrawable(val shape: Shape) : Drawable(), ValueAnimator.AnimatorUpda
         animator.start()
     }
     override fun draw(p0: Canvas) {
-        if (!animator.isRunning) {
-        }
         when (shape) {
             Shape.Circle ->
                 p0.drawCircle(bounds.width() / 2f, bounds.height() / 2f, currentSize, paint)
@@ -38,6 +36,9 @@ class LoadingDrawable(val shape: Shape) : Drawable(), ValueAnimator.AnimatorUpda
     override fun setAlpha(p0: Int) {
     }
 
+    @Deprecated("Deprecated in Java",
+        ReplaceWith("PixelFormat.TRANSPARENT", "android.graphics.PixelFormat")
+    )
     override fun getOpacity(): Int {
         return PixelFormat.TRANSPARENT
     }
@@ -52,7 +53,7 @@ class LoadingDrawable(val shape: Shape) : Drawable(), ValueAnimator.AnimatorUpda
     }
 
     override fun onAnimationUpdate(p0: ValueAnimator) {
-        currentSize = p0?.animatedValue as Float
+        currentSize = p0.animatedValue as Float
         invalidateSelf()
     }
 }

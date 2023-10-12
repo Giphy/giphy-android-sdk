@@ -18,23 +18,23 @@ import com.giphy.sdk.uidemo.databinding.FragmentSettingsBinding
 class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
 
     enum class ClipsPlaybackSetting {
-        inline,
-        popup;
+        INLINE,
+        POPUP;
     }
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
     private var settings: GPHSettings = GPHSettings()
-    private var clipsPlaybackSetting = ClipsPlaybackSetting.inline
-    var dismissListener: (GPHSettings, ClipsPlaybackSetting) -> Unit = { settings, clipsPlaybackSetting -> }
+    private var clipsPlaybackSetting = ClipsPlaybackSetting.INLINE
+    var dismissListener: (GPHSettings, ClipsPlaybackSetting) -> Unit = { _, _ -> }
 
     companion object {
         private const val PICK_GRID_RENDITION = 201
-        private const val PICK_ATTRIBUTION_RENDTION = 202
+        private const val PICK_ATTRIBUTION_RENDITION = 202
 
-        private val KEY_SETTINGS = "key_settings"
-        private val KEY_SETTINGS_CLIPS = "key_settings_clips"
+        private const val KEY_SETTINGS = "key_settings"
+        private const val KEY_SETTINGS_CLIPS = "key_settings_clips"
         fun newInstance(gphSettings: GPHSettings, clipsPlaybackSetting: ClipsPlaybackSetting): SettingsDialogFragment {
             val fragment = SettingsDialogFragment()
             val bundle = Bundle()
@@ -51,8 +51,8 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings = requireArguments().getParcelable(KEY_SETTINGS)!!
-        clipsPlaybackSetting = requireArguments().getSerializable(KEY_SETTINGS_CLIPS) as ClipsPlaybackSetting
+        settings = requireArguments().parcelable(KEY_SETTINGS)!!
+        clipsPlaybackSetting = requireArguments().serializable(KEY_SETTINGS_CLIPS)!!
     }
 
     override fun onCreateView(
@@ -81,7 +81,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                 }, true
             )
             clipsPlaybackSettingsSelector.setToggled(
-                if (clipsPlaybackSetting == ClipsPlaybackSetting.inline) R.id.inline else R.id.popup,
+                if (clipsPlaybackSetting == ClipsPlaybackSetting.INLINE) R.id.inline else R.id.popup,
                 true
             )
             mediaTypeSelector.inflateMenu(R.menu.waterfal_media_types)
@@ -97,12 +97,12 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
                 mediaTypeSelector.setToggled(id, true)
             }
 
-            clipsPlaybackSettingsSelector.onToggledListener = { toggle, selected ->
+            clipsPlaybackSettingsSelector.onToggledListener = { toggle, _ ->
                 if (toggle.id == R.id.inline) {
-                    clipsPlaybackSetting = ClipsPlaybackSetting.inline
+                    clipsPlaybackSetting = ClipsPlaybackSetting.INLINE
                     clipsPlaybackSettingsSelector.setToggled(R.id.inline, true)
                 } else {
-                    clipsPlaybackSetting = ClipsPlaybackSetting.popup
+                    clipsPlaybackSetting = ClipsPlaybackSetting.POPUP
                     clipsPlaybackSettingsSelector.setToggled(R.id.popup, true)
                 }
             }
@@ -111,7 +111,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
             showConfirmationScreen.isChecked = settings.showConfirmationScreen
             showCheckeredBackground.isChecked = settings.showCheckeredBackground
 
-            themeSelector.onToggledListener = { toggle, selected ->
+            themeSelector.onToggledListener = { toggle, _ ->
                 settings.theme = when (toggle.id) {
                     R.id.lightTheme -> GPHTheme.Light
                     R.id.darkTheme -> GPHTheme.Dark
@@ -122,7 +122,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
             gridRenditionType.setOnClickListener { openRenditionPicker(PICK_GRID_RENDITION) }
             attributionRenditionType.setOnClickListener {
                 openRenditionPicker(
-                    PICK_ATTRIBUTION_RENDTION
+                    PICK_ATTRIBUTION_RENDITION
                 )
             }
         }
@@ -154,7 +154,7 @@ class SettingsDialogFragment : androidx.fragment.app.DialogFragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(if (renditionPlace == PICK_GRID_RENDITION) "Pick Grid Rendition" else "Pick Attribution Rendition")
         val renditions = RenditionType.values().map { it.name }.toTypedArray()
-        builder.setItems(renditions) { dialog, which ->
+        builder.setItems(renditions) { _, which ->
             val renditionType = RenditionType.values().find { it.ordinal == which }
             if (renditionPlace == PICK_GRID_RENDITION) {
                 settings.renditionType = renditionType

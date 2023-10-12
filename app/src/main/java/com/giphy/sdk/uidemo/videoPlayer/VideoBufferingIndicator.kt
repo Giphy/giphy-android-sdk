@@ -1,4 +1,4 @@
-package com.giphy.sdk.uidemo.VideoPlayer
+package com.giphy.sdk.uidemo.videoPlayer
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -31,6 +32,7 @@ class VideoBufferingIndicator @JvmOverloads constructor(
         colorAnimation.addUpdateListener { animator -> setBackgroundColor(animator.animatedValue as Int) }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun setVisibility(visibility: Int) {
         if (visibility == View.VISIBLE) {
             visible = true

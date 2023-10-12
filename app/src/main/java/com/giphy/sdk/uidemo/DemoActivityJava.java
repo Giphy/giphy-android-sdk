@@ -67,7 +67,7 @@ public class DemoActivityJava extends AppCompatActivity {
                 });*/
 
                 // To use the selected media:
-                boolean useGifView = false;
+                boolean useGifView = Math.random() < 0.5;
                 GPHMediaView gifView = binding.gifView;
                 ImageView imageView = binding.imageView;
                 gifView.setVisibility(View.GONE);

@@ -14,9 +14,10 @@ import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.utils.GPHAbstractVideoPlayer
 import com.giphy.sdk.ui.utils.GPHVideoPlayerState
 import com.giphy.sdk.ui.views.GiphyDialogFragment
-import com.giphy.sdk.uidemo.VideoPlayer.VideoCache
+import com.giphy.sdk.uidemo.videoPlayer.VideoCache
 import com.giphy.sdk.uidemo.feed.*
 import com.giphy.sdk.uidemo.databinding.ActivityDemoBinding
+import com.giphy.sdk.uidemo.videoPlayer.VideoPlayerExoPlayerImpl
 import timber.log.Timber
 
 /**
@@ -25,25 +26,25 @@ import timber.log.Timber
 class DemoActivity : AppCompatActivity() {
 
     companion object {
-        val TAG = DemoActivity::class.java.simpleName
-        val INVALID_KEY = "NOT_A_VALID_KEY"
+        val TAG: String = DemoActivity::class.java.simpleName
+        const val INVALID_KEY = "NOT_A_VALID_KEY"
     }
     private lateinit var binding: ActivityDemoBinding
-    var settings = GPHSettings(theme = GPHTheme.Light, stickerColumnCount = 3)
-    var feedAdapter: MessageFeedAdapter? = null
-    var messageItems = ArrayList<FeedDataItem>()
-    var contentType = GPHContentType.gif
+    private var settings = GPHSettings(theme = GPHTheme.Light, stickerColumnCount = 3)
+    private var feedAdapter: MessageFeedAdapter? = null
+    private var messageItems = ArrayList<FeedDataItem>()
+    private var contentType = GPHContentType.gif
 
     //TODO: Set a valid API KEY
-    val YOUR_API_KEY = INVALID_KEY
+    private val yourAPIKey = INVALID_KEY
 
-    val player: GPHAbstractVideoPlayer = createVideoPlayer()
-    private var clipsPlaybackSetting = SettingsDialogFragment.ClipsPlaybackSetting.inline
+    private val player: GPHAbstractVideoPlayer = createVideoPlayer()
+    private var clipsPlaybackSetting = SettingsDialogFragment.ClipsPlaybackSetting.INLINE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Giphy.configure(this, YOUR_API_KEY, true)
+        Giphy.configure(this, yourAPIKey, true)
         VideoCache.initialize(this, 100 * 1024 * 1024)
         binding = ActivityDemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -56,7 +57,7 @@ class DemoActivity : AppCompatActivity() {
             val dialog = GiphyDialogFragment.newInstance(
                 settings.copy(selectedContentType = contentType),
                 videoPlayer = { playerView, repeatable, showCaptions ->
-                    VideoPlayerExoPlayer2181Impl(playerView, repeatable, showCaptions)
+                    VideoPlayerExoPlayerImpl(playerView, repeatable, showCaptions)
                 }
             )
             dialog.gifSelectionListener = getGifSelectionListener()
@@ -86,9 +87,9 @@ class DemoActivity : AppCompatActivity() {
                 messageItems.forEach {
                     (it as? ClipItem)?.autoPlay = false
                 }
-                messageItems.add(ClipItem(media, Author.Me, autoPlay = true))
+                messageItems.add(ClipItem(media, autoPlay = true))
             } else {
-                messageItems.add(GifItem(media, Author.Me))
+                messageItems.add(GifItem(media))
             }
             feedAdapter?.notifyItemInserted(messageItems.size - 1)
             contentType = selectedContentType
@@ -137,18 +138,16 @@ class DemoActivity : AppCompatActivity() {
     private fun setupFeed() {
         messageItems.add(
             MessageItem(
-                "Hi there! The SDK is perfect for many contexts, including messaging, reactions, stories and other camera features. This is one example of how the GIPHY SDK can be used in a messaging app.",
-                Author.GifBot
+                "Hi there! The SDK is perfect for many contexts, including messaging, reactions, stories and other camera features. This is one example of how the GIPHY SDK can be used in a messaging app."
             )
         )
         messageItems.add(
             MessageItem(
-                "Tap the GIPHY button in the bottom left to see the SDK in action. Tap the settings icon in the top right to try out all of the customization options.",
-                Author.GifBot
+                "Tap the GIPHY button in the bottom left to see the SDK in action. Tap the settings icon in the top right to try out all of the customization options."
             )
         )
-        if (YOUR_API_KEY == INVALID_KEY) {
-            messageItems.add(InvalidKeyItem(Author.GifBot))
+        if (yourAPIKey == INVALID_KEY) {
+            messageItems.add(InvalidKeyItem())
         }
         feedAdapter = MessageFeedAdapter(messageItems)
         feedAdapter?.itemSelectedListener = ::onGifSelected
@@ -160,7 +159,7 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun createVideoPlayer(): GPHAbstractVideoPlayer {
-        val player = VideoPlayerExoPlayer2181Impl(null, true)
+        val player = VideoPlayerExoPlayerImpl(null, true)
         player.addListener { playerState ->
             when (playerState) {
                 is GPHVideoPlayerState.MediaChanged -> {
@@ -183,15 +182,23 @@ class DemoActivity : AppCompatActivity() {
     }
 
     private fun onGifSelected(itemData: FeedDataItem) {
-        if (itemData is MessageItem) {
-            Timber.d("onItemSelected ${itemData.text}")
-        } else if (itemData is InvalidKeyItem) {
-            Timber.d("onItemSelected InvalidKeyItem")
-        } else if (itemData is GifItem) {
-            Timber.d("onItemSelected ${itemData.media}")
-        } else if (itemData is ClipItem) {
-            Timber.d("onItemSelected ${itemData.media}")
-            showVideoPlayerDialog(itemData.media)
+        when (itemData) {
+            is MessageItem -> {
+                Timber.d("onItemSelected ${itemData.text}")
+            }
+
+            is InvalidKeyItem -> {
+                Timber.d("onItemSelected InvalidKeyItem")
+            }
+
+            is GifItem -> {
+                Timber.d("onItemSelected ${itemData.media}")
+            }
+
+            is ClipItem -> {
+                Timber.d("onItemSelected ${itemData.media}")
+                showVideoPlayerDialog(itemData.media)
+            }
         }
     }
 
@@ -212,10 +219,5 @@ class DemoActivity : AppCompatActivity() {
         this.settings = settings
         this.clipsPlaybackSetting = clipsPlaybackSetting
         feedAdapter?.adapterHelper?.clipsPlaybackSetting = clipsPlaybackSetting
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Timber.d("onActivityResult")
-        super.onActivityResult(requestCode, resultCode, data)
     }
 }

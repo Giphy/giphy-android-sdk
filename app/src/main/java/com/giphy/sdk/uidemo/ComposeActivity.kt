@@ -1,7 +1,6 @@
 package com.giphy.sdk.uidemo
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -47,9 +46,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.IntOffset
 import com.giphy.sdk.core.models.Media
-import com.giphy.sdk.core.network.api.Constants
 import com.giphy.sdk.ui.views.GPHMediaView
-import com.giphy.sdk.uidemo.VideoPlayer.VideoCache
+import com.giphy.sdk.uidemo.videoPlayer.VideoCache
+import com.giphy.sdk.uidemo.videoPlayer.VideoPlayerExoPlayerImpl
+import timber.log.Timber
 import kotlin.math.roundToInt
 
 class ComposeActivity : ComponentActivity() {
@@ -120,9 +120,9 @@ fun FeedItem(media: Media, index: Int) {
 
 @Composable
 fun EmbeddedViewDemo(onMediaSelected: (Media) -> Unit) {
-    val YOUR_API_KEY = "NOT_A_VALID_KEY"
+    val yourAPIKey = "NOT_A_VALID_KEY"
     var showView by rememberSaveable { mutableStateOf(false) }
-    var offset by rememberSaveable { mutableStateOf(0f) }
+    var offset by rememberSaveable { mutableFloatStateOf(0f) }
     val configuration = LocalConfiguration.current
     var contentType by rememberSaveable { mutableStateOf(GPHContentType.gif) }
 
@@ -162,14 +162,14 @@ fun EmbeddedViewDemo(onMediaSelected: (Media) -> Unit) {
                 AndroidView(
                     factory = { ctx ->
                         VideoCache.initialize(ctx, 100 * 1024 * 1024)
-                        Giphy.configure(ctx, YOUR_API_KEY, true)
+                        Giphy.configure(ctx, yourAPIKey, true)
                         val settings =
                             GPHSettings(theme = GPHTheme.Light, stickerColumnCount = 3)
                         GiphyDialogView(ctx).apply {
                             setup(
                                 settings.copy(selectedContentType = contentType),
                                 videoPlayer = { playerView, repeatable, showCaptions ->
-                                    VideoPlayerExoPlayer2181Impl(
+                                    VideoPlayerExoPlayerImpl(
                                         playerView,
                                         repeatable,
                                         showCaptions
@@ -191,11 +191,11 @@ fun EmbeddedViewDemo(onMediaSelected: (Media) -> Unit) {
                                 }
 
                                 override fun didSearchTerm(term: String) {
-                                    Log.d("Giphy", "didSearchTerm: $term")
+                                    Timber.d("didSearchTerm: $term")
                                 }
 
                                 override fun onFocusSearch() {
-                                    Log.d("Giphy", "onFocusSearch")
+                                    Timber.d("onFocusSearch")
                                 }
                             }
                         }

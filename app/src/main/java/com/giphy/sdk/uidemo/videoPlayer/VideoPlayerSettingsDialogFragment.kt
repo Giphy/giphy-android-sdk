@@ -21,7 +21,7 @@ class VideoPlayerSettingsDialogFragment : androidx.fragment.app.DialogFragment()
 
     private var settings: GPHSettings = GPHSettings()
     private var clipsPlaybackSetting = VideoPlaybackSetting.inline
-    var dismissListener: (GPHSettings, VideoPlaybackSetting) -> Unit = { settings, videoPlaybackSetting -> }
+    var dismissListener: (GPHSettings, VideoPlaybackSetting) -> Unit = { _, _ -> }
 
     companion object {
 
@@ -43,8 +43,8 @@ class VideoPlayerSettingsDialogFragment : androidx.fragment.app.DialogFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings = arguments!!.getParcelable(KEY_SETTINGS)!!
-        clipsPlaybackSetting = arguments!!.getSerializable(KEY_SETTINGS_CLIPS) as VideoPlaybackSetting
+        settings = requireArguments().parcelable(KEY_SETTINGS)!!
+        clipsPlaybackSetting = requireArguments().serializable(KEY_SETTINGS_CLIPS)!!
     }
 
     override fun onCreateView(
@@ -69,7 +69,7 @@ class VideoPlayerSettingsDialogFragment : androidx.fragment.app.DialogFragment()
                 true
             )
 
-            clipsPlaybackSettingsSelector.onToggledListener = { toggle, selected ->
+            clipsPlaybackSettingsSelector.onToggledListener = { toggle, _ ->
                 if (toggle.id == R.id.inline) {
                     clipsPlaybackSetting = VideoPlaybackSetting.inline
                     clipsPlaybackSettingsSelector.setToggled(R.id.inline, true)

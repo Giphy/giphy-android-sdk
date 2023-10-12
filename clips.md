@@ -41,6 +41,12 @@ implementation("com.google.android.exoplayer:exoplayer-core:2.18.1")
 implementation("com.google.android.exoplayer:exoplayer-ui:2.18.1")
 ```
 
+As of version 2.3.11, the standalone Exoplayer library migrated from the standalone library to androidx.media3:
+```
+implementation("androidx.media3:media3-exoplayer:1.1.1")
+implementation("androidx.media3:media3-ui:1.1.1")
+```
+
 Initialize the [VideoCache](https://github.com/Giphy/giphy-android-sdk/blob/main/app/src/main/java/com/giphy/sdk/uidemo/VideoPlayer/VideoCache.kt) to use `Clips`:
 
 ```
@@ -50,14 +56,14 @@ Giphy.configure(this, YOUR_API_KEY, true)
 
 Provide a `GPHAbstractVideoPlayer` implementation, which is required by the GIPHY SDK to play Clips.
 
-We prepared an example based on the `ExoPlayer` 2.18.1 version - this may need to be modified for different versions of ExoPlayer:
-- [VideoPlayerExoPlayer2181Impl](https://github.com/Giphy/giphy-android-sdk/blob/main/app/src/main/java/com/giphy/sdk/uidemo/VideoPlayer/VideoPlayerExoPlayer2181Impl.kt)
+We prepared an example based on the `media3-exoplayer:1.1.1` - this may need to be modified for different versions of ExoPlayer:
+- [VideoPlayerExoPlayerImpl](https://github.com/Giphy/giphy-android-sdk/blob/main/app/src/main/java/com/giphy/sdk/uidemo/VideoPlayer/VideoPlayerExoPlayerImpl.kt)
 
 ```
  val dialog = GiphyDialogFragment.newInstance(
     settings.copy(selectedContentType = contentType),
     videoPlayer = { playerView, repeatable, showCaptions ->
-        VideoPlayerExoPlayer2181Impl(playerView, repeatable, showCaptions)
+        VideoPlayerExoPlayerImpl(playerView, repeatable, showCaptions)
     }
  )
 ```
@@ -142,7 +148,7 @@ player.loadMedia(media, view = playerView)
 Attach the player to `GPHVideoPlayerView`. There are two ways to do that:
 - using `GPHAbstractVideoPlayer` implementation constructor.
 ```
-  videoPlayer = VideoPlayerExoPlayer2181Impl(videoPlayerView, true)
+  videoPlayer = VideoPlayerExoPlayerImpl(videoPlayerView, true)
  ```
 - pass as param of `GPHAbstractVideoPlayer.loadMedia` function.
 ```
@@ -152,13 +158,13 @@ Attach the player to `GPHVideoPlayerView`. There are two ways to do that:
 Prepare the player with a `Media` item to play: `GPHAbstractVideoPlayer.loadMedia(media)`
 ```
   val playerView = GPHVideoPlayerView(context)  
-  val videoPlayer = VideoPlayerExoPlayer2181Impl(null, true)
+  val videoPlayer = VideoPlayerExoPlayerImpl(null, true)
   videoPlayer.loadMedia(media, view = viewBinding.videoPlayerView)
   
   OR
   
   val playerView = GPHVideoPlayerView(context)
-  val videoPlayer = VideoPlayerExoPlayer2181Impl(videoPlayerView, true)
+  val videoPlayer = VideoPlayerExoPlayerImpl(videoPlayerView, true)
   player.loadMedia(media)
 ```  
 
@@ -187,7 +193,7 @@ GPHAbstractVideoPlayer.addListener(GPHPlaybackStateListener)
 It's preferable to use only one `GPHAbstractVideoPlayer` implementation instance and share it between `GPHVideoPlayerView`(s):
 ```
 val playerView = GPHVideoPlayerView(context)
-val player = VideoPlayerExoPlayer2181Impl(null, true)
+val player = VideoPlayerExoPlayerImpl(null, true)
 player.loadMedia(media, view = playerView)
 ```
 

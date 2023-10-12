@@ -1,4 +1,4 @@
-package com.giphy.sdk.uidemo.feed
+package com.giphy.sdk.uidemo.videoPlayer.feed
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,20 +9,23 @@ import com.giphy.sdk.ui.utils.aspectRatio
 import com.giphy.sdk.ui.utils.px
 import com.giphy.sdk.ui.utils.videoUrl
 import com.giphy.sdk.uidemo.R
-import com.giphy.sdk.uidemo.VideoPlayer.VideoPlayer
+import com.giphy.sdk.uidemo.videoPlayer.VideoPlayer
 import com.giphy.sdk.uidemo.VideoPlayerSettingsDialogFragment
 import com.giphy.sdk.uidemo.databinding.GifVideoItemBinding
+import com.giphy.sdk.uidemo.feed.ClipItem
+import com.giphy.sdk.uidemo.feed.FeedDataItem
+import com.giphy.sdk.uidemo.feed.InvalidKeyItem
 
 class VideoPlayerAdapterHelper {
     lateinit var player: VideoPlayer
     lateinit var videoPlaybackSetting: VideoPlayerSettingsDialogFragment.VideoPlaybackSetting
 }
 
-class VideoPlayerMessageFeedAdapter(val items: MutableList<FeedDataItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class VideoPlayerMessageFeedAdapter(private val items: MutableList<FeedDataItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val ITEM_NONE = 102
-    private val ITEM_INVALID_API = 103
-    private val ITEM_CLIP = 104
+    private val itemNone = 102
+    private val itemInvalidAPI = 103
+    private val itemClip = 104
 
     var adapterHelper = VideoPlayerAdapterHelper()
 
@@ -30,8 +33,8 @@ class VideoPlayerMessageFeedAdapter(val items: MutableList<FeedDataItem>) : Recy
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            ITEM_CLIP -> ClipViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.gif_video_item, parent, false), adapterHelper)
-            ITEM_INVALID_API -> InvalidApiViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_api_key, parent, false))
+            itemClip -> ClipViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.gif_video_item, parent, false), adapterHelper)
+            itemInvalidAPI -> InvalidApiViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_api_key, parent, false))
             else -> throw RuntimeException("unsupported type")
         }
     }
@@ -54,9 +57,9 @@ class VideoPlayerMessageFeedAdapter(val items: MutableList<FeedDataItem>) : Recy
 
     override fun getItemViewType(position: Int): Int {
         return when (items[position]) {
-            is ClipItem -> ITEM_CLIP
-            is InvalidKeyItem -> ITEM_INVALID_API
-            else -> ITEM_NONE
+            is ClipItem -> itemClip
+            is InvalidKeyItem -> itemInvalidAPI
+            else -> itemNone
         }
     }
 
@@ -64,9 +67,9 @@ class VideoPlayerMessageFeedAdapter(val items: MutableList<FeedDataItem>) : Recy
         RecyclerView.ViewHolder(itemView) {
 
         lateinit var media: Media
-        lateinit var player: VideoPlayer
+        private lateinit var player: VideoPlayer
 
-        val viewBinding = GifVideoItemBinding.bind(itemView)
+        private val viewBinding = GifVideoItemBinding.bind(itemView)
 
         fun bindMessage(message: ClipItem) {
             media = message.media

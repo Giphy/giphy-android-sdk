@@ -56,7 +56,7 @@
                 tools:ignore="MissingPrefix" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.giphy.sdk.uidemo.VideoPlayer.VideoBufferingIndicator
+    <com.giphy.sdk.uidemo.videoPlayer.VideoBufferingIndicator
             android:id="@+id/bufferingAnimation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -70,9 +70,9 @@
                 android:layout_gravity="bottom"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
 
-    </com.giphy.sdk.uidemo.VideoPlayer.VideoBufferingIndicator>
+    </com.giphy.sdk.uidemo.videoPlayer.VideoBufferingIndicator>
 
-    <com.giphy.sdk.uidemo.VideoPlayer.VideoControls
+    <com.giphy.sdk.uidemo.videoPlayer.VideoControls
             android:id="@+id/videoControls"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
