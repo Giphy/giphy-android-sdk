@@ -45,7 +45,7 @@ The latest release is available on [Maven Central](https://search.maven.org/arti
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.3.16'
+implementation 'com.giphy.sdk:ui:2.3.17'
 ``` 
 
 ### Configure your API key
@@ -255,6 +255,11 @@ settings.showSuggestionsBar = false
 - **Image Format**: You can choose a file type for the grid.
 ```kotlin
 settings.imageFormat = ImageFormat.WEBP
+```
+
+- **Edge-to-edge support**: You can enable edge-to-edge support for the `GiphyDialogFragment`.
+```kotlin
+settings.enableEdgeToEdge = true
 ```
 
 ### _Presentation_
