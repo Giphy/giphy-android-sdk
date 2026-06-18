@@ -55,7 +55,7 @@ class DemoActivity : AppCompatActivity() {
         binding.launchGiphyBtn.setOnClickListener {
             player.onPause()
             val dialog = GiphyDialogFragment.newInstance(
-                settings.copy(selectedContentType = contentType),
+                settings.copy(selectedContentType = contentType, enableEdgeToEdge = true),
                 videoPlayer = { playerView, repeatable, showCaptions ->
                     VideoPlayerExoPlayerImpl(playerView, repeatable, showCaptions)
                 }
