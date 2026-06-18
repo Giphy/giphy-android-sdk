@@ -36,6 +36,8 @@
 ### Requirements
 - The Giphy UI SDK only supports projects that have been upgraded to [androidx](https://developer.android.com/jetpack/androidx/).
 - Requires minSdkVersion 19
+- Requires `compileSdkVersion` 35 or higher.
+- Requires Kotlin 2.1 or higher. (As of v2.5.0 the SDK is built with the Kotlin 2.x toolchain)
 - A Giphy Android SDK key from the [Giphy Developer Portal](https://developers.giphy.com/dashboard/?create=true).
 
 ### Installation
@@ -44,7 +46,7 @@ The latest release is available on [Maven Central](https://search.maven.org/arti
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.4.2'
+implementation 'com.giphy.sdk:ui:2.5.0'
 ``` 
 
 ### Configure your API key

@@ -1,9 +1,10 @@
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-parcelize"
+apply plugin: "org.jetbrains.kotlin.plugin.compose"
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion 35
     defaultConfig {
         applicationId "com.giphy.sdk.uidemo"
         minSdkVersion 21
@@ -19,10 +20,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.7"
     }
 
     namespace = "com.giphy.sdk.uidemo"
@@ -51,11 +48,11 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.21"
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0"
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
     implementation "com.google.android.material:material:1.10.0"
-    implementation "com.giphy.sdk:ui:2.4.2"
+    implementation "com.giphy.sdk:ui:2.5.0"
     implementation("androidx.media3:media3-exoplayer:1.1.1")
     implementation("androidx.media3:media3-ui:1.1.1")
     implementation 'com.github.bumptech.glide:glide:4.12.0'

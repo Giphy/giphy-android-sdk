@@ -46,7 +46,7 @@ typealias PlayerStateListener = (VideoPlayerState) -> Unit
 class VideoPlayer : Player.Listener {
     private var playerView: VideoPlayerView?
     private var repeatable: Boolean
-    var showCaptions: Boolean
+    var showCaptions: Boolean = false
         set(value) {
             listeners.forEach {
                 it(VideoPlayerState.CaptionsVisibilityChanged(value))
