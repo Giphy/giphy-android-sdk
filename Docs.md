@@ -47,7 +47,7 @@ The latest release is available on [Maven Central](https://search.maven.org/arti
 
 Add the GIPHY SDK dependency in the module ```build.gradle``` file:
 ```
-implementation 'com.giphy.sdk:ui:2.5.0'
+implementation 'com.giphy.sdk:ui:2.5.1'
 ``` 
 
 ### Configure your API key
